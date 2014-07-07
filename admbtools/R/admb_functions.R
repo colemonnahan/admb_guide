@@ -64,35 +64,35 @@ get.admb.cov <- function(model.path=getwd()){
     return(result)
 }
 
-#' Read in the maximum likelihood results of an ADMB model
-#'
-#' @author Cole Monnahan, modified from a version found at
-#' http://qfc.fw.msu.edu/userfun.asp
-#' @param model.name The name of the model (without the .tpl extension).
-#' @param model.path The directory path to the folder containing the model.
-get.admb.fit  <-  function(model.name, model.path=getwd()){
-    ret  <-  list()
-    parmodel.name <- as.numeric(scan(paste(model.name,'.par', sep=''),
-                                   what='', n=16, quiet=TRUE)[c(6,11,16)])
-    ret$nopar <- as.integer(parmodel.name[1])
-    ret$nloglike <- parmodel.name[2]      #objective function value
-    ret$maxgrad <- parmodel.name[3]
-    model.name <- paste(model.name,'.cor', sep='') # read cor model.name
-    lin <- readLines(model.name) # total parameter including sdreport variables
-    ret$totPar <- length(lin)-2  #log of the determinant of the hessian
-    ret$logDetHess <- as.numeric(strsplit(lin[1], '=')[[1]][2])
-    sublin <- lapply(strsplit(lin[1:ret$totPar+2], ' '),function(x)x[x!=''])
-    ret$names <- unlist(lapply(sublin,function(x)x[2]))
-    ret$est <- as.numeric(unlist(lapply(sublin,function(x)x[3])))
-    ret$std <- as.numeric(unlist(lapply(sublin,function(x)x[4])))
-    ret$cor <- matrix(NA, ret$totPar, ret$totPar)
-    corvec <- unlist(sapply(1:length(sublin), function(i)sublin[[i]][5:(4+i)]))
-    ret$cor[upper.tri(ret$cor, diag=TRUE)] <- as.numeric(corvec)
-    ret$cor[lower.tri(ret$cor)]  <-  t(ret$cor)[lower.tri(ret$cor)] # covariance matrix
-    ret$cov <- ret$cor*(ret$std %o% ret$std)
-    return(ret)
-}
-## ------------------------------------------------------------
+## #' Read in the maximum likelihood results of an ADMB model
+## #'
+## #' @author Cole Monnahan, modified from a version found at
+## #' http://qfc.fw.msu.edu/userfun.asp
+## #' @param model.name The name of the model (without the .tpl extension).
+## #' @param model.path The directory path to the folder containing the model.
+## get.admb.fit  <-  function(model.name, model.path=getwd()){
+##     ret  <-  list()
+##     parmodel.name <- as.numeric(scan(paste(model.name,'.par', sep=''),
+##                                    what='', n=16, quiet=TRUE)[c(6,11,16)])
+##     ret$nopar <- as.integer(parmodel.name[1])
+##     ret$nloglike <- parmodel.name[2]      #objective function value
+##     ret$maxgrad <- parmodel.name[3]
+##     model.name <- paste(model.name,'.cor', sep='') # read cor model.name
+##     lin <- readLines(model.name) # total parameter including sdreport variables
+##     ret$totPar <- length(lin)-2  #log of the determinant of the hessian
+##     ret$logDetHess <- as.numeric(strsplit(lin[1], '=')[[1]][2])
+##     sublin <- lapply(strsplit(lin[1:ret$totPar+2], ' '),function(x)x[x!=''])
+##     ret$names <- unlist(lapply(sublin,function(x)x[2]))
+##     ret$est <- as.numeric(unlist(lapply(sublin,function(x)x[3])))
+##     ret$std <- as.numeric(unlist(lapply(sublin,function(x)x[4])))
+##     ret$cor <- matrix(NA, ret$totPar, ret$totPar)
+##     corvec <- unlist(sapply(1:length(sublin), function(i)sublin[[i]][5:(4+i)]))
+##     ret$cor[upper.tri(ret$cor, diag=TRUE)] <- as.numeric(corvec)
+##     ret$cor[lower.tri(ret$cor)]  <-  t(ret$cor)[lower.tri(ret$cor)] # covariance matrix
+##     ret$cov <- ret$cor*(ret$std %o% ret$std)
+##     return(ret)
+## }
+## ## ------------------------------------------------------------
 
 
 write.admb.cov <- function(correlation.user, model.path=getwd()){

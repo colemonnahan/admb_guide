@@ -39,7 +39,7 @@
 #' @param extra.args A character string which is passed to ADMB at
 #' runtime. Useful for passing additional arguments to the model
 #' executable.
-run.mcmc <- function(model.path, model.name, Nout, mcsave, burn.in,
+run_admb_mcmc <- function(model.path, model.name, Nout, mcsave, burn.in,
                      cor.mat=NULL, init.pin=NULL, se.scale=NULL,
                      mcscale=FALSE,  mcseed=NULL, mcrb=NULL, mcdiag=FALSE,
                      mcprobe=NULL, verbose=TRUE, extra.args=NULL){
