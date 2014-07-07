@@ -8,7 +8,10 @@
 #' @param diag What type of plot to include on the diagonal, options are
 #' 'acf' which plots the autocorrelation function \code{acf}, 'hist' shows
 #' marginal posterior histograms, and 'trace' the trace plot.
-#' @param fits A list containing the fitted information, read in using xxx
+#' @param fits A list of class 'admb' read in from from
+#' \code{R2admb::read_admb}, or \code{NULL} (default). If provided, the
+#' maximum likelihood estimates are shown with their corresponding 95%
+#' confidence bivariate normal estimates.
 #' @param acf.ylim If using the acf function on the diagonal, specify the y
 #' limit. The default is c(-1,1).
 #' @param ymult A vector of length ncol(posterior) specifying how much room to
@@ -16,8 +19,10 @@
 #' is blocking part of the plot.
 #' @param limits A list containing the ranges for each parameter to use in
 #' plotting.
+#' @return Produces a plot, and returns nothing.
+#' @author Cole Monnahan
 #' @export
-admb.pairs <- function(posterior, diag=c("acf","hist", "trace"), fits=NULL,
+pairs_admb <- function(posterior, diag=c("acf","hist", "trace"), fits=NULL,
                        acf.ylim=c(-1,1), ymult=NULL, axis.col=gray(.5),
                        limits=NULL, ...){
     old.par <- par(no.readonly=TRUE)
