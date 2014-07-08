@@ -8,13 +8,9 @@
 #' @param diag What type of plot to include on the diagonal, options are
 #' 'acf' which plots the autocorrelation function \code{acf}, 'hist' shows
 #' marginal posterior histograms, and 'trace' the trace plot.
-#' @param fits A list of class 'admb' read in from from
-#' \code{R2admb::read_admb}, or \code{NULL} (default). If provided, the
-#' maximum likelihood estimates are shown with their corresponding 95%
-#' confidence bivariate normal estimates.
 #' @param acf.ylim If using the acf function on the diagonal, specify the y
 #' limit. The default is c(-1,1).
-#' @param ymult A vector of length ncol(posterior) specifying how much room to
+#' @param ymult A vector of length ncol(admb_mcmc) specifying how much room to
 #' give when using the hist option for the diagonal. For use if the label
 #' is blocking part of the plot.
 #' @param limits A list containing the ranges for each parameter to use in
@@ -22,14 +18,15 @@
 #' @return Produces a plot, and returns nothing.
 #' @author Cole Monnahan
 #' @export
-pairs_admb <- function(posterior, diag=c("acf","hist", "trace"), fits=NULL,
+pairs_admb <- function(admb_mcmc, diag=c("acf","hist", "trace"),
                        acf.ylim=c(-1,1), ymult=NULL, axis.col=gray(.5),
                        limits=NULL, ...){
     old.par <- par(no.readonly=TRUE)
     on.exit(par(old.par))
     diag <- match.arg(diag)
-    posterior.names <- names(posterior)
-    posterior <- as.matrix(posterior)
+    posterior.names <- names(admb_mcmc$mcmc)
+    posterior <- admb_mcmc$mcmc
+    mle <- admb_mcmc$mle
     n <- NCOL(posterior)
     if(n==1) warning("This function is only meaningful for >1 parameter")
     if(is.null(ymult)) ymult <- rep(1.3, n)
@@ -51,17 +48,15 @@ pairs_admb <- function(posterior, diag=c("acf","hist", "trace"), fits=NULL,
                              ylim=c(0, ymult[row]*max(h$density)),
                              col=gray(.8), border=gray(.5))
                     } else {
-                    hist(posterior[,row], axes=F, freq=FALSE, ann=F,
-                         ylim=c(0, ymult[row]*max(h$density)),
-                         col=gray(.8), border=gray(.5), xlim=limits[[row]])
-                }
+                        hist(posterior[,row], axes=F, freq=FALSE, ann=F,
+                             ylim=c(0, ymult[row]*max(h$density)),
+                             col=gray(.8), border=gray(.5), xlim=limits[[row]])
+                    }
                     temp.box()
                 } else if(diag=="acf") {
                     acf(posterior[,row], axes=F, ann=F, ylim=acf.ylim)
-                    ## If the fit is  given, add effective sample sizes
-                    if(!is.null(fits)){
-                        legend("topright", bty='n', legend=NA,
-                               title=sprintf("EFS=%.3f", 100*fits$efsize[row],2))                    }
+                    legend("topright", bty='n', legend=NA,
+                           title=sprintf("EFS=%.3f", 100*admb_mcmc$diag$efsize[row],2))
                     temp.box()
                 } else if(diag=="trace") {
                     plot(x=posterior[,row], lwd=.5, col=gray(.5), type="l", axes=F,
@@ -77,20 +72,18 @@ pairs_admb <- function(posterior, diag=c("acf","hist", "trace"), fits=NULL,
                      pch=ifelse(NROW(posterior)>=5000,".", 1), col=1,
                      xlim=limits[[col]], ylim=limits[[row]])
                 ## Add bivariate 95% normal levels for both the MLE
-                ## estimated covariance, but also the user supplied cor.mat
-                if(!is.null(fits)){
-                    points(x=fits$est[col], y=fits$est[row],
-                           pch=16, cex=1, col=2)
-                    lines(ellipse::ellipse(x=fits$cor[col, row],
-                                  scale=fits$std[1:fits$nopar],
-                                  centre= fits$est[c(col, row)], npoints=1000,
-                                  level=.95) , lwd=1.5, lty=1, col="red")
-                    if(!is.null(fits$cor.mat))
-                        lines(ellipse::ellipse(x=fits$cor.mat[col, row],
-                                               scale=fits$std[1:fits$nopar],
-                                               centre= fits$est[c(col, row)], npoints=1000,
-                                               level=.95) , lwd=1.5, lty=1, col="blue")
-                }
+                ## estimated covariance, but also the user supplied cor.user
+                points(x=mle$coefficients[col], y=mle$coefficients[row],
+                       pch=16, cex=1, col=2)
+                lines(ellipse::ellipse(x=mle$cor[col, row],
+                                       scale=mle$se[1:mle$npar],
+                                       centre= mle$coefficients[c(col, row)], npoints=1000,
+                                       level=.95) , lwd=1.5, lty=1, col="red")
+                if(!is.null(mle$cor.user))
+                    lines(ellipse::ellipse(x=mle$cor.user[col, row],
+                                           scale=mle$se[1:mle$npar],
+                                           centre= mle$coefficient[c(col, row)], npoints=1000,
+                                           level=.95) , lwd=1.5, lty=1, col="blue")
                 par(xaxs="i", yaxs="i")
                 temp.box()
             }

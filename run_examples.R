@@ -1,25 +1,26 @@
-
+## Make sure these are updated
 library(devtools)
 library(roxygen2)
 library(coda)
 library(R2admb)
 
-
-simple.fit <- read_admb("simple/simple")
 document("admbtools")
 load_all("admbtools")
 dev_help("pairs_admb")                  # how to see doc
 ## devtools::create("admbtools")
 
+simple.fit <- read_admb("simple/simple")
+
+
 ## Demonstrate run_admb_mcmc and pairs_admb. The former runs chains, and the
 ## later is similar to pairs() but works specifically for ADMB model fits.
 simple1 <- run_admb_mcmc("simple", "simple", Nout=1000, mcsave=1, burn.in=1,
                     verbose=TRUE)
-pairs_admb(posterior=simple1$mcmc, fits=simple1$fit)
-pairs_admb(posterior=simple1$mcmc, fits=simple1$fit, diag="trace")
+pairs_admb(admb_mcmc=simple1)
+pairs_admb(admb_mcmc=simple1,  diag="trace")
 simple2 <- run_admb_mcmc("simple", "simple", Nout=1000, mcsave=100, burn.in=1, verbose=TRUE)
-pairs_admb(posterior=simple2$mcmc, fits=simple2$fit)
-pairs_admb(posterior=simple2$mcmc, fits=simple2$fit, diag="trace")
+pairs_admb(admb_mcmc=simple2)
+pairs_admb(admb_mcmc=simple2,  diag="trace")
 
 
 ## age.ctl contains inputted values for the phases of the 4 parameters, in
@@ -33,10 +34,10 @@ write.table(x=c(1,1,1,-1), file="age/age.ctl", row.names=F, col.names=F)
 mcmc3 <- run_admb_mcmc("age", "age", Nout=500, mcsave=500, burn.in=10)
 write.table(x=c(1,1,1,1), file="age/age.ctl", row.names=F, col.names=F)
 mcmc4 <- run_admb_mcmc("age", "age", Nout=500, mcsave=500, burn.in=10)
-pairs_admb(posterior=mcmc1$mcmc, fits=mcmc1$fit)
-pairs_admb(posterior=mcmc2$mcmc, fits=mcmc2$fit)
-pairs_admb(posterior=mcmc3$mcmc, fits=mcmc3$fit)
-pairs_admb(posterior=mcmc4$mcmc, fits=mcmc4$fit)
+pairs_admb(admb_mcmc=mcmc1$mcmc, fits=mcmc1$fit)
+pairs_admb(admb_mcmc=mcmc2$mcmc, fits=mcmc2$fit)
+pairs_admb(admb_mcmc=mcmc3$mcmc, fits=mcmc3$fit)
+pairs_admb(admb_mcmc=mcmc4$mcmc, fits=mcmc4$fit)
 
 ## Use simple model to explore what happens as the MLE approaches the bound
 

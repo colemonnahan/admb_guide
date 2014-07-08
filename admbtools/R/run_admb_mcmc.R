@@ -14,7 +14,7 @@
 #' chain, *after* thining. The burn in period (i.e., the first
 #' burn.in*mcsave draws) should be at least large enough to cover dynamic
 #' scaling.
-#' @param cor.mat A manually defined correlation matrix (in bounded space)
+#' @param cor.user A manually defined correlation matrix (in bounded space)
 #' to use in the Metropolis-Hastings algorithm.
 #' @param init.pin A vector of initial values, which are written to file
 #' and used in the model via the -mcpin option.
@@ -39,8 +39,11 @@
 #' @param extra.args A character string which is passed to ADMB at
 #' runtime. Useful for passing additional arguments to the model
 #' executable.
+#' @return Returns a list containing (1) the posterior draws, (2) and
+#' object of class 'admb', read in using the results read in using
+#' \code{read_admb}, and (3) some MCMC convergence diagnostics using CODA.
 run_admb_mcmc <- function(model.path, model.name, Nout, mcsave, burn.in,
-                     cor.mat=NULL, init.pin=NULL, se.scale=NULL,
+                     cor.user=NULL, init.pin=NULL, se.scale=NULL,
                      mcscale=FALSE,  mcseed=NULL, mcrb=NULL, mcdiag=FALSE,
                      mcprobe=NULL, verbose=TRUE, extra.args=NULL){
     ## This function runs an ADMB model MCMC, burns and thins, calculates
@@ -55,18 +58,24 @@ run_admb_mcmc <- function(model.path, model.name, Nout, mcsave, burn.in,
     }
     ## Run to get MLE and covariance matrix
     system(model.name, ignore.stdout=T)
-    ## If user provided covar matrix, write it to file
-    if(!is.null(cor.mat)){
-        if(!is.positive.definite(cor.mat))
-            stop("Invalid cor.mat matrix, not positive definite")
-        write.admb.cov(cor.mat)
-    }
     ## Grab original admb fit and metrics
-    fit <- get.admb.fit(model.name)
-    if(!is.null(cor.mat)) fit$cor.mat <- cor.mat
+    mle <- read_admb(model.name)
+    ## If user provided covar matrix, write it to file and save to results
+    if(!is.null(cor.user)){
+        if(!is.positive.definite(cor.user))
+            stop("Invalid cor.user matrix, not positive definite")
+        write.admb.cov(cor.user)
+        mle$cor.user <- cor.user
+        cor <- cor.user
+    }
+    ## otherwise use the estimated one
+    else {
+        cor <- with(mle, cor[1:npar, 1:npar])
+        mle$cor.user <-  NULL
+    }
     ## If init values not provided, start from the MLEs (see below for why
     ## necessary)
-    if(is.null(init.pin)) init.pin <- fit$est[1:fit$nopar]
+    if(is.null(init.pin)) init.pin <- mle$coefficients[1:mle$npar]
     ## Write the starting values to file
     write.table(file="init.pin", x=init.pin, row.names=F, col.names=F)
     ## make the argument and run the MCMC
@@ -79,7 +88,7 @@ run_admb_mcmc <- function(model.path, model.name, Nout, mcsave, burn.in,
     if(mcdiag==TRUE) cmd <- paste(cmd, "-mcdiag")
     if(!is.null(extra.args)) cmd <- paste(cmd, extra.args)
     ## Always using a init.pin file b/c need to use -nohess -noest so that
-    ## the cor.mat can be specified and not overwritten. HOwever, this
+    ## the cor.user can be specified and not overwritten. HOwever, this
     ## feature then starts the mcmc chain from the initial values instead
     ## of the MLEs. So let the user specify the init values, or specify the
     ## MLEs manually
@@ -96,12 +105,17 @@ run_admb_mcmc <- function(model.path, model.name, Nout, mcsave, burn.in,
                    byrow=TRUE)
     close(psv)
     mcmc <- as.data.frame(mcmc)
-    names(mcmc) <- fit$names[1:nparams]
+    if(!is.null(mle)){
+        names(mcmc) <- names(with(mle, coefficients[1:npar]))
+    }
     ## Remove the 'burn in' specified by user
     if(burn.in>0) mcmc <- mcmc[-(1:burn.in),]
     ## Run effective sample size calcs from CODA, metric of convergence
     efsize <- data.frame(t(effectiveSize(mcmc)/NROW(mcmc)))
     names(efsize) <- paste0(names(mcmc), "_efs")
     fit$efsize <- efsize
-    return(list(fit=fit,  mcmc=mcmc))
+    results <- list(mcmc=mcmc, mle=mle)
+    results$diag <- efsize
+    class(results) <- 'admb_mcmc'
+    return(results)
 }
