@@ -30,6 +30,21 @@ pairs_admb <- function(admb_mcmc, diag=c("acf","hist", "trace"),
     n <- NCOL(posterior)
     if(n==1) warning("This function is only meaningful for >1 parameter")
     if(is.null(ymult)) ymult <- rep(1.3, n)
+    ## If no limits given, calculate the max range of the posterior samples and
+    ## parameter confidence interval
+    if(is.null(limits)){
+        limits <- list()
+        for(i in 1:n){
+            limit.temp <- with(mle, coefficients[i]+c(-1,1)*1.96*se[i])
+            ## multiplier for the ranges, adjusts the whitespace around the
+            ## plots
+            min.temp <- min(posterior[,i], limit.temp[1])
+            max.temp <- max(posterior[,i], limit.temp[2])
+            margin <- .5*(max.temp-min.temp)
+            limits[[i]] <- c(min.temp-margin, max.temp+margin)
+        }
+    }
+    print(limits)
     par(mfrow=c(n,n), mar=0*c(.1,.1,.1,.1), yaxs="i", xaxs="i", mgp=c(.25, .25,0),
         tck=-.02, cex.axis=.65, col.axis=axis.col, oma=c(2, 2, 2,.5))
     temp.box <- function() box(col=axis.col, lwd=.5)
@@ -48,6 +63,7 @@ pairs_admb <- function(admb_mcmc, diag=c("acf","hist", "trace"),
                              ylim=c(0, ymult[row]*max(h$density)),
                              col=gray(.8), border=gray(.5))
                     } else {
+                        ## Else use the user provided limits
                         hist(posterior[,row], axes=F, freq=FALSE, ann=F,
                              ylim=c(0, ymult[row]*max(h$density)),
                              col=gray(.8), border=gray(.5), xlim=limits[[row]])
@@ -65,8 +81,8 @@ pairs_admb <- function(admb_mcmc, diag=c("acf","hist", "trace"),
                 }
                 legend("top", bty='n', legend=NA, title=posterior.names[row], ...)
             }
+            ## If lower triangle add scatterplot
             if(row>col){
-                ## If lower triangle add scatterplot
                 par(xaxs="r", yaxs="r")
                 plot(x=posterior[,col], y=posterior[,row], axes=FALSE, ann=FALSE,
                      pch=ifelse(NROW(posterior)>=5000,".", 1), col=1,
@@ -75,10 +91,12 @@ pairs_admb <- function(admb_mcmc, diag=c("acf","hist", "trace"),
                 ## estimated covariance, but also the user supplied cor.user
                 points(x=mle$coefficients[col], y=mle$coefficients[row],
                        pch=16, cex=1, col=2)
-                lines(ellipse::ellipse(x=mle$cor[col, row],
+                ## Get points of a bivariate normal 95% confidence contour
+                ellipse.temp <- ellipse::ellipse(x=mle$cor[col, row],
                                        scale=mle$se[1:mle$npar],
                                        centre= mle$coefficients[c(col, row)], npoints=1000,
-                                       level=.95) , lwd=1.5, lty=1, col="red")
+                                       level=.95)
+                lines(ellipse.temp , lwd=1.5, lty=1, col="red")
                 if(!is.null(mle$cor.user))
                     lines(ellipse::ellipse(x=mle$cor.user[col, row],
                                            scale=mle$se[1:mle$npar],

@@ -2,41 +2,41 @@
 #' fits and covariance/correlation matrices, and some MCMC convergence
 #' diagnostics using CODA.
 #'
-#' @param model.path A path to the folder containing the model. NULL
+#' @param model.path (Character) A path to the folder containing the model. NULL
 #' indicates the current folder.
-#' @param mode.name The name of the model executable. A character string,
+#' @param mode.name (Character) The name of the model executable. A character string,
 #' without '.exe'.
-#' @param Nout The number of draws after thinning and burn in.
-#' @param mcsave Controls thinning of samples. Save every mcsave value,
-#' such that 1 corresponds to keeping all draws, and 100 saving every 100th
-#' draw.
-#' @param burn.in How many samples to discard from the beginning of the
-#' chain, *after* thining. The burn in period (i.e., the first
+#' @param Nout (Integer) The number of draws after thinning and burn in.
+#' @param mcsave (Integer) Controls thinning of samples. Save every mcsave
+#' value, such that 1 corresponds to keeping all draws, and 100 saving
+#' every 100th draw.
+#' @param burn.in (Integer) How many samples to discard from the beginning
+#' of the chain, *after* thining. The burn in period (i.e., the first
 #' burn.in*mcsave draws) should be at least large enough to cover dynamic
 #' scaling.
-#' @param cor.user A manually defined correlation matrix (in bounded space)
+#' @param cor.user (Numeric matrix) A manually defined correlation matrix (in bounded space)
 #' to use in the Metropolis-Hastings algorithm.
-#' @param init.pin A vector of initial values, which are written to file
+#' @param init.pin (Numeric vector) A vector of initial values, which are written to file
 #' and used in the model via the -mcpin option.
-#' @param se.scale A value which scales all of the variances from the MLE
-#' fit. A value of 1 indicates to use the estimated variances.
-#' @param mcscale Whether to use the mcscale option, which dynamically
-#' scales the covariance matrix for efficient acceptance ratios.
-#' @param mcseed Which seed (integer value) to pass ADMB. Used for
-#' reproducibility.
-#' @param mcrb Which value to use in the rescale bounded algorithm. Must be
-#' an integer from 1-9. The default NULL value disables this feature. See
-#' the vignette for more information on this algorithm and how to best use
-#' it.
-#' @param mcdiag Boolean for whether to use the mcdiag feature. This
-#' uses an identity matrix for the covariance matrix.
-#' #' @param mcprobe Which value to use in the probing algorithm. The default
-#' NULL value disables this feature. See the vignette for more information
-#' on this algorithm and how to best use it.
-#' @param verbose Boolean value for whether to print ADMB warnings and other
-#' information. Useful for verifying the code is interacting with a
-#' properly functioning model.
-#' @param extra.args A character string which is passed to ADMB at
+#' @param se.scale (Numeric) A value which scales all of the variances from
+#' the MLE fit. A value of 1 indicates to use the estimated variances.
+#' @param mcscale (Logical) Whether to use the mcscale option, which
+#' dynamically scales the covariance matrix for efficient acceptance
+#' ratios.
+#' @param mcseed (Integer) Which seed (integer value) to pass ADMB. Used
+#' for reproducibility.
+#' @param mcrb (Integer) Which value to use in the rescale bounded
+#' algorithm. Must be an integer from 1-9. The default NULL value disables
+#' this feature. See the vignette for more information on this algorithm
+#' and how to best use it.
+#' @param mcdiag (Logical) Whether to use the \code{mcdiag} feature. This
+#' uses an identity matrix for the covariance matrix.  #' @param mcprobe
+#' Which value to use in the probing algorithm. The default NULL value
+#' disables this feature. See the vignette for more information on this
+#' algorithm and how to best use it.
+#' @param verbose (Logical) Whether to print ADMB warnings and other
+#' information. Useful for testing and troubleshooting.
+#' @param extra.args (Character) A string which is passed to ADMB at
 #' runtime. Useful for passing additional arguments to the model
 #' executable.
 #' @return Returns a list containing (1) the posterior draws, (2) and
@@ -113,9 +113,8 @@ run_admb_mcmc <- function(model.path, model.name, Nout, mcsave, burn.in,
     ## Run effective sample size calcs from CODA, metric of convergence
     efsize <- data.frame(t(effectiveSize(mcmc)/NROW(mcmc)))
     names(efsize) <- paste0(names(mcmc), "_efs")
-    fit$efsize <- efsize
     results <- list(mcmc=mcmc, mle=mle)
-    results$diag <- efsize
+    results$diag <- list(efsize=efsize)
     class(results) <- 'admb_mcmc'
     return(results)
 }
