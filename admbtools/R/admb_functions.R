@@ -95,38 +95,38 @@ get.admb.cov <- function(model.path=getwd()){
 ## ## ------------------------------------------------------------
 
 
-write.admb.cov <- function(correlation.user, model.path=getwd()){
-    ## This function takes a user specified correlation matrix and
+write.admb.cov <- function(cov.user, model.path=getwd()){
+    ## This function takes a user specified covariance matrix and
     ## writes it to admodel.hes. Note that this requires a current
     ## admodel.cov file to be in the directory specified. This
     ## function currently doesn't handle not positive definite
     ## Hessians. Cole Monnahan | monnahc@uw.edu | 9/2012
     ##
     ## Make a backup of the original
-    temp <- file.exists(paste(model.path, "/admodel.cov", sep=""))
-    if(!temp) stop(paste("Couldn't find file ",model.path, "/admodel.cov", sep=""))
-    temp <- file.copy(from=paste(model.path, "/admodel.cov", sep=""),
-                      to=paste(model.path, "/admodel_original.cov", sep=""))
+    temp <- file.exists(paste0(model.path, "/admodel.cov"))
+    if(!temp) stop(paste0("Couldn't find file ",model.path, "/admodel.cov"))
+    temp <- file.copy(from=paste0(model.path, "/admodel.cov"),
+                      to=paste0(model.path, "/admodel_original.cov"))
+    wd.old <- getwd()
+    on.exit(setwed(wd.old))
+    setwd(model.path)
     ## Read in the output files
-    results <- getADMBHessian()
-    hes <- results$hes    # the unbounded Hessian
-    cov <- solve(hes)                # unbounded Covariance
+    results <- get.admb.cov()
+    cov <- results$cov                # unbounded Covariance
     scale <- results$scale
     num.pars <- results$num.pars
     cov.bounded <- cov *(scale %o% scale)  # the bounded Cov
     se <- sqrt(diag(cov.bounded))
-    ## Create new covariance matrix
-    cor <- correlation.user
-    if(nrow(cor) != num.pars | ncol(cor) != num.pars)
-        stop(paste("Invalid size of correlation matrix, should be:", num.pars,
+    if(NROW(cov.user != num.pars))
+        stop(paste0("Invalid size of correlation matrix, should be:", num.pars,
                    "by",num.pars))
-    cov.bounded <- cor * (se %o% se)
+    cov.bounded <- cov.user * (se %o% se)
     cov.unbounded <- cov.bounded/(scale %o% scale)
     ##
     ## Write it back to file, note need to write the .cov *not* the .hes file.
-    ## temp <- file.remove(paste(model.path, "/admodel.cov", sep=""))
+    ## temp <- file.remove(paste0(model.path, "/admodel.cov"))
     ## if(!temp) stop("Couldn't delete admodel.cov")
-    file.new <- file(paste(model.path, "/admodel.cov", sep=""),"wb")
+    file.new <- file(paste0(model.path, "/admodel.cov"),"wb")
     on.exit(close(file.new))
     writeBin(as.integer(num.pars), con=file.new)
     writeBin(as.vector(as.numeric(cov.unbounded)), con=file.new)
