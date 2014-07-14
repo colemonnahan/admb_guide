@@ -44,7 +44,6 @@ pairs_admb <- function(admb_mcmc, diag=c("acf","hist", "trace"),
             limits[[i]] <- c(min.temp-margin, max.temp+margin)
         }
     }
-    print(limits)
     par(mfrow=c(n,n), mar=0*c(.1,.1,.1,.1), yaxs="i", xaxs="i", mgp=c(.25, .25,0),
         tck=-.02, cex.axis=.65, col.axis=axis.col, oma=c(2, 2, 2,.5))
     temp.box <- function() box(col=axis.col, lwd=.5)

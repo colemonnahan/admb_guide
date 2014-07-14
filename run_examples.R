@@ -2,6 +2,7 @@
 library(devtools)
 library(roxygen2)
 library(coda)
+library(matrixcalc)
 library(R2admb)
 
 ## document("admbtools")
@@ -23,12 +24,27 @@ pairs_admb(admb_mcmc=simple2,  diag="trace")
 
 ## Run more of the examples
 setwd('examples')
-finance1 <- run_admb_mcmc('finance', 'finance', Nout=1000, mcsave=100,
-                          mcrb=9, burn.in=5)
-finance2 <- run_admb_mcmc('finance', 'finance', Nout=1000, mcsave=100,
-                          mcrb=9, burn.in=5, se.scale=1/100)
+write.table(x=c(1,1,1,1), file='finance/phases.dat', row.names=FALSE,
+            col.names=FALSE)
+finance1 <- run_admb_mcmc('finance', 'finance', Nout=1000, mcsave=10,
+                          burn.in=5)
+pairs_admb(finance1)
+write.table(x=c(1,1,1,-1), file='finance/phases.dat', row.names=FALSE,
+            col.names=FALSE)
+finance2 <- run_admb_mcmc('finance', 'finance', Nout=1000, mcsave=10,
+                          burn.in=5)
+pairs_admb(finance2)
+cov.user <- cov(finance2$mcmc)
+finance3 <- run_admb_mcmc('finance', 'finance', Nout=1000, mcsave=10,
+                          burn.in=5, cov.user=cov.user)
 
-pairs_admb(finance)
+
+finance4 <- run_admb_mcmc('finance', 'finance', Nout=1000, mcsave=1,
+                          burn.in=5, cov.user=cov.user, hybrid=TRUE,
+                          hynstep=20, hyeps=.1)
+pairs_admb(finance4)
+
+
 chem-eng <- run_admb_mcmc('chem-eng', 'chem-eng', Nout=1000, mcsave=1000, burn.in=5)
 pairs_admb(chem-eng)
 setwd('..')

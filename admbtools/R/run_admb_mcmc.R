@@ -14,7 +14,7 @@
 #' of the chain, *after* thining. The burn in period (i.e., the first
 #' burn.in*mcsave draws) should be at least large enough to cover dynamic
 #' scaling.
-#' @param cor.user (Numeric matrix) A manually defined correlation matrix (in bounded space)
+#' @param cov.user (Numeric matrix) A manually defined covariance matrix (in bounded space)
 #' to use in the Metropolis-Hastings algorithm.
 #' @param init.pin (Numeric vector) A vector of initial values, which are written to file
 #' and used in the model via the -mcpin option.
@@ -43,9 +43,10 @@
 #' object of class 'admb', read in using the results read in using
 #' \code{read_admb}, and (3) some MCMC convergence diagnostics using CODA.
 run_admb_mcmc <- function(model.path, model.name, Nout, mcsave, burn.in,
-                     cor.user=NULL, init.pin=NULL, se.scale=NULL,
+                     cov.user=NULL, init.pin=NULL, se.scale=NULL,
                      mcscale=FALSE,  mcseed=NULL, mcrb=NULL, mcdiag=FALSE,
-                     mcprobe=NULL, verbose=TRUE, extra.args=NULL){
+                     mcprobe=NULL, verbose=TRUE, extra.args=NULL,
+                     hybrid=FALSE, hyeps=NULL, hynstep=NULL){
     ## This function runs an ADMB model MCMC, burns and thins, calculates
     ## effective sizes, and returns stuff depending on verbose.
     ## browser()
@@ -61,44 +62,49 @@ run_admb_mcmc <- function(model.path, model.name, Nout, mcsave, burn.in,
     ## Grab original admb fit and metrics
     mle <- read_admb(model.name)
     ## If user provided covar matrix, write it to file and save to results
-    if(!is.null(cor.user)){
-        if(!is.positive.definite(cor.user))
-            stop("Invalid cor.user matrix, not positive definite")
-        write.admb.cov(cor.user)
-        mle$cor.user <- cor.user
-        cor <- cor.user
+    if(!is.null(cov.user)){
+        cor <- cov.user/ sqrt(diag(cov.user) %o% diag(cov.user))
+        if(!is.positive.definite(x=cor))
+            stop("Invalid cov.user matrix, not positive definite")
+        write.admb.cov(cov.user)
+        mle$cor.user <- cor
     }
     ## otherwise use the estimated one
     else {
         cor <- with(mle, cor[1:npar, 1:npar])
-        mle$cor.user <-  NULL
+        mle$cov.user <-  NULL
     }
-    ## If init values not provided, start from the MLEs (see below for why
-    ## necessary)
+    ## Write the starting values to file. Always using a init.pin file b/c
+    ## need to use -nohess -noest so that the cov.user can be specified and
+    ## not overwritten. HOwever, this feature then starts the mcmc chain
+    ## from the initial values instead of the MLEs. So let the user specify
+    ## the init values, or specify the MLEs manually
     if(is.null(init.pin)) init.pin <- mle$coefficients[1:mle$npar]
-    ## Write the starting values to file
     write.table(file="init.pin", x=init.pin, row.names=F, col.names=F)
-    ## make the argument and run the MCMC
+    ## Separate the options by algorithm, first doing the shared arguments
     cmd <- paste(model.name,"-mcmc",iterations, "-nohess -noest")
+    cmd <- paste(cmd, "-mcpin init.pin")
+    if(!is.null(extra.args)) cmd <- paste(cmd, extra.args)
     if(!is.null(mcseed)) cmd <- paste(cmd, "-mcseed", mcseed)
     cmd <- paste(cmd, "-mcsave",mcsave)
+    ## Those options for the standard MH algorithm
+    if(!hybrid){
     if(mcscale==FALSE) cmd <- paste(cmd, "-mcnoscale")
     if(!is.null(mcrb)) cmd <- paste(cmd, "-mcrb",mcrb)
     if(!is.null(mcprobe)) cmd <- paste(cmd, "-mcprobe",mcprobe)
     if(mcdiag==TRUE) cmd <- paste(cmd, "-mcdiag")
-    if(!is.null(extra.args)) cmd <- paste(cmd, extra.args)
-    ## Always using a init.pin file b/c need to use -nohess -noest so that
-    ## the cor.user can be specified and not overwritten. HOwever, this
-    ## feature then starts the mcmc chain from the initial values instead
-    ## of the MLEs. So let the user specify the init values, or specify the
-    ## MLEs manually
-    cmd <- paste(cmd, "-mcpin init.pin")
+} else {
+    ## The hybrid options
+    cmd <- paste(cmd, "-hyeps",hyeps)
+    cmd <- paste(cmd, "-hynstep",hynstep)
+}
+    ## The command is constructed.
     if(verbose) print(cmd)
     ## Scale the covariance matrix
     if(!is.null(se.scale)) SetScale(se.scale) # change the covariance matrix
+    ## Run it and get results
     system(cmd, ignore.stdout=T)
     system(paste(model.name, "-mceval -noest -nohess"), ignore.stdout=T)
-    ## Read in the MCMC results
     psv <- file(paste0(model.name, ".psv"), "rb")
     nparams <- readBin(psv, "integer", n=1)
     mcmc <- matrix(readBin(psv, "numeric", n=nparams*(Nout+burn.in)), ncol=nparams,

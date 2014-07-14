@@ -108,7 +108,7 @@ write.admb.cov <- function(cov.user, model.path=getwd()){
     temp <- file.copy(from=paste0(model.path, "/admodel.cov"),
                       to=paste0(model.path, "/admodel_original.cov"))
     wd.old <- getwd()
-    on.exit(setwed(wd.old))
+    on.exit(setwd(wd.old))
     setwd(model.path)
     ## Read in the output files
     results <- get.admb.cov()
@@ -117,9 +117,9 @@ write.admb.cov <- function(cov.user, model.path=getwd()){
     num.pars <- results$num.pars
     cov.bounded <- cov *(scale %o% scale)  # the bounded Cov
     se <- sqrt(diag(cov.bounded))
-    if(NROW(cov.user != num.pars))
-        stop(paste0("Invalid size of correlation matrix, should be:", num.pars,
-                   "by",num.pars))
+    if(NROW(cov.user) != num.pars)
+        stop(paste0("Invalid size of correlation matrix, should be: ", num.pars,
+                   "instead of ",NROW(cov.user)))
     cov.bounded <- cov.user * (se %o% se)
     cov.unbounded <- cov.bounded/(scale %o% scale)
     ##
