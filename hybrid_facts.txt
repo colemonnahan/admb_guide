@@ -1,0 +1,15 @@
+
+
+Random thoughts from looking at the code
+
+He is randomizing the leapfrom steps:
+	// randomize the number of steps
+	double rnd2=randn(rng);
+	int hnsteps=hybnstep*exp(.2*rnd2);
+If user doens't enter a valid nmcmc, it defaults to 100000 which is way to
+high
+
+mcsave doens't do anything, is alwasy set to 1!!
+
+It's programmed to have a backward leapfrog, but is turned off. Was this
+just for testing?
