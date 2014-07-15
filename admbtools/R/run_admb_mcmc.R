@@ -95,8 +95,7 @@ run_admb_mcmc <- function(model.path, model.name, Nout, mcsave, burn.in,
     if(mcdiag==TRUE) cmd <- paste(cmd, "-mcdiag")
 } else {
     ## The hybrid options
-    cmd <- paste(cmd, "-hyeps",hyeps)
-    cmd <- paste(cmd, "-hynstep",hynstep)
+    cmd <- paste(cmd, "-hybrid -hyeps",hyeps,"-hynstep",hynstep)
 }
     ## The command is constructed.
     if(verbose) print(cmd)

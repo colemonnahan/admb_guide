@@ -22,6 +22,13 @@ simple2 <- run_admb_mcmc("simple", "simple", Nout=1000, mcsave=100,
 pairs_admb(admb_mcmc=simple2)
 pairs_admb(admb_mcmc=simple2,  diag="trace")
 
+## Explore hybrid option
+simple.hy1 <- run_admb_mcmc("simple", "simple", Nout=100, mcsave=1,
+                         burn.in=1, verbose=TRUE, hybrid=TRUE, hynstep=50,
+                            hyeps=.1)
+pairs_admb(admb_mcmc=simple.hy1,  diag="trace")
+
+
 ## Run more of the examples
 setwd('examples')
 write.table(x=c(1,1,1,1), file='finance/phases.dat', row.names=FALSE,
