@@ -1,0 +1,66 @@
+#if !defined(_FOREST_)
+#  define _FOREST_
+
+class model_data : public ad_comm{
+  data_int nsteps;
+  data_int k;
+  data_vector a;
+  data_vector freq;
+  int a_index;
+  double sum_freq;
+  ~model_data();
+  model_data(int argc,char * argv[]);
+  friend class model_parameters;
+};
+
+class model_parameters : public model_data ,
+  public function_minimizer
+{
+public:
+  ~model_parameters();
+  void preliminary_calculations(void);
+  void set_runtime(void);
+  virtual void * mycast(void) {return (void*)this;}
+  static int mc_phase(void)
+  {
+    return initial_params::mc_phase;
+  }
+  static int mceval_phase(void)
+  {
+    return initial_params::mceval_phase;
+  }
+  static int sd_phase(void)
+  {
+    return initial_params::sd_phase;
+  }
+  static int current_phase(void)
+  {
+    return initial_params::current_phase;
+  }
+  static int last_phase(void)
+  {
+    return (initial_params::current_phase
+      >=initial_params::max_number_phases);
+  }
+private:
+  ivector integer_control_flags;
+  dvector double_control_flags;
+  param_init_bounded_number log_tau;
+  param_init_bounded_number log_nu;
+  param_init_bounded_number beta;
+  param_init_bounded_number log_sigma;
+  param_likeprof_number tau;
+  param_stddev_number nu;
+  param_stddev_number sigma;
+  param_vector S;
+  objective_function_value f;
+public:
+  virtual void userfunction(void);
+  virtual void report(void);
+  virtual void final_calcs(void);
+  model_parameters(int sz,int argc, char * argv[]);
+  virtual void initializationfunction(void);
+ dvariable h(const dvariable& z);
+
+};
+#endif
