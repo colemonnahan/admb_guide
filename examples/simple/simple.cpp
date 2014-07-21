@@ -10,6 +10,9 @@ model_data::model_data(int argc,char * argv[]) : ad_comm(argc,argv)
   nobs.allocate("nobs");
   Y.allocate(1,nobs,"Y");
   x.allocate(1,nobs,"x");
+ ad_comm::change_datafile_name("bounds.txt");
+  upb_b.allocate("upb_b");
+ cout << upb_b << endl;
 }
 
 model_parameters::model_parameters(int sz,int argc,char * argv[]) : 
@@ -17,7 +20,7 @@ model_parameters::model_parameters(int sz,int argc,char * argv[]) :
 {
   initializationfunction();
   a.allocate("a");
-  b.allocate("b");
+  b.allocate(-10,upb_b,"b");
   aa.allocate("aa");
   pred_Y.allocate(1,nobs,"pred_Y");
   #ifndef NO_AD_INITIALIZE
@@ -29,7 +32,7 @@ model_parameters::model_parameters(int sz,int argc,char * argv[]) :
 void model_parameters::userfunction(void)
 {
   pred_Y=a*x+b;
-  aa=a;
+ aa=a;
   f=(norm2(pred_Y-Y));
   f=nobs/2.*log(f);    // make it a likelihood function so that
                        // covariance matrix is correct
