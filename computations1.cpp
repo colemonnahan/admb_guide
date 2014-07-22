@@ -57,6 +57,7 @@ void function_minimizer::computations1(int argc,char * argv[])
  
       //double ratio=100.*gradient_structure::max_last_offset/12000.0;
       tracing_message(traceflag,"E1");
+
       if (option_match(argc,argv,"-est") == -1)
 	{
 	  if (!quit_flag)
@@ -109,33 +110,11 @@ void function_minimizer::computations1(int argc,char * argv[])
 			  mcmc_computations();
 			}
 		    }
-		  if ( (on=option_match(argc,argv,"-sob",nopt))>-1)
-		    {
-		      int nsob=0;
-		      //int iseed0=0;
-		      //double dscale=1.0;
-		      if (nopt)
-			{
-			  nsob=atoi(argv[on+1]);
-			  if (nsob <=0)
-			    {
-			      cerr << " Invalid option following command line option -sob"
-				" -- "
-				   << endl << " ignored" << endl;
-			    }
-			}
-		      if ( (on=option_match(argc,argv,"-mcr",nopt))>-1)
-			{
-			}
-		      else
-			{
-			}
-		    }
 		  initial_params::sd_phase=0;
 		}
 	    }
 	}
       // end of if -est not specified
-    }
+    } // end of do loop
   while(spminflag || repeatminflag);
 }

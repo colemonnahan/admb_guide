@@ -19,6 +19,3 @@ PROCEDURE_SECTION
   f=(norm2(pred_Y-Y));
   f=nobs/2.*log(f);    // make it a likelihood function so that
                        // covariance matrix is correct
-C:\Program Files\R\R-3.0.2\bin\x64;c:/ADMB/admb101-gcc452-win32/bin;c:/gnu/GCC452-WIN32/bin;c:/gnu/GDB/bin;C:\Program Files (x86)\GNU Emacs 24.3\bin
-
-c:\Rtools\bin;c:\Rtools\gcc-4.6.3\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\UWICK\SSH Tectia\SSH Tectia AUX;C:\Program Files (x86)\UWICK\SSH Tectia\SSH Tectia AUX/Support binaries;C:\Program Files (x86)\UWICK\SSH Tectia\SSH Tectia Broker;C:\Program Files (x86)\UWICK\SSH Tectia\SSH Tectia Client;C:\Program Files\MiKTeX 2.9\miktex\bin\x64\

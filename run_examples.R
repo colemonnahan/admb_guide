@@ -57,6 +57,65 @@ pairs_admb(chem-eng)
 setwd('..')
 
 
+## ------------------------------------------------------------
+## Explore what happens when the bound approaches the MLE
+setwd("examples")
+Nout <- 1000
+mcsave <-  100
+posterior.list <- fit.list <- list()
+bhat <- 4.0782
+bound.seq <- seq(bhat*.99, bhat*1.01, len=50)
+for(i in 1:length(bound.seq)){
+    write.table(x=bound.seq[i], file="simple/bounds.txt", row.names=FALSE,
+                col.names=FALSE)
+    temp <- run_admb_mcmc(model.path="simple", model.name="simple", Nout=Nout,
+                     mcsave=mcsave, burn.in=1, verbose=F,
+                     init.pin=c(0,0), mcseed=i)
+    fit.list[[i]] <- temp$mle
+    posterior.list[[i]] <- temp
+}
+cors <- unlist(lapply(fit.list, function(x) x$cor[1,2]))
+std <-  do.call(rbind, lapply(fit.list, function(x) x$std[1:2]))
+est <-  do.call(rbind, lapply(fit.list, function(x) x$est[1:2]))
+## Explore what happens when the bound approaches the MLE but use posfun to
+## put a soft limit on the upper bound -- does it improve it??
+posterior.posfun.list <- fit.posfun.list <- list()
+for(i in 1:length(bound.seq)){
+    write.table(x=bound.seq[i], file="simple_posfun/bounds.txt", row.names=FALSE,
+                col.names=FALSE)
+    temp <- run_admb_mcmc(model.path="simple_posfun",
+                     model.name="simple_posfun",  Nout=Nout,
+                     mcsave=mcsave, burn.in=1, verbose=F,
+                     init.pin=c(0,0), mcseed=i)
+    fit.posfun.list[[i]] <- temp$mle
+    posterior.posfun.list[[i]] <- temp$mcmc
+}
+cors.posfun <- unlist(lapply(fit.posfun.list, function(x) x$cor[1,2]))
+std.posfun <-  do.call(rbind, lapply(fit.posfun.list, function(x) x$std[1:2]))
+est.posfun <-  do.call(rbind, lapply(fit.posfun.list, function(x) x$est[1:2]))
+
+
+par(mfrow=c(2,3))
+plot(bound.seq, cors, type='b', ylim=range(c(cors, cors.posfun)))
+lines(bound.seq, cors.posfun, type='b', col=2, pch=16)
+plot(bound.seq, est[,1], type='b', ylim=range(c(est[,1], est.posfun[,1])))
+lines(bound.seq, est.posfun[,1], type='b', col=2, pch=16)
+abline(v=bhat)
+plot(bound.seq, est[,2], type='b', ylim=range(c(est[,2], est.posfun[,2])))
+lines(bound.seq, est.posfun[,2], type='b', col=2, pch=16)
+abline(v=bhat, h=bhat)
+plot(bound.seq, std[,1], type='b')
+lines(bound.seq, std.posfun[,1], type='b', col=2, pch=16)
+plot(bound.seq, std[,2], type='b')
+lines(bound.seq, std.posfun[,2], type='b', col=2, pch=16)
+
+for(i in 1:length(bound.seq))
+    pairs_admb(posterior.list[[i]], diag="acf",
+               limits=list(c(1,3), c(-1,4.1)))
+for(i in 1:length(bound.seq))
+    admb.pairs(posterior.posfun.list[[i]], diag="acf", fits=fit.posfun.list[[i]],
+               limits=list(c(1,3), c(-1,4.1)))
+
 
 ## ------------------------------------------------------------
 ## OLD CODE -- from earlier developmental versions
