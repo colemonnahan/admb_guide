@@ -5,8 +5,6 @@
 Infinity) to (minb, maxb).}
 \usage{
 boundp(x, minb, maxb, hbf = 0)
-
-boundp(x, minb, maxb, hbf = 0)
 }
 \arguments{
 \item{x}{The value to transform.}
@@ -16,20 +14,8 @@ boundp(x, minb, maxb, hbf = 0)
 \item{maxb}{The maximum bound.}
 
 \item{hbf}{The hybrid bounded flag. Determines which function is used.}
-
-\item{x}{The value to transform.}
-
-\item{minb}{The minimum bound.}
-
-\item{maxb}{The maximum bound.}
-
-\item{hbf}{The hybrid bounded flag. Determines which function is used.}
 }
 \description{
-If \code{hbf=0} then the function is
-minb+(maxb-minb)/(1+exp(-x)), otherwise it is
-minb+(maxb-minb)*(.5*sin(x*pi/2)+.5).
-
 If \code{hbf=0} then the function is
 minb+(maxb-minb)/(1+exp(-x)), otherwise it is
 minb+(maxb-minb)*(.5*sin(x*pi/2)+.5).

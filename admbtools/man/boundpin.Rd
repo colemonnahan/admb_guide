@@ -4,8 +4,6 @@
 \title{Inverse bounding transformation function used by ADMB.}
 \usage{
 boundpin(x, minb, maxb, hbf)
-
-boundpin(x, minb, maxb, hbf)
 }
 \arguments{
 \item{x}{The value to back-transform.}
@@ -15,18 +13,8 @@ boundpin(x, minb, maxb, hbf)
 \item{maxb}{The maximum bound.}
 
 \item{hbf}{The hybrid bounded flag. Determines which function is used.}
-
-\item{x}{The value to back-transform.}
-
-\item{minb}{The minimum bound.}
-
-\item{maxb}{The maximum bound.}
-
-\item{hbf}{The hybrid bounded flag. Determines which function is used.}
 }
 \description{
-Inverse bounding transformation function used by ADMB.
-
 Inverse bounding transformation function used by ADMB.
 }
 

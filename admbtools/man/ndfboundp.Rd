@@ -4,8 +4,6 @@
 \title{Inverse bounding transformation function used by ADMB.}
 \usage{
 ndfboundp(x, minb, maxb, hbf)
-
-ndfboundp(x, minb, maxb, hbf)
 }
 \arguments{
 \item{x}{The value for which}
@@ -15,18 +13,8 @@ ndfboundp(x, minb, maxb, hbf)
 \item{maxb}{The maximum bound.}
 
 \item{hbf}{The hybrid bounded flag. Determines which function is used.}
-
-\item{x}{The value for which}
-
-\item{minb}{The minimum bound.}
-
-\item{maxb}{The maximum bound.}
-
-\item{hbf}{The hybrid bounded flag. Determines which function is used.}
 }
 \description{
-Inverse bounding transformation function used by ADMB.
-
 Inverse bounding transformation function used by ADMB.
 }
 
