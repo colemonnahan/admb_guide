@@ -21,7 +21,12 @@ simple2 <- run_admb_mcmc("simple", "simple", Nout=1000, mcsave=100,
                          burn.in=1, verbose=TRUE)
 pairs_admb(admb_mcmc=simple2)
 pairs_admb(admb_mcmc=simple2,  diag="trace")
-
+## Run one with user supplied covariance
+cov(simple2$mcmc)
+cov.user <- matrix(c(.05, .2, .2, .9), nrow=2)
+simple3 <- run_admb_mcmc("simple", "simple", Nout=1000, mcsave=100,
+                         burn.in=1, cov.user=cov.user, verbose=TRUE)
+pairs_admb(admb_mcmc=simple3)
 ## Explore hybrid option
 simple.hy1 <- run_admb_mcmc("simple", "simple", Nout=100, mcsave=1,
                          burn.in=1, verbose=TRUE, hybrid=TRUE, hynstep=50,
@@ -29,7 +34,8 @@ simple.hy1 <- run_admb_mcmc("simple", "simple", Nout=100, mcsave=1,
 pairs_admb(admb_mcmc=simple.hy1,  diag="trace")
 
 
-## Run more of the examples
+## Run more of the examples. This finance one seems to have covariance
+## estimation issues
 setwd('examples')
 write.table(x=c(1,1,1,1), file='finance/phases.dat', row.names=FALSE,
             col.names=FALSE)
@@ -44,7 +50,7 @@ pairs_admb(finance2)
 cov.user <- cov(finance2$mcmc)
 finance3 <- run_admb_mcmc('finance', 'finance', Nout=1000, mcsave=10,
                           burn.in=5, cov.user=cov.user)
-
+pairs_admb(finance3)
 
 finance4 <- run_admb_mcmc('finance', 'finance', Nout=1000, mcsave=1,
                           burn.in=5, cov.user=cov.user, hybrid=TRUE,
@@ -56,6 +62,65 @@ chem-eng <- run_admb_mcmc('chem-eng', 'chem-eng', Nout=1000, mcsave=1000, burn.i
 pairs_admb(chem-eng)
 setwd('..')
 
+
+## ------------------------------------------------------------
+## Explore what happens when the bound approaches the MLE
+setwd("examples")
+Nout <- 1000
+mcsave <-  100
+posterior.list <- fit.list <- list()
+bhat <- 4.0782
+bound.seq <- seq(bhat*.99, bhat*1.01, len=50)
+for(i in 1:length(bound.seq)){
+    write.table(x=bound.seq[i], file="simple/bounds.txt", row.names=FALSE,
+                col.names=FALSE)
+    temp <- run_admb_mcmc(model.path="simple", model.name="simple", Nout=Nout,
+                     mcsave=mcsave, burn.in=1, verbose=F,
+                     init.pin=c(0,0), mcseed=i)
+    fit.list[[i]] <- temp$mle
+    posterior.list[[i]] <- temp
+}
+cors <- unlist(lapply(fit.list, function(x) x$cor[1,2]))
+std <-  do.call(rbind, lapply(fit.list, function(x) x$std[1:2]))
+est <-  do.call(rbind, lapply(fit.list, function(x) x$est[1:2]))
+## Explore what happens when the bound approaches the MLE but use posfun to
+## put a soft limit on the upper bound -- does it improve it??
+posterior.posfun.list <- fit.posfun.list <- list()
+for(i in 1:length(bound.seq)){
+    write.table(x=bound.seq[i], file="simple_posfun/bounds.txt", row.names=FALSE,
+                col.names=FALSE)
+    temp <- run_admb_mcmc(model.path="simple_posfun",
+                     model.name="simple_posfun",  Nout=Nout,
+                     mcsave=mcsave, burn.in=1, verbose=F,
+                     init.pin=c(0,0), mcseed=i)
+    fit.posfun.list[[i]] <- temp$mle
+    posterior.posfun.list[[i]] <- temp$mcmc
+}
+cors.posfun <- unlist(lapply(fit.posfun.list, function(x) x$cor[1,2]))
+std.posfun <-  do.call(rbind, lapply(fit.posfun.list, function(x) x$std[1:2]))
+est.posfun <-  do.call(rbind, lapply(fit.posfun.list, function(x) x$est[1:2]))
+
+
+par(mfrow=c(2,3))
+plot(bound.seq, cors, type='b', ylim=range(c(cors, cors.posfun)))
+lines(bound.seq, cors.posfun, type='b', col=2, pch=16)
+plot(bound.seq, est[,1], type='b', ylim=range(c(est[,1], est.posfun[,1])))
+lines(bound.seq, est.posfun[,1], type='b', col=2, pch=16)
+abline(v=bhat)
+plot(bound.seq, est[,2], type='b', ylim=range(c(est[,2], est.posfun[,2])))
+lines(bound.seq, est.posfun[,2], type='b', col=2, pch=16)
+abline(v=bhat, h=bhat)
+plot(bound.seq, std[,1], type='b')
+lines(bound.seq, std.posfun[,1], type='b', col=2, pch=16)
+plot(bound.seq, std[,2], type='b')
+lines(bound.seq, std.posfun[,2], type='b', col=2, pch=16)
+
+for(i in 1:length(bound.seq))
+    pairs_admb(posterior.list[[i]], diag="acf",
+               limits=list(c(1,3), c(-1,4.1)))
+for(i in 1:length(bound.seq))
+    admb.pairs(posterior.posfun.list[[i]], diag="acf", fits=fit.posfun.list[[i]],
+               limits=list(c(1,3), c(-1,4.1)))
 
 
 ## ------------------------------------------------------------
