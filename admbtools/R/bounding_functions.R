@@ -1,4 +1,3 @@
-
 #' Bounding transformation used by ADMB to map unbounded (-Infinity,
 #' Infinity) to (minb, maxb).
 #'
