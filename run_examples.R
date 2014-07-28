@@ -5,7 +5,7 @@ library(coda)
 library(matrixcalc)
 library(R2admb)
 
-document("admbtools")
+## document("admbtools")
 load_all("admbtools")
 ## dev_help("pairs_admb")                  # how to see doc
 ## devtools::create("admbtools")
