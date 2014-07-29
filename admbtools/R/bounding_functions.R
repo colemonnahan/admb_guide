@@ -1,14 +1,6 @@
-#' Bounding transformation used by ADMB to map unbounded (-Infinity,
-#' Infinity) to (minb, maxb).
+#' The bounding function.
 #'
-#' If \code{hbf=0} then the function is
-#' minb+(maxb-minb)/(1+exp(-x)), otherwise it is
-#' minb+(maxb-minb)*(.5*sin(x*pi/2)+.5).
-#'
-#' @param x The value to transform.
-#' @param minb The minimum bound.
-#' @param maxb The maximum bound.
-#' @param hbf The hybrid bounded flag. Determines which function is used.
+#' @template bounding_template
 boundp <- function(x, minb, maxb, hbf=0){
     ## The internal transformations used in ADMB depending on the value of the
     ## Hybrid_bounded_flag (hbf) value.
@@ -22,10 +14,7 @@ boundp <- function(x, minb, maxb, hbf=0){
 
 #' Inverse bounding transformation function used by ADMB.
 #'
-#' @param x The value to back-transform.
-#' @param minb The minimum bound.
-#' @param maxb The maximum bound.
-#' @param hbf The hybrid bounded flag. Determines which function is used.
+#' @template bounding_template
 boundpin <- function(x, minb, maxb, hbf) {
     ## The inverse of the transformation
     if(hbf==1)
@@ -35,12 +24,10 @@ boundpin <- function(x, minb, maxb, hbf) {
     else stop("Invalid hbf value, should be 0 or 1")
     return(result)
 }
-#' Inverse bounding transformation function used by ADMB.
+
+#' Derivative of the bounding transformation function used by ADMB.
 #'
-#' @param x The value for which
-#' @param minb The minimum bound.
-#' @param maxb The maximum bound.
-#' @param hbf The hybrid bounded flag. Determines which function is used.
+#' @template bounding_template
 ndfboundp <- function(x, minb, maxb, hbf) {
     ## The derivative used to find the "scales"
     if(hbf==1)
@@ -50,4 +37,3 @@ ndfboundp <- function(x, minb, maxb, hbf) {
     else stop("Invalid hbf value, should be 0 or 1")
     return(result)
 }
-## ------------------------------------------------------------
