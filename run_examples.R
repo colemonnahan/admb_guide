@@ -4,7 +4,6 @@ library(roxygen2)
 library(coda)
 library(matrixcalc)
 library(R2admb)
-
 ## document("admbtools")
 load_all("admbtools")
 ## dev_help("pairs_admb")                  # how to see doc
@@ -21,38 +20,39 @@ simple2 <- run_admb_mcmc("simple", "simple", Nout=1000, mcsave=100,
                          burn.in=1, verbose=TRUE)
 pairs_admb(admb_mcmc=simple2)
 pairs_admb(admb_mcmc=simple2,  diag="trace")
+
 ## Run one with user supplied covariance
 cov(simple2$mcmc)
 cov.user <- matrix(c(.05, .2, .2, .9), nrow=2)
 simple3 <- run_admb_mcmc("simple", "simple", Nout=1000, mcsave=100,
                          burn.in=1, cov.user=cov.user, verbose=TRUE)
 pairs_admb(admb_mcmc=simple3)
-## Explore hybrid option
+
+## Demonstrate the hybrid option
 simple.hy1 <- run_admb_mcmc("simple", "simple", Nout=100, mcsave=1,
-                         burn.in=1, verbose=TRUE, hybrid=TRUE, hynstep=50,
-                            hyeps=.1)
+                            burn.in=1, verbose=TRUE, hybrid=TRUE,
+                            hynstep=50, hyeps=.1)
 pairs_admb(admb_mcmc=simple.hy1,  diag="trace")
 
 
 ## Run more of the examples. This finance one seems to have covariance
 ## estimation issues
-setwd('examples')
-write.table(x=c(1,1,1,1), file='finance/phases.dat', row.names=FALSE,
+write.table(x=c(1,1,1,1), file='examples/finance/phases.dat', row.names=FALSE,
             col.names=FALSE)
-finance1 <- run_admb_mcmc('finance', 'finance', Nout=1000, mcsave=10,
+finance1 <- run_admb_mcmc('examples/finance', 'finance', Nout=1000, mcsave=10,
                           burn.in=5)
 pairs_admb(finance1)
-write.table(x=c(1,1,1,-1), file='finance/phases.dat', row.names=FALSE,
+write.table(x=c(1,1,1,-1), file='examples/finance/phases.dat', row.names=FALSE,
             col.names=FALSE)
-finance2 <- run_admb_mcmc('finance', 'finance', Nout=1000, mcsave=10,
+finance2 <- run_admb_mcmc('examples/finance', 'finance', Nout=1000, mcsave=10,
                           burn.in=5)
 pairs_admb(finance2)
 cov.user <- cov(finance2$mcmc)
-finance3 <- run_admb_mcmc('finance', 'finance', Nout=1000, mcsave=10,
+finance3 <- run_admb_mcmc('examples/finance', 'finance', Nout=1000, mcsave=10,
                           burn.in=5, cov.user=cov.user)
 pairs_admb(finance3)
 
-finance4 <- run_admb_mcmc('finance', 'finance', Nout=1000, mcsave=1,
+finance4 <- run_admb_mcmc('examples/finance', 'finance', Nout=1000, mcsave=1,
                           burn.in=5, cov.user=cov.user, hybrid=TRUE,
                           hynstep=20, hyeps=.1)
 pairs_admb(finance4)
