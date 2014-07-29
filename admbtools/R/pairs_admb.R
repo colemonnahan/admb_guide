@@ -40,7 +40,7 @@ pairs_admb <- function(admb_mcmc, diag=c("acf","hist", "trace"),
             ## plots
             min.temp <- min(posterior[,i], limit.temp[1])
             max.temp <- max(posterior[,i], limit.temp[2])
-            margin <- .5*(max.temp-min.temp)
+            margin <- .15*(max.temp-min.temp)
             limits[[i]] <- c(min.temp-margin, max.temp+margin)
         }
     }
@@ -92,7 +92,7 @@ pairs_admb <- function(admb_mcmc, diag=c("acf","hist", "trace"),
                        pch=16, cex=1, col=2)
                 ## Get points of a bivariate normal 95% confidence contour
                 ellipse.temp <- ellipse::ellipse(x=mle$cor[col, row],
-                                       scale=mle$se[1:mle$npar],
+                                       scale=mle$se[1:mle$npar][c(col, row)],
                                        centre= mle$coefficients[c(col, row)], npoints=1000,
                                        level=.95)
                 lines(ellipse.temp , lwd=1.5, lty=1, col="red")
@@ -100,8 +100,8 @@ pairs_admb <- function(admb_mcmc, diag=c("acf","hist", "trace"),
                     se.user <- sqrt(diag(mle$cov.user))
                     cor.user <- mle$cov.user/(se.user %o% se.user)
                     lines(ellipse::ellipse(
-                        x=mle$cor.user[col, row],
-                        scale=se.user,
+                        x=cor.user[col, row],
+                        scale=se.user[c(col, row)],
                         centre= mle$coefficient[c(col, row)], npoints=1000,
                         level=.95) , lwd=1.5, lty=1, col="blue")
                 }

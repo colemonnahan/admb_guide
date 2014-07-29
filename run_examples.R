@@ -21,7 +21,7 @@ simple2 <- run_admb_mcmc("simple", "simple", Nout=1000, mcsave=100,
 pairs_admb(admb_mcmc=simple2)
 pairs_admb(admb_mcmc=simple2,  diag="trace")
 
-## Run one with user supplied covariance
+## Run one with user supplied covariance, in this case a worse choice
 cov(simple2$mcmc)
 cov.user <- matrix(c(.05, .2, .2, .9), nrow=2)
 simple3 <- run_admb_mcmc("simple", "simple", Nout=1000, mcsave=100,
