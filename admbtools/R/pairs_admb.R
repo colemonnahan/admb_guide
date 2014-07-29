@@ -87,7 +87,7 @@ pairs_admb <- function(admb_mcmc, diag=c("acf","hist", "trace"),
                      pch=ifelse(NROW(posterior)>=5000,".", 1), col=1,
                      xlim=limits[[col]], ylim=limits[[row]])
                 ## Add bivariate 95% normal levels for both the MLE
-                ## estimated covariance, but also the user supplied cor.user
+                ## estimated covariance, but also the user supplied cov.user
                 points(x=mle$coefficients[col], y=mle$coefficients[row],
                        pch=16, cex=1, col=2)
                 ## Get points of a bivariate normal 95% confidence contour
@@ -96,11 +96,15 @@ pairs_admb <- function(admb_mcmc, diag=c("acf","hist", "trace"),
                                        centre= mle$coefficients[c(col, row)], npoints=1000,
                                        level=.95)
                 lines(ellipse.temp , lwd=1.5, lty=1, col="red")
-                if(!is.null(mle$cor.user))
-                    lines(ellipse::ellipse(x=mle$cor.user[col, row],
-                                           scale=mle$se[1:mle$npar],
-                                           centre= mle$coefficient[c(col, row)], npoints=1000,
-                                           level=.95) , lwd=1.5, lty=1, col="blue")
+                if(!is.null(mle$cov.user)){
+                    se.user <- sqrt(diag(mle$cov.user))
+                    cor.user <- mle$cov.user/(se.user %o% se.user)
+                    lines(ellipse::ellipse(
+                        x=mle$cor.user[col, row],
+                        scale=se.user,
+                        centre= mle$coefficient[c(col, row)], npoints=1000,
+                        level=.95) , lwd=1.5, lty=1, col="blue")
+                }
                 par(xaxs="i", yaxs="i")
                 temp.box()
             }

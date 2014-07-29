@@ -63,15 +63,14 @@ run_admb_mcmc <- function(model.path, model.name, Nout, mcsave, burn.in,
     mle <- read_admb(model.name)
     ## If user provided covar matrix, write it to file and save to results
     if(!is.null(cov.user)){
-        cor <- cov.user/ sqrt(diag(cov.user) %o% diag(cov.user))
-        if(!is.positive.definite(x=cor))
+        cor.user <- cov.user/ sqrt(diag(cov.user) %o% diag(cov.user))
+        if(!is.positive.definite(x=cor.user))
             stop("Invalid cov.user matrix, not positive definite")
         write.admb.cov(cov.user)
-        mle$cor.user <- cor
+        mle$cov.user <- cov.user
     }
     ## otherwise use the estimated one
     else {
-        cor <- with(mle, cor[1:npar, 1:npar])
         mle$cov.user <-  NULL
     }
     ## Write the starting values to file. Always using a init.pin file b/c
