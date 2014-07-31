@@ -29,10 +29,40 @@ simple3 <- run_admb_mcmc("simple", "simple", Nout=1000, mcsave=100,
 pairs_admb(admb_mcmc=simple3)
 
 ## Demonstrate the hybrid option
-simple.hy1 <- run_admb_mcmc("simple", "simple", Nout=100, mcsave=1,
-                            burn.in=1, verbose=TRUE, hybrid=TRUE,
-                            hynstep=50, hyeps=.1)
+simple.hy1 <-
+    run_admb_mcmc("simple", "simple", Nout=1000, mcsave=1,
+                  burn.in=1, hybrid=TRUE, verb=FALSE,
+                  hynstep=20, hyeps=.1)
+pairs_admb(simple.hy1)
+pairs_admb(simple.hy1, "trace")
+
+## Does it match the other algorithm?
+with(simple.hy1$mcmc, plot(a,b))
+with(simple2$mcmc, points(a,b, pch=".", col='red'))
+
+hynstep.seq <- c(2, 20)
+hyeps.seq <- c(.05, .5)
+simple.hy <- list()
+k <- 1
+for(i in 1:2){
+    for(j in 1:2){
+        simple.hy[[k]] <-
+            run_admb_mcmc("simple", "simple", Nout=10, mcsave=1,
+                          burn.in=1, hybrid=TRUE, verb=FALSE,
+                          hynstep=hynstep.seq[i], hyeps=hyeps.seq[j])
+        k <- k+1
+    }
+}
+
+par(mfrow=c(2,2))
+for(k in 1:4){
+plot(0,0, type='n', xlim=c(1.5, 2.5), ylim=c(2, 6))
+with(simple.hy[[k]]$mcmc, arrows(x0=a[-length(a)], x1=a[-1],
+                                 y0=b[-length(b)], y1=b[-1], len=.05))
+}
+
 pairs_admb(admb_mcmc=simple.hy1,  diag="trace")
+pairs_admb(admb_mcmc=simple.hy1,  diag="acf")
 
 
 ## Run more of the examples. This finance one seems to have covariance

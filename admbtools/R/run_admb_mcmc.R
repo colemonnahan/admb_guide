@@ -34,6 +34,14 @@
 #' Which value to use in the probing algorithm. The default NULL value
 #' disables this feature. See the vignette for more information on this
 #' algorithm and how to best use it.
+#' @param hyrbid (Logical) Whether to use the Hamiltonial (hybrid)
+#' algorithm. Default is FALSE.
+#' @param hyeps (Numeric) The size of the leapfrog jump in the hybrid
+#' method, with smaller values leading to smaller but more accurate
+#' jumps. Must be a positive value.
+#' @param hynstep (Integer) The approximate number of steps used in the
+#' leapfrog step of the hybrid algorithm. Steps are randomly generated for
+#' each MCMC iteration, centered around \code{hynstep}.
 #' @param verbose (Logical) Whether to print ADMB warnings and other
 #' information. Useful for testing and troubleshooting.
 #' @param extra.args (Character) A string which is passed to ADMB at
@@ -43,10 +51,10 @@
 #' object of class 'admb', read in using the results read in using
 #' \code{read_admb}, and (3) some MCMC convergence diagnostics using CODA.
 run_admb_mcmc <- function(model.path, model.name, Nout, mcsave, burn.in,
-                     cov.user=NULL, init.pin=NULL, se.scale=NULL,
-                     mcscale=FALSE,  mcseed=NULL, mcrb=NULL, mcdiag=FALSE,
-                     mcprobe=NULL, verbose=TRUE, extra.args=NULL,
-                     hybrid=FALSE, hyeps=NULL, hynstep=NULL){
+                          cov.user=NULL, init.pin=NULL, se.scale=NULL,
+                          mcscale=FALSE,  mcseed=NULL, mcrb=NULL, mcdiag=FALSE,
+                          mcprobe=NULL, verbose=TRUE, extra.args=NULL,
+                          hybrid=FALSE, hyeps=NULL, hynstep=NULL){
     ## This function runs an ADMB model MCMC, burns and thins, calculates
     ## effective sizes, and returns stuff depending on verbose.
     ## browser()
@@ -85,17 +93,21 @@ run_admb_mcmc <- function(model.path, model.name, Nout, mcsave, burn.in,
     cmd <- paste(cmd, "-mcpin init.pin")
     if(!is.null(extra.args)) cmd <- paste(cmd, extra.args)
     if(!is.null(mcseed)) cmd <- paste(cmd, "-mcseed", mcseed)
-    cmd <- paste(cmd, "-mcsave",mcsave)
+    if(mcdiag==TRUE) cmd <- paste(cmd, "-mcdiag")
     ## Those options for the standard MH algorithm
     if(!hybrid){
-    if(mcscale==FALSE) cmd <- paste(cmd, "-mcnoscale")
-    if(!is.null(mcrb)) cmd <- paste(cmd, "-mcrb",mcrb)
-    if(!is.null(mcprobe)) cmd <- paste(cmd, "-mcprobe",mcprobe)
-    if(mcdiag==TRUE) cmd <- paste(cmd, "-mcdiag")
-} else {
-    ## The hybrid options
-    cmd <- paste(cmd, "-hybrid -hyeps",hyeps,"-hynstep",hynstep)
-}
+        cmd <- paste(cmd, "-mcsave",mcsave)
+        if(mcscale==FALSE) cmd <- paste(cmd, "-mcnoscale")
+        if(!is.null(mcrb)) cmd <- paste(cmd, "-mcrb",mcrb)
+        if(!is.null(mcprobe)) cmd <- paste(cmd, "-mcprobe",mcprobe)
+    } else {
+        ## The hybrid options
+        if(mcsave!=1)
+            stop("mcsave option is incompatible with the hybrid algorithm (fixed at 1 internally)")
+        if(hyeps<=0) stop("hyeps must be positive number")
+        if(hynstep<=0) stop("hynstep must be positive integer")
+        cmd <- paste(cmd, "-hybrid -hyeps",hyeps,"-hynstep",hynstep)
+    }
     ## The command is constructed.
     if(verbose) print(cmd)
     ## Scale the covariance matrix
