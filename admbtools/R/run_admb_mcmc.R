@@ -61,10 +61,8 @@ run_admb_mcmc <- function(model.path, model.name, Nout, mcsave, burn.in,
     iterations <- (Nout+burn.in)*mcsave
     if(verbose) print(paste("Run started at", round(Sys.time())))
     if(iterations <1) stop(paste0("Iterations too low: ", iterations))
-    if(!is.null(model.path)) {
-        wd.old <- getwd(); on.exit(setwd(wd.old))
-        setwd(model.path)
-    }
+    wd.old <- getwd(); on.exit(setwd(wd.old))
+    setwd(model.path)
     ## Run to get MLE and covariance matrix
     system(model.name, ignore.stdout=T)
     ## Grab original admb fit and metrics
@@ -76,6 +74,15 @@ run_admb_mcmc <- function(model.path, model.name, Nout, mcsave, burn.in,
             stop("Invalid cov.user matrix, not positive definite")
         write.admb.cov(cov.user)
         mle$cov.user <- cov.user
+    } else if(!is.null(mcrb)){
+        ## Use the built-in rescaling algorithm. Here we need to calculate
+        ## it externally just for plotting
+        results <- get.admb.cov()
+        scale <- results$scale
+        cov.unbounded <- results$cov
+        cov.bounded <- cov.unbounded* (scale %o% scale)
+        cor.bounded <-
+            cov.bounded / sqrt(diag(cov.bounded)) %o% sqrt(diag(cov.bounded))
     }
     ## otherwise use the estimated one
     else {
@@ -124,6 +131,18 @@ run_admb_mcmc <- function(model.path, model.name, Nout, mcsave, burn.in,
     if(!is.null(mle)){
         names(mcmc) <- names(with(mle, coefficients[1:npar]))
     }
+    ## If mcrb is used, read  that in for plotting. It's in the corrtest file.
+    if(!is.null(mcrb)){
+        L <- readLines('corrtest')
+        st <- grep("modified S", L)[1]+1
+        en <- grep("S* modified S", L)-1
+        L <- gsub("^\\s+|\\s+$", "", L[st:en])
+        cov.mcrb <- do.call(rbind, lapply(strsplit(L, " "), as.numeric))
+        cor.mcrb <- cov.mcrb/(sqrt(diag(cov.mcrb) %o% diag(cov.mcrb)))
+        if(!is.positive.definite(cor.mcrb))
+            warning("the modified mcrb covariance matrix read in was not positive definite")
+        else mle$cov.user <- cov.mcrb
+    }
     ## Remove the 'burn in' specified by user
     if(burn.in>0) mcmc <- mcmc[-(1:burn.in),]
     ## Run effective sample size calcs from CODA, metric of convergence
@@ -134,3 +153,5 @@ run_admb_mcmc <- function(model.path, model.name, Nout, mcsave, burn.in,
     class(results) <- 'admb_mcmc'
     return(results)
 }
+
+
