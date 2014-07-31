@@ -248,6 +248,7 @@ void function_minimizer::hybrid_mcmc_routine(int nmcmc,int iseed0,double dscale,
 	  }
 	*/
       }
+    // if mcdiag is specified
     else
       {
 	S.initialize();

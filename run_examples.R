@@ -47,7 +47,7 @@ k <- 1
 for(i in 1:2){
     for(j in 1:2){
         simple.hy[[k]] <-
-            run_admb_mcmc("simple", "simple", Nout=10, mcsave=1,
+            run_admb_mcmc("simple", "simple", Nout=1000, mcsave=1,
                           burn.in=1, hybrid=TRUE, verb=FALSE,
                           hynstep=hynstep.seq[i], hyeps=hyeps.seq[j])
         k <- k+1
@@ -60,6 +60,7 @@ plot(0,0, type='n', xlim=c(1.5, 2.5), ylim=c(2, 6))
 with(simple.hy[[k]]$mcmc, arrows(x0=a[-length(a)], x1=a[-1],
                                  y0=b[-length(b)], y1=b[-1], len=.05))
 }
+for(k in 1:4) with(simple.hy[[k]]$mcmc, acf(a))
 
 pairs_admb(admb_mcmc=simple.hy1,  diag="trace")
 pairs_admb(admb_mcmc=simple.hy1,  diag="acf")

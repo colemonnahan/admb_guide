@@ -89,7 +89,7 @@ run_admb_mcmc <- function(model.path, model.name, Nout, mcsave, burn.in,
     if(is.null(init.pin)) init.pin <- mle$coefficients[1:mle$npar]
     write.table(file="init.pin", x=init.pin, row.names=F, col.names=F)
     ## Separate the options by algorithm, first doing the shared arguments
-    cmd <- paste(model.name,"-mcmc",iterations, "-nohess -noest")
+    cmd <- paste(model.name,"-mcmc",iterations, "-nohess")
     cmd <- paste(cmd, "-mcpin init.pin")
     if(!is.null(extra.args)) cmd <- paste(cmd, extra.args)
     if(!is.null(mcseed)) cmd <- paste(cmd, "-mcseed", mcseed)
