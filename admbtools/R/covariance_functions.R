@@ -47,16 +47,12 @@ write.admb.cov <- function(cov.user, model.path=getwd()){
     setwd(model.path)
     ## Read in the output files
     results <- get.admb.cov()
-    cov <- results$cov                # unbounded Covariance
     scale <- results$scale
     num.pars <- results$num.pars
-    cov.bounded <- cov *(scale %o% scale)  # the bounded Cov
-    se <- sqrt(diag(cov.bounded))
     if(NROW(cov.user) != num.pars)
         stop(paste0("Invalid size of covariance matrix, should be: ", num.pars,
                    "instead of ",NROW(cov.user)))
-    cov.bounded <- cov.user * (se %o% se)
-    cov.unbounded <- cov.bounded/(scale %o% scale)
+    cov.unbounded <- cov.user/(scale %o% scale)
     ## Write it back to file
     file.new <- file(paste0(model.path, "/admodel.cov"),"wb")
     on.exit(close(file.new))
