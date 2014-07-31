@@ -70,15 +70,15 @@ pairs_admb <- function(admb_mcmc, diag=c("acf","hist", "trace"),
                     temp.box()
                 } else if(diag=="acf") {
                     acf(posterior[,row], axes=F, ann=F, ylim=acf.ylim)
-                    legend("topright", bty='n', legend=NA,
-                           title=sprintf("EFS=%.3f", 100*admb_mcmc$diag$efsize[row],2))
+                    ## legend("topright", bty='n', legend=NA,
+                    ##        title=sprintf("EFS=%.3f", 100*admb_mcmc$diag$efsize[row],2))
                     temp.box()
                 } else if(diag=="trace") {
                     plot(x=posterior[,row], lwd=.5, col=gray(.5), type="l", axes=F,
                          ann=F, ylim=limits[[row]])
                     temp.box()
                 }
-                legend("top", bty='n', legend=NA, title=posterior.names[row], ...)
+                mtext(posterior.names[row], line=-2)
             }
             ## If lower triangle add scatterplot
             if(row>col){
@@ -116,7 +116,7 @@ pairs_admb <- function(admb_mcmc, diag=c("acf","hist", "trace"),
                 ## visible, but still a function of correlation. This
                 ## might need to be dynamic with n.
                 legend("center", legend=NA, title=temp.cor,
-                       cex=(3*abs(temp.cor)+.5)*.9, bty='n')
+                       cex=(3*abs(temp.cor)+.25)*.5, bty='n')
                 ## text(.5,.5, labels=temp.cor, cex=(3*abs(temp.cor)+.5)*.9,
                 ##      col=1)
                 temp.box()
@@ -130,6 +130,11 @@ pairs_admb <- function(admb_mcmc, diag=c("acf","hist", "trace"),
                 par( mgp=c(.05, ifelse(row %% 2 ==1, .15, .65),0) )
                 axis(2, col=axis.col, lwd=.5)
             }
+            if(col==1 & row ==1){
+                par( mgp=c(.05, ifelse(row %% 2 ==1, .15, .65),0) )
+                axis(2, col=axis.col, lwd=.5)
+            }
+
         }
     }
 }
