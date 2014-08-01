@@ -1,53 +1,4 @@
-\documentclass{article}\usepackage[]{graphicx}\usepackage[]{color}
-%% maxwidth is the original width if it is less than linewidth
-%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
-\makeatletter
-\def\maxwidth{ %
-  \ifdim\Gin@nat@width>\linewidth
-    \linewidth
-  \else
-    \Gin@nat@width
-  \fi
-}
-\makeatother
-
-\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
-\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
-\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
-\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
-\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
-\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
-\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
-\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
-\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
-\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
-
-\usepackage{framed}
-\makeatletter
-\newenvironment{kframe}{%
- \def\at@end@of@kframe{}%
- \ifinner\ifhmode%
-  \def\at@end@of@kframe{\end{minipage}}%
-  \begin{minipage}{\columnwidth}%
- \fi\fi%
- \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
- \colorbox{shadecolor}{##1}\hskip-\fboxsep
-     % There is no \\@totalrightmargin, so:
-     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
- \MakeFramed {\advance\hsize-\width
-   \@totalleftmargin\z@ \linewidth\hsize
-   \@setminipage}}%
- {\par\unskip\endMakeFramed%
- \at@end@of@kframe}
-\makeatother
-
-\definecolor{shadecolor}{rgb}{.97, .97, .97}
-\definecolor{messagecolor}{rgb}{0, 0, 0}
-\definecolor{warningcolor}{rgb}{1, 0, 1}
-\definecolor{errorcolor}{rgb}{1, 0, 0}
-\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
-
-\usepackage{alltt}
+\documentclass{article}
 \usepackage[margin=1in]{geometry}
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -55,10 +6,15 @@
 \usepackage{float}
 
 
-
-% The above is supposed to enable inline code highlighting using \Sexpr{}, 
+<<setup, include=FALSE>>=
+library(highr)
+knit_hooks$set(inline = function(x) {
+  if (is.numeric(x)) return(knitr:::format_sci(x, 'latex'))
+  highr:::hi_latex(x)
+})
+@
+% The above is supposed to enable inline code highlighting using \Sexpr{},
 % but i can't get it to work; just , does the same thing as \texttt{}. My tester is on line 58
-\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 
 \begin{document}
 \title{A guide for Bayesian analysis in ADMB}
@@ -100,7 +56,7 @@ used for conducting a MCMC in ADMB.
   \texttt{-mcmc $N$ -mcsave $N_{\text{save}}$} (among other
   options, see below). The thinned draws are discarded,
   leaving a total of $N_{\text{out}}=N/N_{\text{save}}$
-  saved draws. For example -mcmc 1e6 -mcsave 1000
+  saved draws. For example \texttt{-mcmc 1e6 -mcsave 1000}
   will run 1 million draws but only save (i.e.``thin'')
   every 1000th, for a total kept of $Nout=1000$.
 \item After completion, run the model again with argument
@@ -182,18 +138,12 @@ During the \texttt{mcmc} phase, saved parameter values, in
 bounded space, are written to a binary file called
 \texttt{<model name>.psv}. This file can be read into R
 using the following commands:
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{psv} \hlkwb{<-} \hlkwd{file}\hlstd{(}\hlstr{"<model name>.psv"}\hlstd{,} \hlstr{"rb"}\hlstd{)}
-\hlstd{nparams} \hlkwb{<-} \hlkwd{readBin}\hlstd{(psv,} \hlstr{"integer"}\hlstd{,} \hlkwc{n} \hlstd{=} \hlnum{1}\hlstd{)}
-\hlstd{mcmc} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlkwd{readBin}\hlstd{(psv,} \hlstr{"numeric"}\hlstd{,} \hlkwc{n} \hlstd{= nparams} \hlopt{*} \hlstd{Nout),} \hlkwc{ncol} \hlstd{= nparams,}
-    \hlkwc{byrow} \hlstd{=} \hlnum{TRUE}\hlstd{)}
-\hlkwd{close}\hlstd{(psv)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
-
+<<readInPSV, eval=FALSE>>=
+psv <- file("<model name>.psv", "rb")
+nparams <- readBin(psv, "integer", n=1)
+mcmc <- matrix(readBin(psv, "numeric", n=nparams*Nout), ncol=nparams, byrow=TRUE)
+close(psv)
+@
 The first element in the \texttt{.psv} file is the number of
 active parameters in the model, which then tells R how to
 parse the following elements into parameter values. Note
@@ -203,7 +153,7 @@ manually. This is the main file that was designed to be used
 to extract MCMC draws from ADMB. However, this file only
 contains parameter values and not derived quantities or
 other quantities of interest (e.g. $MSY$ or biomass
-trajectories) which often are of interest. 
+trajectories) which often are of interest.
 \subsubsection{Derived quantity draws}
 
 A simple way of extracting this information is to bypass the
@@ -215,31 +165,21 @@ are desired. This can be accomplished inside the ADMB
 create an IO object that writes values to a \texttt{.csv}
 file, similar to the function \texttt{cout} which prints to
 screen.
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
- !!CLASS ofstream \hlkwd{MCMCreport}(\hlstr{"MCMCreport.csv"},ios::app);
-\end{alltt}
-\end{kframe}
-\end{knitrout}
-
+<<declareOutputFile, eval=FALSE>>=
+ ## !!CLASS ofstream MCMCreport("MCMCreport.csv",ios::app);
+@
 Then, inside the \texttt{PROCEDURE\_SECTION} the function
 can be used to write both parameters, derived quantities, or
 other information about the model.
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-  \hlkwd{if}(\hlkwd{mceval_phase}())\{
-    \hlkwd{if}(header==1) \{
-        MCMCreport << \hlstr{"a,b,NLL,ab"} << endl;
+<<writeToOutputFile, eval=FALSE>>=
+  if(mceval_phase()){
+    if(header==1) {
+   ##     MCMCreport << "a,b,NLL,ab" << endl;
         header=0;
-    \}
-   MCMCreport << a <<\hlstr{","} << b << \hlstr{","} << NLL << \hlstr{","} << ab << endl;
-  \}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
-
+    }
+  ## MCMCreport << a <<"," << b << "," << NLL << "," << ab << endl;
+  }
+@
 The \texttt{MCMCreport} object is used just like
 \texttt{cout} and is executed only during the
 \texttt{mceval} phase so that only saved values are written
@@ -253,7 +193,7 @@ between MCMC runs.
 How to restart a chain if you need more samples. How does this work?
 \subsection{Convergence diagnostics} \label{sec:diag}
 Burn-in and thinning, how to check this? What happens if not
-independent? 
+independent?
 \subsection{Starting values and scaling}\label{sec:startvals}
 Where the algorithm starts from (MLE) and the scaling process
 (default and user options). Must discard these draws!
@@ -291,7 +231,7 @@ distribution\footnote{Technically a bounded multivariate
   Xprop\sim MVN(Xcur, \Sigma)
 \end{equation*}
  where $\Sigma$ is the covariance matrix obtained by
- inverting the Hessian at the posterior mode. 
+ inverting the Hessian at the posterior mode.
 
 In ADMB there are options to modify the proposal function to
 achieve better efficiency.
@@ -316,7 +256,7 @@ The \texttt{-mcrb N} option (which stands for rescaled
 bounded) alters the covariance matrix used to propose new
 parameter sets in the MH algorithm. Its intended use is to
 create a more efficient MCMC sampler so the analyses run
-faster. 
+faster.
 
 The option will be most effective under circumstances where
 the correlation between parameters at the MPD is higher than
@@ -397,107 +337,10 @@ then compare the two posteriors to show the same.
 How to create top-level functions for running analyses
 programmatically.
 \subsection{Code}
-Here is one I wrote for my thesis, which could be generalized
-easily. Use psv file here, or force user to write to csv? Let
-them use append or always overwrite files? Who actually restarts?
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{run.mcmc} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{Nout}\hlstd{,} \hlkwc{mcsave}\hlstd{,} \hlkwc{burn.in}\hlstd{,} \hlkwc{boot}\hlstd{,} \hlkwc{cor.mat} \hlstd{=} \hlkwa{NULL}\hlstd{,} \hlkwc{init.pin} \hlstd{=} \hlkwa{NULL}\hlstd{,}
-    \hlkwc{se.scale} \hlstd{=} \hlkwa{NULL}\hlstd{,} \hlkwc{mcscale} \hlstd{=} \hlnum{FALSE}\hlstd{,} \hlkwc{mcdiag} \hlstd{=} \hlnum{FALSE}\hlstd{,} \hlkwc{mcseed} \hlstd{=} \hlkwa{NULL}\hlstd{,} \hlkwc{mcrb} \hlstd{=} \hlkwa{NULL}\hlstd{,}
-    \hlkwc{mcgrope} \hlstd{=} \hlkwa{NULL}\hlstd{,} \hlkwc{verbose} \hlstd{=} \hlnum{TRUE}\hlstd{,} \hlkwc{extra.args} \hlstd{=} \hlkwa{NULL}\hlstd{) \{}
-    \hlcom{## This function runs an ADMB model MCMC, burns and thins, calculates}
-    \hlcom{## effective sizes, and returns stuff depending on verbose.}
-    \hlkwd{require}\hlstd{(coda)}
-    \hlstd{model} \hlkwb{<-} \hlstr{"logistic"}
-    \hlstd{thin.every} \hlkwb{<-} \hlnum{1}  \hlcom{# setting to 1 for this project}
-    \hlstd{iterations} \hlkwb{<-} \hlstd{(Nout} \hlopt{+} \hlstd{burn.in)} \hlopt{*} \hlstd{mcsave}
-    \hlcom{## print(paste('Run started at', round(Sys.time())))}
-    \hlkwa{if} \hlstd{(iterations} \hlopt{<} \hlnum{1}\hlstd{)}
-        \hlkwd{stop}\hlstd{(}\hlkwd{paste0}\hlstd{(}\hlstr{"Iterations too low: "}\hlstd{, iterations))}
-    \hlstd{wd.old} \hlkwb{<-} \hlkwd{getwd}\hlstd{()}
-    \hlkwd{on.exit}\hlstd{(}\hlkwd{setwd}\hlstd{(wd.old))}
-    \hlkwd{setwd}\hlstd{(model.dir)}
-    \hlcom{## Run to get MLE and covariance matrix if none provided}
-    \hlkwa{if} \hlstd{(}\hlkwd{is.null}\hlstd{(init.pin))}
-        \hlkwd{system}\hlstd{(model,} \hlkwc{ignore.stdout} \hlstd{= T)} \hlkwa{else} \hlstd{\{}
-        \hlkwd{write.table}\hlstd{(}\hlkwc{file} \hlstd{=} \hlstr{"init.pin"}\hlstd{,} \hlkwc{x} \hlstd{= init.pin,} \hlkwc{row.names} \hlstd{= F,} \hlkwc{col.names} \hlstd{= F)}
-    \hlstd{\}}
 
-    \hlkwa{if} \hlstd{(}\hlopt{!}\hlkwd{is.null}\hlstd{(se.scale))}
-        \hlkwd{SetScale}\hlstd{(se.scale)}  \hlcom{# change the covariance matrix}
-    \hlcom{## Clean up the old files}
-    \hlstd{file.list} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"mc_abundances.csv"}\hlstd{,} \hlstr{"mc_abundances_def.csv"}\hlstd{,} \hlstr{"mc_abundances_mit.csv"}\hlstd{,}
-        \hlstr{"mc_abundances_none.csv"}\hlstd{,} \hlstr{"mc_shipstrikes.csv"}\hlstd{,} \hlstr{"mc_shipstrikes_def.csv"}\hlstd{,}
-        \hlstr{"mc_shipstrikes_mit.csv"}\hlstd{,} \hlstr{"mc_shipstrikes_none.csv"}\hlstd{,} \hlstr{"mc_parameters.csv"}\hlstd{,}
-        \hlstr{"mc_vessels.csv"}\hlstd{,} \hlstr{"mc_equil.csv"}\hlstd{)}
-    \hlkwd{suppressWarnings}\hlstd{(}\hlkwd{file.remove}\hlstd{(file.list))}
-    \hlstd{cmd} \hlkwb{<-} \hlkwd{paste}\hlstd{(model,} \hlstr{"-mcmc"}\hlstd{, iterations,} \hlstr{"-nohess -noest"}\hlstd{)}
-    \hlcom{## make the argument and run the MCMC}
-    \hlkwa{if} \hlstd{(}\hlopt{!}\hlkwd{is.null}\hlstd{(mcseed))}
-        \hlstd{cmd} \hlkwb{<-} \hlkwd{paste}\hlstd{(cmd,} \hlstr{"-mcseed"}\hlstd{, mcseed)}
-    \hlstd{cmd} \hlkwb{<-} \hlkwd{paste}\hlstd{(cmd,} \hlstr{"-mcsave"}\hlstd{, mcsave)}
-    \hlkwa{if} \hlstd{(mcscale} \hlopt{==} \hlnum{FALSE}\hlstd{)}
-        \hlstd{cmd} \hlkwb{<-} \hlkwd{paste}\hlstd{(cmd,} \hlstr{"-mcnoscale"}\hlstd{)}
-    \hlkwa{if} \hlstd{(}\hlopt{!}\hlkwd{is.null}\hlstd{(mcrb))}
-        \hlstd{cmd} \hlkwb{<-} \hlkwd{paste}\hlstd{(cmd,} \hlstr{"-mcrb"}\hlstd{, mcrb)}
-    \hlkwa{if} \hlstd{(}\hlopt{!}\hlkwd{is.null}\hlstd{(mcgrope))}
-        \hlstd{cmd} \hlkwb{<-} \hlkwd{paste}\hlstd{(cmd,} \hlstr{"-mcgrope"}\hlstd{, mcgrope)}
-    \hlkwa{if} \hlstd{(mcdiag} \hlopt{==} \hlnum{TRUE}\hlstd{)}
-        \hlstd{cmd} \hlkwb{<-} \hlkwd{paste}\hlstd{(cmd,} \hlstr{"-mcdiag"}\hlstd{)}
-    \hlkwa{if} \hlstd{(}\hlopt{!}\hlkwd{is.null}\hlstd{(extra.args))}
-        \hlstd{cmd} \hlkwb{<-} \hlkwd{paste}\hlstd{(cmd, extra.args)}
-    \hlkwa{if} \hlstd{(}\hlopt{!}\hlkwd{is.null}\hlstd{(init.pin))}
-        \hlstd{cmd} \hlkwb{<-} \hlkwd{paste}\hlstd{(cmd,} \hlstr{"-mcpin init.pin"}\hlstd{)}
-    \hlcom{## print(cmd) If user provided covar matrix, write it to file}
-    \hlkwa{if} \hlstd{(}\hlopt{!}\hlkwd{is.null}\hlstd{(cor.mat))}
-        \hlkwd{writeADMBCovariance}\hlstd{(cor.mat)}
-    \hlkwd{system}\hlstd{(cmd,} \hlkwc{ignore.stdout} \hlstd{= T)}
-    \hlkwd{system}\hlstd{(}\hlkwd{paste}\hlstd{(model,} \hlstr{"-mceval -noest -nohess"}\hlstd{),} \hlkwc{ignore.stdout} \hlstd{= T)}
-
-    \hlcom{## Read in the results}
-    \hlstd{df} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlstr{"mc_parameters.csv"}\hlstd{)}
-    \hlstd{vessels} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlstr{"mc_vessels.csv"}\hlstd{,} \hlkwc{head} \hlstd{= T)}
-    \hlstd{S} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlstr{"mc_shipstrikes.csv"}\hlstd{)}
-    \hlstd{S.none} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlstr{"mc_shipstrikes_none.csv"}\hlstd{)}
-    \hlstd{S.mit} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlstr{"mc_shipstrikes_mit.csv"}\hlstd{)}
-    \hlstd{S.def} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlstr{"mc_shipstrikes_def.csv"}\hlstd{)}
-    \hlstd{N} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlstr{"mc_abundances.csv"}\hlstd{)}
-    \hlstd{N.none} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlstr{"mc_abundances_none.csv"}\hlstd{)}
-    \hlstd{N.mit} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlstr{"mc_abundances_mit.csv"}\hlstd{)}
-    \hlstd{N.def} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlstr{"mc_abundances_def.csv"}\hlstd{)}
-    \hlstd{D} \hlkwb{<-} \hlstd{N}\hlopt{/}\hlstd{df}\hlopt{$}\hlstd{K}
-    \hlstd{D.none} \hlkwb{<-} \hlstd{N.none}\hlopt{/}\hlstd{df}\hlopt{$}\hlstd{K}
-    \hlstd{D.mit} \hlkwb{<-} \hlstd{N.mit}\hlopt{/}\hlstd{df}\hlopt{$}\hlstd{K}
-    \hlstd{D.def} \hlkwb{<-} \hlstd{N.def}\hlopt{/}\hlstd{df}\hlopt{$}\hlstd{K}
-    \hlstd{equil} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlstr{"mc_equil.csv"}\hlstd{)}
-    \hlcom{## Rows are mcmc iterations, cols are years except df which is parameters}
-    \hlstd{mcmc} \hlkwb{<-} \hlkwd{list}\hlstd{(}\hlkwc{params} \hlstd{= df,} \hlkwc{vessels} \hlstd{= vessels,} \hlkwc{S} \hlstd{= S,} \hlkwc{D} \hlstd{= D,} \hlkwc{N} \hlstd{= N,} \hlkwc{S.none} \hlstd{= S.none,}
-        \hlkwc{S.mit} \hlstd{= S.mit,} \hlkwc{S.def} \hlstd{= S.def,} \hlkwc{N.none} \hlstd{= N.none,} \hlkwc{N.mit} \hlstd{= N.mit,} \hlkwc{N.def} \hlstd{= N.def,}
-        \hlkwc{D.none} \hlstd{= D.none,} \hlkwc{D.mit} \hlstd{= D.mit,} \hlkwc{D.def} \hlstd{= D.def,} \hlkwc{equil} \hlstd{= equil)}
-    \hlkwa{if} \hlstd{(}\hlkwd{nrow}\hlstd{(df)} \hlopt{>} \hlstd{burn.in)}
-        \hlstd{mcmc} \hlkwb{<-} \hlkwd{lapply}\hlstd{(mcmc,} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{) x[}\hlopt{-}\hlstd{(}\hlnum{1}\hlopt{:}\hlstd{burn.in), ])} \hlkwa{else} \hlkwd{stop}\hlstd{(}\hlstr{"Too few samples to thin/burn"}\hlstd{)}
-    \hlcom{## Run effective sample size calcs from CODA, metric of convergence}
-    \hlstd{efsize} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwd{t}\hlstd{(}\hlkwd{effectiveSize}\hlstd{(df)}\hlopt{/}\hlkwd{nrow}\hlstd{(df)))}
-    \hlkwd{names}\hlstd{(efsize)} \hlkwb{<-} \hlkwd{paste0}\hlstd{(}\hlkwd{names}\hlstd{(df),} \hlstr{"_efs"}\hlstd{)}
-    \hlcom{## Grab admb fit and metrics}
-    \hlstd{fit} \hlkwb{<-} \hlkwd{read.admbFit}\hlstd{(}\hlstr{"logistic"}\hlstd{)}
-    \hlstd{mle} \hlkwb{<-} \hlkwd{with}\hlstd{(fit,} \hlkwd{data.frame}\hlstd{(}\hlkwc{NLL} \hlstd{= nloglike,} \hlkwc{maxgrad} \hlstd{= maxgrad,} \hlkwc{rMSY.cor} \hlstd{= cor[}\hlnum{2}\hlstd{,}
-        \hlnum{1}\hlstd{],} \hlkwc{boot} \hlstd{= boot))}
-    \hlstd{temp} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwd{t}\hlstd{(fit}\hlopt{$}\hlstd{est),} \hlkwc{row.names} \hlstd{= F)}
-    \hlkwd{names}\hlstd{(temp)} \hlkwb{<-} \hlkwd{paste0}\hlstd{(fit}\hlopt{$}\hlstd{names,} \hlstr{"_mle"}\hlstd{)}
-    \hlstd{mle} \hlkwb{<-} \hlkwd{cbind}\hlstd{(mle, temp[,} \hlopt{-}\hlkwd{ncol}\hlstd{(temp)])}
-    \hlstd{temp} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwd{t}\hlstd{(fit}\hlopt{$}\hlstd{std),} \hlkwc{row.names} \hlstd{= F)}
-    \hlkwd{names}\hlstd{(temp)} \hlkwb{<-} \hlkwd{paste0}\hlstd{(fit}\hlopt{$}\hlstd{names,} \hlstr{"_se"}\hlstd{)}
-    \hlstd{mle} \hlkwb{<-} \hlkwd{cbind}\hlstd{(mle, temp[,} \hlopt{-}\hlkwd{ncol}\hlstd{(temp)])}
-    \hlstd{fit.df} \hlkwb{<-} \hlkwd{cbind}\hlstd{(mle, efsize)}
-    \hlkwa{if} \hlstd{(verbose)}
-        \hlkwd{return}\hlstd{(}\hlkwd{list}\hlstd{(}\hlkwc{fit.df} \hlstd{= fit.df,} \hlkwc{mcmc} \hlstd{= mcmc))} \hlkwa{else} \hlkwd{return}\hlstd{(}\hlkwc{fit.df} \hlstd{= fit.df)}
-\hlstd{\}}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
-
+test \cite{brooks2011}
+\bibliographystyle{unsrt}
+\bibliography{admb_guide}
 
 \end{document}
 

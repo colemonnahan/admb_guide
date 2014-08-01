@@ -1,20 +1,64 @@
-\documentclass{article}
+\documentclass{article}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
 \usepackage[margin=1in]{geometry}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{graphicx}
 \usepackage{float}
 
-<<setup, include=FALSE>>= 
-library(highr)
-knit_hooks$set(inline = function(x) { 
-  if (is.numeric(x)) return(knitr:::format_sci(x, 'latex')) 
-  highr:::hi_latex(x) 
-})
-@ 
-% The above is supposed to enable inline code highlighting using \Sexpr{}, 
-% but i can't get it to work; just , does the same thing as \texttt{}. My tester is on line 58
 
+
+% The above is supposed to enable inline code highlighting using \Sexpr{},
+% but i can't get it to work; just , does the same thing as \texttt{}. My tester is on line 58
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 \title{A guide for Bayesian analysis in ADMB}
 \author{Cole C. Monnahan | monnahc@uw.edu}
@@ -55,7 +99,7 @@ used for conducting a MCMC in ADMB.
   \texttt{-mcmc $N$ -mcsave $N_{\text{save}}$} (among other
   options, see below). The thinned draws are discarded,
   leaving a total of $N_{\text{out}}=N/N_{\text{save}}$
-  saved draws. For example \Sexpr{'-mcmc 1e6 -mcsave 1000'}
+  saved draws. For example \texttt{-mcmc 1e6 -mcsave 1000}
   will run 1 million draws but only save (i.e.``thin'')
   every 1000th, for a total kept of $Nout=1000$.
 \item After completion, run the model again with argument
@@ -137,12 +181,16 @@ During the \texttt{mcmc} phase, saved parameter values, in
 bounded space, are written to a binary file called
 \texttt{<model name>.psv}. This file can be read into R
 using the following commands:
-<<readInPSV, eval=FALSE>>=
-psv <- file("<model name>.psv", "rb") 
-nparams <- readBin(psv, "integer", n=1)
-mcmc <- matrix(readBin(psv, "numeric", n=nparams*Nout), ncol=nparams, byrow=TRUE)
-close(psv)
-@
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{psv} \hlkwb{<-} \hlkwd{file}\hlstd{(}\hlstr{"<model name>.psv"}\hlstd{,} \hlstr{"rb"}\hlstd{)}
+\hlstd{nparams} \hlkwb{<-} \hlkwd{readBin}\hlstd{(psv,} \hlstr{"integer"}\hlstd{,} \hlkwc{n}\hlstd{=}\hlnum{1}\hlstd{)}
+\hlstd{mcmc} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlkwd{readBin}\hlstd{(psv,} \hlstr{"numeric"}\hlstd{,} \hlkwc{n}\hlstd{=nparams}\hlopt{*}\hlstd{Nout),} \hlkwc{ncol}\hlstd{=nparams,} \hlkwc{byrow}\hlstd{=}\hlnum{TRUE}\hlstd{)}
+\hlkwd{close}\hlstd{(psv)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 The first element in the \texttt{.psv} file is the number of
 active parameters in the model, which then tells R how to
 parse the following elements into parameter values. Note
@@ -152,7 +200,7 @@ manually. This is the main file that was designed to be used
 to extract MCMC draws from ADMB. However, this file only
 contains parameter values and not derived quantities or
 other quantities of interest (e.g. $MSY$ or biomass
-trajectories) which often are of interest. 
+trajectories) which often are of interest.
 \subsubsection{Derived quantity draws}
 
 A simple way of extracting this information is to bypass the
@@ -164,21 +212,29 @@ are desired. This can be accomplished inside the ADMB
 create an IO object that writes values to a \texttt{.csv}
 file, similar to the function \texttt{cout} which prints to
 screen.
-<<declareOutputFile, eval=FALSE>>=
- !!CLASS ofstream MCMCreport("MCMCreport.csv",ios::app);
-@
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+ \hlcom{## !!CLASS ofstream MCMCreport("MCMCreport.csv",ios::app);}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 Then, inside the \texttt{PROCEDURE\_SECTION} the function
 can be used to write both parameters, derived quantities, or
 other information about the model.
-<<writeToOutputFile, eval=FALSE>>=
-  if(mceval_phase()){
-    if(header==1) {
-        MCMCreport << "a,b,NLL,ab" << endl;
-        header=0;
-    }
-   MCMCreport << a <<"," << b << "," << NLL << "," << ab << endl;
-  }
-@
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+  \hlkwa{if}\hlstd{(}\hlkwd{mceval_phase}\hlstd{())\{}
+    \hlkwa{if}\hlstd{(header}\hlopt{==}\hlnum{1}\hlstd{) \{}
+   \hlcom{##     MCMCreport << "a,b,NLL,ab" << endl;}
+        \hlstd{header}\hlkwb{=}\hlnum{0}\hlstd{;}
+    \hlstd{\}}
+  \hlcom{## MCMCreport << a <<"," << b << "," << NLL << "," << ab << endl;}
+  \hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 The \texttt{MCMCreport} object is used just like
 \texttt{cout} and is executed only during the
 \texttt{mceval} phase so that only saved values are written
@@ -192,7 +248,7 @@ between MCMC runs.
 How to restart a chain if you need more samples. How does this work?
 \subsection{Convergence diagnostics} \label{sec:diag}
 Burn-in and thinning, how to check this? What happens if not
-independent? 
+independent?
 \subsection{Starting values and scaling}\label{sec:startvals}
 Where the algorithm starts from (MLE) and the scaling process
 (default and user options). Must discard these draws!
@@ -230,7 +286,7 @@ distribution\footnote{Technically a bounded multivariate
   Xprop\sim MVN(Xcur, \Sigma)
 \end{equation*}
  where $\Sigma$ is the covariance matrix obtained by
- inverting the Hessian at the posterior mode. 
+ inverting the Hessian at the posterior mode.
 
 In ADMB there are options to modify the proposal function to
 achieve better efficiency.
@@ -255,7 +311,7 @@ The \texttt{-mcrb N} option (which stands for rescaled
 bounded) alters the covariance matrix used to propose new
 parameter sets in the MH algorithm. Its intended use is to
 create a more efficient MCMC sampler so the analyses run
-faster. 
+faster.
 
 The option will be most effective under circumstances where
 the correlation between parameters at the MPD is higher than
@@ -336,95 +392,10 @@ then compare the two posteriors to show the same.
 How to create top-level functions for running analyses
 programmatically.
 \subsection{Code}
-Here is one I wrote for my thesis, which could be generalized
-easily. Use psv file here, or force user to write to csv? Let
-them use append or always overwrite files? Who actually restarts?
-<<runMCMC, eval=FALSE>>=
-run.mcmc <- function(Nout, mcsave, burn.in, boot, cor.mat=NULL, init.pin=NULL,
-                     se.scale=NULL, mcscale=FALSE, mcdiag=FALSE, mcseed=NULL,
-                     mcrb=NULL, mcgrope=NULL, verbose=TRUE, extra.args=NULL){
-    ## This function runs an ADMB model MCMC, burns and thins, calculates
-    ## effective sizes, and returns stuff depending on verbose.
-    require(coda)
-    model <- "logistic"
-    thin.every <- 1                     # setting to 1 for this project
-    iterations <- (Nout+burn.in)*mcsave
-    ##    print(paste("Run started at", round(Sys.time())))
-    if(iterations <1) stop(paste0("Iterations too low: ", iterations))
-    wd.old <- getwd(); on.exit(setwd(wd.old))
-    setwd(model.dir)
-    ## Run to get MLE and covariance matrix if none provided
-    if(is.null(init.pin)) system(model, ignore.stdout=T) else {
-        write.table(file="init.pin", x=init.pin, row.names=F, col.names=F)
-    }
 
-    if(!is.null(se.scale)) SetScale(se.scale) # change the covariance matrix
-    ## Clean up the old files
-    file.list <-c("mc_abundances.csv","mc_abundances_def.csv",
-                  "mc_abundances_mit.csv", "mc_abundances_none.csv",
-                  "mc_shipstrikes.csv", "mc_shipstrikes_def.csv",
-                  "mc_shipstrikes_mit.csv", "mc_shipstrikes_none.csv",
-                  "mc_parameters.csv", "mc_vessels.csv", "mc_equil.csv")
-    suppressWarnings(file.remove(file.list))
-    cmd <- paste(model,"-mcmc",iterations,"-nohess -noest")
-    ## make the argument and run the MCMC
-    if(!is.null(mcseed)) cmd <- paste(cmd, "-mcseed", mcseed)
-    cmd <- paste(cmd, "-mcsave",mcsave)
-    if(mcscale==FALSE) cmd <- paste(cmd, "-mcnoscale")
-    if(!is.null(mcrb)) cmd <- paste(cmd, "-mcrb",mcrb)
-    if(!is.null(mcgrope)) cmd <- paste(cmd, "-mcgrope",mcgrope)
-    if(mcdiag==TRUE) cmd <- paste(cmd, "-mcdiag")
-    if(!is.null(extra.args)) cmd <- paste(cmd, extra.args)
-    if(!is.null(init.pin)) cmd <- paste(cmd, "-mcpin init.pin")
-    ##  print(cmd)
-    ## If user provided covar matrix, write it to file
-    if(!is.null(cor.mat)) writeADMBCovariance(cor.mat)
-    system(cmd, ignore.stdout=T)
-    system(paste(model, "-mceval -noest -nohess"), ignore.stdout=T)
-
-    ## Read in the results
-    df <- read.csv("mc_parameters.csv")
-    vessels <- read.csv("mc_vessels.csv", head=T)
-    S <- read.csv("mc_shipstrikes.csv")
-    S.none <- read.csv("mc_shipstrikes_none.csv")
-    S.mit <- read.csv("mc_shipstrikes_mit.csv")
-    S.def <- read.csv("mc_shipstrikes_def.csv")
-    N <- read.csv("mc_abundances.csv")
-    N.none <- read.csv("mc_abundances_none.csv")
-    N.mit <- read.csv("mc_abundances_mit.csv")
-    N.def <- read.csv("mc_abundances_def.csv")
-    D <- N/df$K
-    D.none <- N.none/df$K
-    D.mit <- N.mit/df$K
-    D.def <- N.def/df$K
-    equil <- read.csv("mc_equil.csv")
-    ## Rows are mcmc iterations, cols are years except df which is parameters
-    mcmc <- list(params=df, vessels=vessels, S=S, D=D, N=N,
-                 S.none=S.none, S.mit=S.mit, S.def=S.def,
-                 N.none=N.none, N.mit=N.mit, N.def=N.def,
-                 D.none=D.none, D.mit=D.mit, D.def=D.def,
-                 equil=equil)
-    if(nrow(df)>burn.in) mcmc <- lapply(mcmc, function(x) x[-(1:burn.in),])
-    else stop ("Too few samples to thin/burn")
-    ## Run effective sample size calcs from CODA, metric of convergence
-    efsize <- data.frame(t(effectiveSize(df)/nrow(df)))
-    names(efsize) <- paste0(names(df), "_efs")
-    ## Grab admb fit and metrics
-    fit <- read.admbFit("logistic")
-    mle <- with(fit,
-                data.frame(NLL=nloglike, maxgrad=maxgrad,
-                           rMSY.cor=cor[2,1], boot=boot))
-    temp <- data.frame(t(fit$est), row.names=F)
-    names(temp) <- paste0(fit$names, "_mle")
-    mle <- cbind(mle, temp[,-ncol(temp)])
-    temp <- data.frame(t(fit$std), row.names=F)
-    names(temp) <- paste0(fit$names, "_se")
-    mle <- cbind(mle, temp[,-ncol(temp)])
-    fit.df <- cbind(mle, efsize)
-    if(verbose) return(list(fit.df=fit.df, mcmc=mcmc))
-    else return(fit.df=fit.df)
-}
-@
+test \cite{brooks2011}
+\bibliographystyle{unsrt}
+\bibliography{admb_guide}
 
 \end{document}
 
