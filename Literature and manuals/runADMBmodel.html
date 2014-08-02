@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>Quick reference for how to run a model in ADMB using BASH through the terminal</title>
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 12px;
+   margin: 8px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 { 
+   font-size:2.2em; 
+}
+
+h2 { 
+   font-size:1.8em; 
+}
+
+h3 { 
+   font-size:1.4em; 
+}
+
+h4 { 
+   font-size:1.0em; 
+}
+
+h5 { 
+   font-size:0.9em; 
+}
+
+h6 { 
+   font-size:0.8em; 
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre {	
+   margin-top: 0;
+   max-width: 95%;
+   border: 1px solid #ccc;
+   white-space: pre-wrap;
+}
+
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code.r, code.cpp {
+   background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * { 
+      background: transparent !important; 
+      color: black !important; 
+      filter:none !important; 
+      -ms-filter: none !important; 
+   }
+
+   body { 
+      font-size:12pt; 
+      max-width:100%; 
+   }
+       
+   a, a:visited { 
+      text-decoration: underline; 
+   }
+
+   hr { 
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote { 
+      padding-right: 1em; 
+      page-break-inside: avoid; 
+   }
+
+   tr, img { 
+      page-break-inside: avoid; 
+   }
+
+   img { 
+      max-width: 100% !important; 
+   }
+
+   @page :left { 
+      margin: 15mm 20mm 15mm 10mm; 
+   }
+     
+   @page :right { 
+      margin: 15mm 10mm 15mm 20mm; 
+   }
+
+   p, h2, h3 { 
+      orphans: 3; widows: 3; 
+   }
+
+   h2, h3 { 
+      page-break-after: avoid; 
+   }
+}
+
+</style>
+
+
+
+
+
+</head>
+
+<body>
+<h1>Quick reference for how to run a model in ADMB using BASH through the terminal</h1>
+
+<p>To open ADMB, open a terminal window and type </p>
+
+<pre><code>admb
+</code></pre>
+
+<p>In bash, to change to directory ~ , run </p>
+
+<pre><code>cd ./~
+</code></pre>
+
+<p>To list all folders/files in the directory type <code>dir</code><br/>
+To move up a directory type <code>cd ..</code></p>
+
+<p>To compile your model in safe mode, run</p>
+
+<pre><code>admb -s model
+</code></pre>
+
+<p>Finally, to run the model execute </p>
+
+<pre><code>./model -anyRuntime command -anyOtherRuntime command
+</code></pre>
+
+<p>A list of available options can be accessed through the terminal by typing</p>
+
+<pre><code>./model -help
+</code></pre>
+
+<p>The default in ADMB is to use the PIN file with the same name as the model.TPL - to use a different PIN file than the default use runtime option </p>
+
+<pre><code>-ainp differentFile.pin 
+</code></pre>
+
+<h2>Run Markov chain Monte-Carlo simulations</h2>
+
+<p>After you compile your model, as above, this is a two-step process. First use</p>
+
+<pre><code>./model -mcmc N -mcsave M
+</code></pre>
+
+<p>to run N total MCMC iterations with a thinning rate of M. The final step is to use</p>
+
+<pre><code>./model -mceval
+</code></pre>
+
+<p>which reads in the saved parameter vectors and calls the function for each - it is this final step which provides your output.</p>
+
+<h2>Trouble-shooting options</h2>
+
+<p>To see what your model does after a single function evalutaion and to see what the value of the OF is at first run using the PIN values use runtime option <code>-maxfn 1</code>. This can also be used for any other finite number (n) function evaluations by using <code>-maxfn n</code>. </p>
+
+<p>Use <code>-noest</code> to turn estimation of all parameters off, and use <code>-nohess</code> to repress Hessian calculations which are unecessary in deterministic-test runs.</p>
+
+</body>
+
+</html>
+
