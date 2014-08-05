@@ -7,12 +7,10 @@
 
 model_data::model_data(int argc,char * argv[]) : ad_comm(argc,argv)
 {
+  pad_leapfrog = new ofstream("leapfrog.csv",ios::trunc);;
   nobs.allocate("nobs");
   Y.allocate(1,nobs,"Y");
   x.allocate(1,nobs,"x");
- ad_comm::change_datafile_name("bounds.txt");
-  upb_b.allocate("upb_b");
- cout << upb_b << endl;
 }
 
 model_parameters::model_parameters(int sz,int argc,char * argv[]) : 
@@ -20,7 +18,7 @@ model_parameters::model_parameters(int sz,int argc,char * argv[]) :
 {
   initializationfunction();
   a.allocate("a");
-  b.allocate(-10,upb_b,"b");
+  b.allocate("b");
   aa.allocate("aa");
   pred_Y.allocate(1,nobs,"pred_Y");
   #ifndef NO_AD_INITIALIZE
@@ -31,11 +29,25 @@ model_parameters::model_parameters(int sz,int argc,char * argv[]) :
 
 void model_parameters::userfunction(void)
 {
+  ofstream& leapfrog= *pad_leapfrog;
   pred_Y=a*x+b;
  aa=a;
   f=(norm2(pred_Y-Y));
   f=nobs/2.*log(f);    // make it a likelihood function so that
                        // covariance matrix is correct
+  leapfrog << a << "," << b << "," << f << endl;
+}
+
+void model_parameters::report()
+{
+ adstring ad_tmp=initial_params::get_reportfile_name();
+  ofstream report((char*)(adprogram_name + ad_tmp));
+  if (!report)
+  {
+    cerr << "error trying to open report file"  << adprogram_name << ".rep";
+    return;
+  }
+ cout << a << ", " << b << endl;
 }
 
 void model_parameters::preliminary_calculations(void){
@@ -46,9 +58,10 @@ model_data::~model_data()
 {}
 
 model_parameters::~model_parameters()
-{}
-
-void model_parameters::report(void){}
+{
+  delete pad_leapfrog;
+  pad_leapfrog = NULL;
+}
 
 void model_parameters::final_calcs(void){}
 

@@ -2,10 +2,10 @@
 #  define _SIMPLE_
 
 class model_data : public ad_comm{
+  ofstream *   pad_leapfrog;
   data_int nobs;
   data_vector Y;
   data_vector x;
-  data_number upb_b;
   ~model_data();
   model_data(int argc,char * argv[]);
   friend class model_parameters;
@@ -44,7 +44,7 @@ private:
   ivector integer_control_flags;
   dvector double_control_flags;
   param_init_number a;
-  param_init_bounded_number b;
+  param_init_number b;
   param_stddev_number aa;
   param_vector pred_Y;
   objective_function_value f;
