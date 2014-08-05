@@ -109,7 +109,8 @@ Nsim <- 1000
 qsim <- rep(NA, len=Nsim)
 qsim[1] <- 0                            # initialize at 0
 for(n in 2:Nsim){
-    qsim[n] <- HMC(U, grad.U, eps=.1, L=5, current.q=qsim[n-1])
+    qsim[n] <-
+        HMC(U, grad.U, eps=.1, L=5, current.q=qsim[n-1])
 }
 plot(qsim, type='l', ylim=c(-3,3))
 
@@ -123,6 +124,90 @@ grad.U <- function(q) c(2*q[1]*cor.inv[1,1]+2*q[2]*cor.inv[1,2],
 Nsim <- 100
 qsim <- matrix(NA, nrow=Nsim, ncol=nrow(cor) )
 qsim[1,] <- c(-15, -15)
+temp <- list()
+for(n in 2:Nsim){
+    temp[[n]] <- HMC(U, grad.U, eps=.25, L=5, current.q=qsim[n-1,])
+    qsim[n,] <- temp[[n]]$q
+}
+## clean up and organize the results
+q <- do.call(rbind, lapply(temp, function(x) x$q))
+proposed.q <- do.call(rbind, lapply(temp, function(x) x$proposed.q))
+current.q <- do.call(rbind, lapply(temp, function(x) x$current.q))
+current.p <- do.call(rbind, lapply(temp, function(x) x$current.p))
+NLL <- do.call(rbind, lapply(temp, function(x) x$NLL))
+accepted <- proposed.q[,1]==q[,1]
+
+plot(q, type='p', ylim=c(-3,3), xlim=c(-3,3))
+plot(proposed.q, type='p', ylim=c(-3,3), xlim=c(-3,3), col=ifelse(accepted,
+                                                       "black", "red"))
+plot(current.q, type='p', ylim=c(-3,3), xlim=c(-3,3))
+plot(qsim)
+
+## Recreate the simple example in R for producing example plots
+                                        # observed Y values
+a.mle <- 1.90909098475
+b.mle <- 4.07817738582
+
+U <- function(q) log(sum((q[1]*xobs+q[2]-yobs)^2))*length(yobs)/2
+grad.U <- function(q){
+    a <- q[1]; b <- q[2]
+    ypred <- a*xobs+b
+    dadf <- length(yobs)/2/sum((ypred-yobs)^2)*sum(2*a*(ypred-yobs))
+    dbdf <- length(yobs)/2/sum((ypred-yobs)^2)*sum(2*(ypred-yobs))
+    return(c(dadf, dbdf))
+}
+HMC.simple <- function(hyeps, hynstep, current.q){
+    ## Define data and the energy functions
+    yobs <- c(1.4, 4.7, 5.1, 8.3, 9.0, 14.5, 14.0, 13.4, 19.2, 18)
+    xobs <- c(-1, 0, 1, 2, 3, 4, 5, 6, 7, 8)
+    q <- current.q
+    p <- rnorm(length(q), 0,1)
+    current.p <- p
+    ## Make a half step
+    p <- p-hyeps*grad.U(q)/2
+    ## alternate full steps for position and momentum
+    leapfrog <- matrix(NA, nrow=hynstep+1, ncol=3)
+    leapfrog[1,] <- c(q, U(q))
+    for (i in 1:hynstep){
+        q <- q+ hyeps*p
+        leapfrog[i+1,] <- c(q, U(q))
+        if(i!=hynstep) p <- p-hyeps*grad.U(q)
+    }
+    ## half step for momentum at the end
+    p <- p-hyeps*grad.U(q)/2
+    ## negate p to make proposal symmetric
+    p <- -p
+    current.U <- U(current.q)
+    current.K <- sum(current.p^2)/2
+    proposed.U <- U(q)
+    proposed.K <- sum(p^2)/2
+    ## Return a list of the current state, proposed, and acceptance
+    NLL <- current.U
+    ## accept or reject
+    if(runif(1) < exp(current.U-proposed.U+current.K-proposed.K))
+        final.q <- q
+    else final.q <- current.q
+    results <- list(leapfrog=leapfrog, proposed.q=q, q=final.q, NLL=NLL)
+    return(results)
+}
+
+## Make a grid of the likelihood surface
+a.seq <- seq(1,5, len=50)
+b.seq <- seq(2,6, len=50)
+param.grid <- expand.grid(a=a.seq, b=b.seq)
+NLL <- sapply(1:nrow(param.grid), function(x)
+                         U(c(param.grid$a[x], param.grid$b[x])))
+NLL <- matrix(NLL, nrow=50)
+contour(a.seq, b.seq, NLL)
+points(a.mle, b.mle, col='red', pch=16)
+
+simple.hy1 <- HMC.simple(.1, 10, c(2,4))
+plot(simple.hy1$leapfrog)
+plot(simple.hy1$NLL)
+
+Nsim <- 10
+qsim <- matrix(NA, nrow=Nsim, ncol=nrow(cor) )
+qsim[1,] <- c(2, 4)
 temp <- list()
 for(n in 2:Nsim){
     temp[[n]] <- HMC(U, grad.U, eps=.25, L=5, current.q=qsim[n-1,])

@@ -35,6 +35,18 @@ void model_parameters::userfunction(void)
                        // covariance matrix is correct
 }
 
+void model_parameters::report()
+{
+ adstring ad_tmp=initial_params::get_reportfile_name();
+  ofstream report((char*)(adprogram_name + ad_tmp));
+  if (!report)
+  {
+    cerr << "error trying to open report file"  << adprogram_name << ".rep";
+    return;
+  }
+ cout << a << ", " << b << endl;
+}
+
 void model_parameters::preliminary_calculations(void){
   admaster_slave_variable_interface(*this);
 }
@@ -44,8 +56,6 @@ model_data::~model_data()
 
 model_parameters::~model_parameters()
 {}
-
-void model_parameters::report(void){}
 
 void model_parameters::final_calcs(void){}
 
