@@ -9,9 +9,13 @@
      "sec:MH"
      "tab:mh_args"
      "fig:mcrb"
+     "fig:simple1"
+     "fig:simple2"
      "sec:hybrid"
      "eq:motion"
-     "fig:hybrid_grid_trace")
+     "fig:hybrid_grid_trace"
+     "tab:hy_args"
+     "fig:hybrid_grid_acf")
     (TeX-run-style-hooks
      "float"
      "graphicx"

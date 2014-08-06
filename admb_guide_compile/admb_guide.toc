@@ -8,7 +8,7 @@
 \contentsline {subsubsection}{\numberline {2.3.3}Derived quantity draws}{3}
 \contentsline {subsection}{\numberline {2.4}Restarting a chain}{3}
 \contentsline {subsection}{\numberline {2.5}Convergence diagnostics}{3}
-\contentsline {subsection}{\numberline {2.6}Starting values and scaling}{4}
+\contentsline {subsection}{\numberline {2.6}Starting values and scaling}{3}
 \contentsline {subsection}{\numberline {2.7}Metropolis-Hastings}{4}
 \contentsline {subsubsection}{\numberline {2.7.1}Algorithm}{4}
 \contentsline {subsubsection}{\numberline {2.7.2}MCMC Arguments}{4}
