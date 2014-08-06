@@ -74,18 +74,8 @@ run_admb_mcmc <- function(model.path, model.name, Nout, mcsave, burn.in,
             stop("Invalid cov.user matrix, not positive definite")
         write.admb.cov(cov.user)
         mle$cov.user <- cov.user
-    } else if(!is.null(mcrb)){
-        ## Use the built-in rescaling algorithm. Here we need to calculate
-        ## it externally just for plotting
-        results <- get.admb.cov()
-        scale <- results$scale
-        cov.unbounded <- results$cov
-        cov.bounded <- cov.unbounded* (scale %o% scale)
-        cor.bounded <-
-            cov.bounded / sqrt(diag(cov.bounded)) %o% sqrt(diag(cov.bounded))
-    }
+    } else {
     ## otherwise use the estimated one
-    else {
         mle$cov.user <-  NULL
     }
     ## Write the starting values to file. Always using a init.pin file b/c
@@ -96,7 +86,9 @@ run_admb_mcmc <- function(model.path, model.name, Nout, mcsave, burn.in,
     if(is.null(init.pin)) init.pin <- mle$coefficients[1:mle$npar]
     write.table(file="init.pin", x=init.pin, row.names=F, col.names=F)
     ## Separate the options by algorithm, first doing the shared arguments
-    cmd <- paste(model.name,"-mcmc",iterations, "-nohess")
+    cmd <- paste(model.name,"-mcmc",iterations)
+    ## If user written one, make sure not to overwrite it
+    if(!is.null(user.cov)) cmd <- paste(cmd, "-nohess")
     cmd <- paste(cmd, "-mcpin init.pin")
     if(!is.null(extra.args)) cmd <- paste(cmd, extra.args)
     if(!is.null(mcseed)) cmd <- paste(cmd, "-mcseed", mcseed)
