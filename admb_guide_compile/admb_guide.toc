@@ -18,6 +18,5 @@
 \contentsline {subsubsection}{\numberline {2.7.6}Example MCMC}{6}
 \contentsline {subsection}{\numberline {2.8}Hyrbid}{6}
 \contentsline {subsubsection}{\numberline {2.8.1}Algorithm}{6}
-\contentsline {subsubsection}{\numberline {2.8.2}Arguments}{6}
-\contentsline {section}{\numberline {3}Running analyses in R}{6}
-\contentsline {subsection}{\numberline {3.1}Code}{7}
+\contentsline {subsubsection}{\numberline {2.8.2}Arguments}{8}
+\contentsline {subsubsection}{\numberline {2.8.3}Tuning the hybrid algorithm}{8}

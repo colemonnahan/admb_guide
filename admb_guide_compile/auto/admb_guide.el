@@ -10,7 +10,8 @@
      "tab:mh_args"
      "fig:mcrb"
      "sec:hybrid"
-     "eq:motion")
+     "eq:motion"
+     "fig:hybrid_grid_trace")
     (TeX-run-style-hooks
      "float"
      "graphicx"
