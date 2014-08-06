@@ -88,16 +88,16 @@ run_admb_mcmc <- function(model.path, model.name, Nout, mcsave, burn.in,
     ## Separate the options by algorithm, first doing the shared arguments
     cmd <- paste(model.name,"-mcmc",iterations)
     ## If user written one, make sure not to overwrite it
-    if(!is.null(user.cov)) cmd <- paste(cmd, "-nohess")
+    if(!is.null(cov.user)) cmd <- paste(cmd, "-nohess")
     cmd <- paste(cmd, "-mcpin init.pin")
     if(!is.null(extra.args)) cmd <- paste(cmd, extra.args)
     if(!is.null(mcseed)) cmd <- paste(cmd, "-mcseed", mcseed)
     if(mcdiag==TRUE) cmd <- paste(cmd, "-mcdiag")
+    if(!is.null(mcrb)) cmd <- paste(cmd, "-mcrb",mcrb)
     ## Those options for the standard MH algorithm
     if(!hybrid){
         cmd <- paste(cmd, "-mcsave",mcsave)
         if(mcscale==FALSE) cmd <- paste(cmd, "-mcnoscale")
-        if(!is.null(mcrb)) cmd <- paste(cmd, "-mcrb",mcrb)
         if(!is.null(mcprobe)) cmd <- paste(cmd, "-mcprobe",mcprobe)
     } else {
         ## The hybrid options
