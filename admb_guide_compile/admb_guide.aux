@@ -1,6 +1,7 @@
 \relax 
 \@writefile{toc}{\contentsline {section}{\numberline {1}Bayesian inference}{1}}
-\@writefile{toc}{\contentsline {section}{\numberline {2}MCMC}{1}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.1}Priors}{1}}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Markov chain Monte Carlo}{2}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Workflow}{2}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.2}MCMC Phases}{2}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Output files}{3}}
@@ -8,39 +9,44 @@
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.1}Meta data: The hst file}{3}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.2}Parameter draws: The psv file}{3}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.3}Derived quantity draws}{3}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Restarting a chain}{3}}
-\newlabel{sec:restart}{{2.4}{3}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.5}Convergence diagnostics}{3}}
-\newlabel{sec:diag}{{2.5}{3}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.6}Starting values and scaling}{3}}
-\newlabel{sec:startvals}{{2.6}{3}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Restarting a chain}{4}}
+\newlabel{sec:restart}{{2.4}{4}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.5}Convergence diagnostics}{4}}
+\newlabel{sec:diag}{{2.5}{4}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.6}Starting values and scaling}{4}}
+\newlabel{sec:startvals}{{2.6}{4}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.7}Metropolis-Hastings}{4}}
 \newlabel{sec:MH}{{2.7}{4}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {2.7.1}Algorithm}{4}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.7.2}MCMC Arguments}{4}}
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces ADMB runtime arguments for Metropolis-Hastings MCMC}}{4}}
-\newlabel{tab:mh_args}{{1}{4}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.7.3}mcprobe}{4}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.7.4}mcrb}{4}}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces The effect of \texttt  {mcrb} on a variety of correlations between two hypothetical parameters. Note that the effect of setting $N=9$ depends on the original correlation.}}{5}}
-\newlabel{fig:mcrb}{{1}{5}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.7.5}User-supplied correlation matrix}{5}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.7.2}MCMC Arguments}{5}}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces ADMB runtime arguments for Metropolis-Hastings MCMC}}{5}}
+\newlabel{tab:mh_args}{{1}{5}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.7.3}mcprobe}{5}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.7.4}mcrb}{5}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.7.5}Example MCMC}{5}}
 \citation{brooks2011}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.7.6}Example MCMC}{6}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces The effect of \texttt  {mcrb} on a variety of correlations between two hypothetical parameters. Note that the effect of setting $N=9$ depends on the original correlation.}}{6}}
+\newlabel{fig:mcrb}{{1}{6}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.7.6}User-supplied correlation matrix}{6}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.8}Hyrbid}{6}}
 \newlabel{sec:hybrid}{{2.8}{6}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {2.8.1}Algorithm}{6}}
-\newlabel{eq:motion}{{2}{6}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces The samples from a simple model with \texttt  {mcsave}=1. Note the high autocorrelation of both parameters.The red ellipses show the estimated pairwise parameter covariances, and the red point the MPD.}}{7}}
+\newlabel{fig:simple1}{{2}{7}}
+\newlabel{eq:motion}{{2}{7}}
 \citation{brooks2011}
 \citation{brooks2011}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Leapfrog trajectories for different sets of tuning parameters. The posterior surface is shown as contours, and the posterior mode as a red point. The filled black point is the starting point, and the arrows show the trajectory of the leapfrog steps, ending at the open circle representing the proposed set of parameters.}}{7}}
-\newlabel{fig:hybrid_grid_trace}{{2}{7}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces The samples from a simple model with \texttt  {mcsave}=100. Note the negligible autocorrelation of both parameters.The red ellipses show the estimated pairwise parameter covariances, and the red point the MPD.}}{8}}
+\newlabel{fig:simple2}{{3}{8}}
 \citation{brooks2011}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.8.2}Arguments}{8}}
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces ADMB runtime arguments for the hybrid MCMC}}{8}}
-\newlabel{tab:hy_args}{{2}{8}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.8.3}Tuning the hybrid algorithm}{8}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Leapfrog trajectories for different sets of tuning parameters. The posterior surface is shown as contours, and the posterior mode as a red point. The filled black point is the starting point, and the arrows show the trajectory of the leapfrog steps, ending at the open circle representing the proposed set of parameters.}}{9}}
+\newlabel{fig:hybrid_grid_trace}{{4}{9}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.8.2}Arguments}{9}}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces ADMB runtime arguments for the hybrid MCMC}}{9}}
+\newlabel{tab:hy_args}{{2}{9}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.8.3}Tuning the hybrid algorithm}{9}}
 \bibstyle{unsrt}
 \bibdata{admb_guide}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces The autocorrelation of the parameter $a$ from the simple model across different tuning parameters of the hybrid method.}}{9}}
-\newlabel{fig:hybrid_grid_acf}{{3}{9}}
+\bibcite{brooks2011}{1}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces The autocorrelation of the parameter $a$ from the simple model across different tuning parameters of the hybrid method.}}{10}}
+\newlabel{fig:hybrid_grid_acf}{{5}{10}}

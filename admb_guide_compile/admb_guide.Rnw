@@ -31,7 +31,48 @@
 \section{Bayesian inference}
 A short intro with citations to better papers. Maybe merge
 in what is currently shown?
-\section{MCMC}
+\subsection{Priors}
+As with any Bayesian analysis, priors are a key component of
+the posterior surface and must be considered in ADMB as
+well. The posterior density is proportional to the product
+of the likelihood and priors. ADMB works in the negative log
+space, so he contribution of priors is incorporated into the
+model by adding the negative log of the prior density to the
+objective function. At this point the minimum point is no
+longer the maximum likelihood estimate, but rather what we
+refer to as the ``maximum posterior mode''-- i.e. the
+parameters corresponding to the highest point of the
+posterior. The difference between the two is subtle, but
+there are important philosophical differences: with Bayesian
+analysis ADMB is integrating across the parameter space,
+while the likelihood framework focuses on maximization.
+
+
+The way MCMC works in ADMB, users need not explicitly define
+and incorporate priors into their model. In this case
+``implicit'' priors are still affecting the posterior. In
+particular, unbounded parameters without explicit priors
+have infinitely broad uniform priors (an example of an
+``improper'' prior because it will not integrate to
+1). Another example is a variance parameter estimated in log
+space and then exponentiated within the model to keep it
+above zero. An implicit uniform prior on the log parameter
+may not be uninformative on the natural scale. The
+implications of these issues are contentious and certainly
+beyond the scope of this guide. We caution users to
+carefully consider and explicitly acknowledge their priors
+-- ADMB will not force you to.
+
+Uniform priors can be incorporated without changing the
+objective function calculation by bounding the
+parameter. Other forms of prior distributions need to be
+added manually by the user, with our without any
+constants. For instance, a normal ($N(5,1)$) prior on a
+parameter $a$ could be added as
+\texttt{f+=pow((a-5),2)/(2*1*1)}, where the constants have
+been dropped.
+
+\section{Markov chain Monte Carlo}
 Markov chain Monte Carlo (MCMC) is a common algorithm used
 to sample from arbitrary, unscaled posterior
 distributions. ADMB implements two different MCMC
@@ -192,7 +233,7 @@ in some situations. New draws are appended to the
 between MCMC runs.
 
 \subsection{Restarting a chain}\label{sec:restart}
-How to restart a chain if you need more samples. How does this work?
+Peter: todo
 \subsection{Convergence diagnostics} \label{sec:diag}
 Burn-in and thinning, how to check this? What happens if not
 independent?
@@ -319,88 +360,104 @@ matrix (i.e. positive definite).
 \end{figure}
 
 \subsubsection{Example MCMC}
-We demonstrate these concepts using the ``simple'' model packaged with
-ADMB, which is a contrived two parameter linear model ($y=ax+b$). First we
-run the model without any thinning by specifying \texttt{mcsave}=1 (figure
+We demonstrate these concepts using the ``simple'' model
+packaged with ADMB, which is a contrived two parameter
+linear model ($y=ax+b$). First we run the model without any
+thinning by specifying \texttt{mcsave}=1 (figure
 \ref{fig:simple2}).
 \begin{figure}[h]
   \centering
   \includegraphics[width=5in]{../plots/simple1.pdf}
-  \caption{The samples from a simple model with \texttt{mcsave}=1. Note the
-    high autocorrelation of both parameters.The red ellipses show the
-    estimated pairwise parameter covariances, and the red point the MPD.}
+  \caption{The samples from a simple model with
+    \texttt{mcsave}=1. Note the high autocorrelation of both
+    parameters.The red ellipses show the estimated pairwise
+    parameter covariances, and the red point the MPD.}
   \label{fig:simple1}
 \end{figure}
-The MCMC chain is clearly autocorrelated from the acf plots and the traces
-(not show). We now rerun the chain with \texttt{mcsave}=100 (figure
-\ref{fig:simple2}), in effect running 100 times the samples and saving
-every $100^{\text{th}$. This helps reduce the autocorrelation and produces
-  independent draws from the posterior of interest.
+The MCMC chain is clearly autocorrelated from the acf plots
+and the traces (not show). We now rerun the chain with
+\texttt{mcsave}=100 (figure \ref{fig:simple2}), in effect
+running 100 times the samples and saving every
+$100^{\text{th}}$. This helps reduce the autocorrelation and
+  produces independent draws from the posterior of interest.
 \begin{figure}[h]
   \centering
   \includegraphics[width=5in]{../plots/simple2.pdf}
-  \caption{The samples from a simple model with \texttt{mcsave}=100. Note the
-    negligible autocorrelation of both parameters.The red ellipses show the
-    estimated pairwise parameter covariances, and the red point the MPD.}
+  \caption{The samples from a simple model with
+    \texttt{mcsave}=100. Note the negligible autocorrelation
+    of both parameters.The red ellipses show the estimated
+    pairwise parameter covariances, and the red point the
+    MPD.}
   \label{fig:simple2}
 \end{figure}
 
 
 \subsubsection{User-supplied correlation matrix}
-If the MLE covariance is inefficient at proposing. Why do this?
-How? Show code for how to do this, and talk about positive
-definitness.
+If the MLE covariance is inefficient at proposing. Why do
+this?  How? Show code for how to do this, and talk about
+positive definitness.
 
 
 \subsection{Hyrbid}\label{sec:hybrid}
-The ``hybrid'' option in ADMB is an implementation of an MCMC algorithm
-based on Hamiltonian dynamics. Here we provid a simplified overview
-\footnote{Ignoring, for example, the transformation of the parameter space
-  via the Choleski decomposition used by ADMB} of the algorithm, with the
-aim of providing users an intuition about its behavior and properties and
-how to use it within ADMB. This section is based on \cite{brooks2011},
-which provides a thorough review of the algorithm, including background
-motivation, proof of ergodicity, and illustrative examples\footnote{This
-  chapter is available at
+The ``hybrid'' option in ADMB is an implementation of an
+MCMC algorithm based on Hamiltonian dynamics. Here we provid
+a simplified overview \footnote{Ignoring, for example, the
+  transformation of the parameter space via the Choleski
+  decomposition used by ADMB} of the algorithm, with the aim
+of providing users an intuition about its behavior and
+properties and how to use it within ADMB. This section is
+based on \cite{brooks2011}, which provides a thorough review
+of the algorithm, including background motivation, proof of
+ergodicity, and illustrative examples\footnote{This chapter
+  is available at
   http://www.admb-project.org/developers/workshop/la-jolla-2010/ham-mcmc.pdf/view}.
 
-The hybrid method is different from the MH algorithm in how it proposes new
-parameter values. Instead of proposing random states based on the current
-value, the hybrid method uses derivatives to follow a contour of the
-posterior surface. By doing so, it (in theory) only proposes states that
-are very likely to be accepted, and as such will have less autocorrelation.
+The hybrid method is different from the MH algorithm in how
+it proposes new parameter values. Instead of proposing
+random states based on the current value, the hybrid method
+uses derivatives to follow a contour of the posterior
+surface. By doing so, it (in theory) only proposes states
+that are very likely to be accepted, and as such will have
+less autocorrelation.
 
-In practice, a well tuned hybrid chain will need less thinning, if any at
-all, and run faster. The downside of the algorithm is that it is more
-difficult to tune than the MH algorithm.
+In practice, a well tuned hybrid chain will need less
+thinning, if any at all, and run faster. The downside of the
+algorithm is that it is more difficult to tune than the MH
+algorithm.
 \subsubsection{Algorithm}
-The algorithm utilizes the properties of a physical system known as
-Hamiltonian dynamics. Hamiltonian dynamics, while based in physics,
-provides some extremely useful mathematical properties for Bayesian
-integration via MCMC.
+The algorithm utilizes the properties of a physical system
+known as Hamiltonian dynamics. Hamiltonian dynamics, while
+based in physics, provides some extremely useful
+mathematical properties for Bayesian integration via MCMC.
 
-A Hamiltonian system consists of two parameter vectors of equal length:
-``position'' ($\mathbf{q}$) and ``momentum'' ($\mathbf{p}$). How these
-parameters change over time is described by the Hamiltonian function,
-$H(\mathbf{q},\mathbf{p})$. This system can be conceptualized as a
-frictionless surface about which an object moves. At some time $t$ an
-object has a certain height (position) and momemtum. The height of the
-surface is equal to the objective function of our model, and the momentum
-variables are introduced parameters to ensure the Hamiltonian dynamics are
-met. Samples from a posterior are generated by simulating the object moving
-about the joint surface through time, governed by $H$.
+A Hamiltonian system consists of two parameter vectors of
+equal length: ``position'' ($\mathbf{q}$) and ``momentum''
+($\mathbf{p}$). How these parameters change over time is
+described by the Hamiltonian function,
+$H(\mathbf{q},\mathbf{p})$. This system can be
+conceptualized as a frictionless surface about which an
+object moves. At some time $t$ an object has a certain
+height (position) and momemtum. The height of the surface is
+equal to the objective function of our model, and the
+momentum variables are introduced parameters to ensure the
+Hamiltonian dynamics are met. Samples from a posterior are
+generated by simulating the object moving about the joint
+surface through time, governed by $H$.
 
 For use with MCMC, $H$ is assumed to be
-$H(\mathbf{q},\mathbf{p})=U(\mathbf{q})+K(\mathbf{p})$, where $U$ is
-analagous to the potential energy and $K$ kinetic energy. $U$ is set equal
-to the ADMB objective function (i.e. the negative log of the posterior
-density) and $K$ to a diagonal multivariate normal distribution. The hybrid
-MCMC algorithm samples from the joint posterior, $H$, but we are only
-interested in the posterior for $U$, so $K$ is not saved by ADMB.
+$H(\mathbf{q},\mathbf{p})=U(\mathbf{q})+K(\mathbf{p})$,
+where $U$ is analagous to the potential energy and $K$
+kinetic energy. $U$ is set equal to the ADMB objective
+function (i.e. the negative log of the posterior density)
+and $K$ to a diagonal multivariate normal distribution. The
+hybrid MCMC algorithm samples from the joint posterior, $H$,
+but we are only interested in the posterior for $U$, so $K$
+is not saved by ADMB.
 
-The time trajectory of the object through the joint probability space, $H$,
-is used to generate proposed parameter sets. Given the form for $H$ above,
-the fundamental equations of motion are:
+The time trajectory of the object through the joint
+probability space, $H$, is used to generate proposed
+parameter sets. Given the form for $H$ above, the
+fundamental equations of motion are:
 \begin{align}
   \label{eq:motion}
   \frac{dq_i}{dt} &= \frac{\partial{K}}{\partial{p_i}}\\
@@ -408,79 +465,92 @@ the fundamental equations of motion are:
 \end{align}
 
 ADMB uses the ``leapfrog'' method to discretize equations
-\eqref{eq:motion}. The leapfrog method is more reliable than the well-known
-Euler method. It has two tuning parameters: the number of steps to
-take (\texttt{hynstep}), and the step size $\epsilon$ (\texttt{hyeps}). The
-following sequence of calculations shows a single iteration of the leapfrog
-method, for the $i^{\text{th}}$ variable, and is repeated \texttt{hynstep}
-times sequentially.
+\eqref{eq:motion}. The leapfrog method is more reliable than
+the well-known Euler method. It has two tuning parameters:
+the number of steps to take (\texttt{hynstep}), and the step
+size $\epsilon$ (\texttt{hyeps}). The following sequence of
+calculations shows a single iteration of the leapfrog
+method, for the $i^{\text{th}}$ variable, and is repeated
+\texttt{hynstep} times sequentially.
 \begin{align*}
   p_i(t+\epsilon/2)&=p_i(t)-(\epsilon/2)\frac{\partial{U}}{\partial{q_i}}q(t)\\
   q_i(t+\epsilon)&=q_i(t)+\epsilon \frac{p_i(t+\epsilon/2)}{mi}\\
   p_i(t+\epsilon)&=p_i(t+\epsilon/2)-(\epsilon/2)\frac{\partial{U}}{\partial{q_i}}q(t+\epsilon)
 \end{align*}
 
-The leapfrog algorithm moves deterministically through the joint surface
-along a contour of (appoximately) constant $H$. That is, for a given
-starting value of $(q_0,p_0)$ and tuning parameters the trajectory will
-always end in the same place. Examples of trajectories under different
-tuning parameters for the leapfrog method are given in figure
-\ref{fig:hybrid_grid_trace}. Note that ADMB calculates the partial
-derivatives $\frac{\partial{U}}{\partial{q_i}}$ at each function evaluation
-using automatic differentiation. Thus these are available for any model and
-do not have to be determined analytically, which can be difficult or
-impossible for large, non-linear models.
+The leapfrog algorithm moves deterministically through the
+joint surface along a contour of (appoximately) constant
+$H$. That is, for a given starting value of $(q_0,p_0)$ and
+tuning parameters the trajectory will always end in the same
+place. Examples of trajectories under different tuning
+parameters for the leapfrog method are given in figure
+\ref{fig:hybrid_grid_trace}. Note that ADMB calculates the
+partial derivatives $\frac{\partial{U}}{\partial{q_i}}$ at
+each function evaluation using automatic
+differentiation. Thus these are available for any model and
+do not have to be determined analytically, which can be
+difficult or impossible for large, non-linear models.
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=5in]{../plots/hybrid_grid_trace.pdf}
-  \caption{Leapfrog trajectories for different sets of tuning
-    parameters. The posterior surface is shown as contours, and the
-    posterior mode as a red point. The filled black point is the starting
-    point, and the arrows show the trajectory of the leapfrog steps, ending
-    at the open circle representing the proposed set of parameters.}
+  \caption{Leapfrog trajectories for different sets of
+    tuning parameters. The posterior surface is shown as
+    contours, and the posterior mode as a red point. The
+    filled black point is the starting point, and the arrows
+    show the trajectory of the leapfrog steps, ending at the
+    open circle representing the proposed set of
+    parameters.}
   \label{fig:hybrid_grid_trace}
 \end{figure}
 
-Casting a posterior into a Hamiltonian system and discretizing it with the
-leapfrog method is simply a way to generate proposed sets of parameters in
-the larger, stochastic MCMC algorithm. A single iteration of the hybrid
+Casting a posterior into a Hamiltonian system and
+discretizing it with the leapfrog method is simply a way to
+generate proposed sets of parameters in the larger,
+stochastic MCMC algorithm. A single iteration of the hybrid
 MCMC algorithm, as implemented in ADMB, has three steps:
 \begin{enumerate}
-\item \textbf{Propose new momentum variables.} New momentum values, $p^*$
-  are generated from a normal distribution based on the estimated
-  covariance matrix, and independent of the current position variables.
-\item \textbf{Propose new position variables.} Given the current state of
-  the system, $(q,p^*)$, new position variables $q^*$ are generated with
-  the leapfrog algorithm using \texttt{hynstep} \footnote{Actually a random
-    integers is generated around this value} steps and a step size of
-  \texttt{hyeps}.
-\item \textbf{Accept or reject the new state.} The new state is then
-  updated with a Metropolis step (i.e. accepted or rejected) in the same
-  way as above. Acceptance is expected to be high because the proposed
-  values $(q^*, p^*)$ are rarely into regions of low density for a well
-  tuned chain.
+\item \textbf{Propose new momentum variables.} New momentum
+  values, $p^*$ are generated from a normal distribution
+  based on the estimated covariance matrix, and independent
+  of the current position variables.
+\item \textbf{Propose new position variables.} Given the
+  current state of the system, $(q,p^*)$, new position
+  variables $q^*$ are generated with the leapfrog algorithm
+  using \texttt{hynstep} \footnote{Actually a random
+    integers is generated around this value} steps and a
+  step size of \texttt{hyeps}.
+\item \textbf{Accept or reject the new state.} The new state
+  is then updated with a Metropolis step (i.e. accepted or
+  rejected) in the same way as above. Acceptance is expected
+  to be high because the proposed values $(q^*, p^*)$ are
+  rarely into regions of low density for a well tuned chain.
 \end{enumerate}
 
-A perhaps intuitive question might be: why bother with the momentum
-variables at all? One issue is that without the momentum variables, and the
-Hamiltonian dynamics in general, we would need to account for changes in
-volume in the acceptance probability (step 3 above)\cite{brooks2011}. This
-would require computing the determinant of the Jacobian matrix of the
-mapping defined by the dynamics. This Jacobian is not readily available and
-is often computationally intensive. Thus the need to adopt the Hamilton
-dynamics framework.  Hamiltonian dynamics also provides other properties
-required for an ergodic Markov chain \cite{brooks2011}.
+A perhaps intuitive question might be: why bother with the
+momentum variables at all? One issue is that without the
+momentum variables, and the Hamiltonian dynamics in general,
+we would need to account for changes in volume in the
+acceptance probability (step 3 above)\cite{brooks2011}. This
+would require computing the determinant of the Jacobian
+matrix of the mapping defined by the dynamics. This Jacobian
+is not readily available and is often computationally
+intensive. Thus the need to adopt the Hamilton dynamics
+framework.  Hamiltonian dynamics also provides other
+properties required for an ergodic Markov chain
+\cite{brooks2011}.
 
-The hybrid MCMC thus samples from the joint posterior of the position and
-momentum vectors, but ADMB discards the momentum variables and returns only
-the position variables. The user can then do inference on those samples in
-the same was as the Metropolis-Hastings method, given they come from a
-properly converged (stationary) chain.
+The hybrid MCMC thus samples from the joint posterior of the
+position and momentum vectors, but ADMB discards the
+momentum variables and returns only the position
+variables. The user can then do inference on those samples
+in the same was as the Metropolis-Hastings method, given
+they come from a properly converged (stationary) chain.
 
 \subsubsection{Arguments}
-Arguments for the hybrid algorithm are in general similar to those above,
-so we only discuss the differences. The main arguments are:
+Arguments for the hybrid algorithm are in general similar to
+those above, so we only discuss the differences. The main
+arguments are:
 \begin{table}[H]
   \centering
   \begin{tabular}[h]{|cl|}
@@ -494,40 +564,48 @@ so we only discuss the differences. The main arguments are:
   \caption{ADMB runtime arguments for the hybrid MCMC}
   \label{tab:hy_args}
 \end{table}
-Since the estimated covariance matrix is used in the algorithm, the
-\texttt{mcdiag}, \texttt{mcrb N}, and \texttt{mcmult} options above are
-also available. The \texttt{mcprobe} argument is not currently supported
-for the hybrid algorithm.
+Since the estimated covariance matrix is used in the
+algorithm, the \texttt{mcdiag}, \texttt{mcrb N}, and
+\texttt{mcmult} options above are also available. The
+\texttt{mcprobe} argument is not currently supported for the
+hybrid algorithm.
 
-Note that \texttt{mcsave N} is \textbf{not} an argument for the hybrid and
-will be ignored. Each MCMC iteration of the hybrid algorithm is saved, such
-that the user may need to thin the chain manually after running.
+Note that \texttt{mcsave N} is \textbf{not} an argument for
+the hybrid and will be ignored. Each MCMC iteration of the
+hybrid algorithm is saved, such that the user may need to
+thin the chain manually after running.
 
 \subsubsection{Tuning the hybrid algorithm}
-A tuned hybrid MCMC algorithm often provides a more efficient
-(computationally) chain than the random walk behavior of the
-Metropolis-Hastings algorithm. However, the hybrid algorithm is often much
-more difficult to tune. A thorough review of tuning techniques is beyond
-the scope of this guide, and we refer users to \cite{brooks2011} for
-further reading of more advanced tuning techniques and intuition about
-reasonable values\footnote{The ADMB algorithm works in the transformed
-  space, via the Cholesky decomposition of the estimated covariance matrix,
-  making intuition about tuning even more difficult}.
+A tuned hybrid MCMC algorithm often provides a more
+efficient (computationally) chain than the random walk
+behavior of the Metropolis-Hastings algorithm. However, the
+hybrid algorithm is often much more difficult to tune. A
+thorough review of tuning techniques is beyond the scope of
+this guide, and we refer users to \cite{brooks2011} for
+further reading of more advanced tuning techniques and
+intuition about reasonable values\footnote{The ADMB
+  algorithm works in the transformed space, via the Cholesky
+  decomposition of the estimated covariance matrix, making
+  intuition about tuning even more difficult}.
 
-In most practical applications the hybrid method is tuned via trial and
-error. That is, values for \texttt{hynstep} and \texttt{hyeps} are tried on
-a short chain, and the output diagnosed. ADMB uses default values of 0.1
-and 10, respectively, and these may be good starting values for most
-problems. The end goal is to find a set of tuning parameters that produces
-a well mixing chain with the fewest leapfrog steps. Figure
-\ref{fig:hybrid_grid_acf} shows the autocorrelation of a parameter from the
-simple model across different tuning parameters. Note that the top right
-and bottom left panels show very similar ACF patterns, which should not be
-a surprise when compared to the corresponding leapfrog trajectories in
-\ref{fig:hybrid_grid_trace}. Further, from that figure we can see that a
-chain with a \texttt{hynstep} of 100 cycles the surface many times, and
-although it mixes well, this value could probably be lowered and the
-runtime reduced without affecting mixing. This is somewhat analagous to
+In most practical applications the hybrid method is tuned
+via trial and error. That is, values for \texttt{hynstep}
+and \texttt{hyeps} are tried on a short chain, and the
+output diagnosed. ADMB uses default values of 0.1 and 10,
+respectively, and these may be good starting values for most
+problems. The end goal is to find a set of tuning parameters
+that produces a well mixing chain with the fewest leapfrog
+steps. Figure \ref{fig:hybrid_grid_acf} shows the
+autocorrelation of a parameter from the simple model across
+different tuning parameters. Note that the top right and
+bottom left panels show very similar ACF patterns, which
+should not be a surprise when compared to the corresponding
+leapfrog trajectories in
+\ref{fig:hybrid_grid_trace}. Further, from that figure we
+can see that a chain with a \texttt{hynstep} of 100 cycles
+the surface many times, and although it mixes well, this
+value could probably be lowered and the runtime reduced
+without affecting mixing. This is somewhat analagous to
 having a higher thinning rate than is necessary.
 
 \begin{figure}[h]
@@ -538,24 +616,29 @@ having a higher thinning rate than is necessary.
   \label{fig:hybrid_grid_acf}
 \end{figure}
 
-A word of caution regarding the tuning of hybrid chains. For most values of
-\texttt{hyeps} the leapfrog trajectories will be ``stable'' in that they
-will cycle around a contour of $H$ (this can be seen in the last panel in
-figure \ref{fig:hybrid_grid_trace}). However, for values of \texttt{hyeps}
-that are too large, the method becomes unstable and trajectories diverge
-($H$ is no longer constant), causing the algorithm to propose parameters
-with low density which are then rejected. Unfortunately for real problems,
-the value of \texttt{hyeps} that is``too big'' can vary across the
-posterior space.  Another issue that can arise is that certain combinations
-of tuning parameters can lead to near periodicity. That is, the leapfrog
-trajectory ends very near to where it began, after one or more steps. In
-pathological cases it could cycle forever and never be able to sample
-regions of the posterior space (i.e. not be ergodic). In practice near
-periodicity will make for a very slow mixing chain. ADMB mitigates this
-possibility by randomly drawing the number of leapfrog steps at each MCMC
-iteration. However, the user should still be aware of these potential
-issues and be vigilant in diagnosing the mixing behavior of a hybrid
-chain. Samples from an MCMC chain that is not in equilibrium, or has other
+A word of caution regarding the tuning of hybrid chains. For
+most values of \texttt{hyeps} the leapfrog trajectories will
+be ``stable'' in that they will cycle around a contour of
+$H$ (this can be seen in the last panel in figure
+\ref{fig:hybrid_grid_trace}). However, for values of
+\texttt{hyeps} that are too large, the method becomes
+unstable and trajectories diverge ($H$ is no longer
+constant), causing the algorithm to propose parameters with
+low density which are then rejected. Unfortunately for real
+problems, the value of \texttt{hyeps} that is``too big'' can
+vary across the posterior space.  Another issue that can
+arise is that certain combinations of tuning parameters can
+lead to near periodicity. That is, the leapfrog trajectory
+ends very near to where it began, after one or more
+steps. In pathological cases it could cycle forever and
+never be able to sample regions of the posterior space
+(i.e. not be ergodic). In practice near periodicity will
+make for a very slow mixing chain. ADMB mitigates this
+possibility by randomly drawing the number of leapfrog steps
+at each MCMC iteration. However, the user should still be
+aware of these potential issues and be vigilant in
+diagnosing the mixing behavior of a hybrid chain. Samples
+from an MCMC chain that is not in equilibrium, or has other
 issues, can lead to incorrect inference.
 
 \bibliographystyle{unsrt}
