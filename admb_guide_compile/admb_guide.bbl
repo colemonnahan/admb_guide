@@ -1,5 +1,10 @@
 \begin{thebibliography}{1}
 
+\bibitem{roberts2001}
+G.~O. Roberts and J.~S. Rosenthal.
+\newblock Optimal scaling for various metropolis-hastings algorithms.
+\newblock {\em Statistical Science}, 16(4):351--367, 2001.
+
 \bibitem{brooks2011}
 Steve Brooks, Andrew Gelman, Galin Jones, and Xiao-Li Meng.
 \newblock {\em Handbook of Markov Chain Monte Carlo}.
