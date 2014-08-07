@@ -79,8 +79,66 @@
 \tableofcontents
 
 \section{Bayesian inference}
-A short intro with citations to better papers. Maybe merge
-in what is currently shown?
+In general, Bayesian inference is used to quantify the full
+range of uncertainty around both models and parameter values
+and incorporate findings from historical studies. In a
+fisheries specific context, Bayesian inference allows
+scientists to investigate the consequences of alternative
+management strategies.
+
+\section{MCMC}
+Markov chain Monte Carlo (MCMC) is a common algorithm used
+to sample and compute expectations with respect to complex
+and high-dimensional probability distributions.  ADMB
+implements two different MCMC algorithms: the ubiqitous
+Metropolis-Hastings and a Hamiltonian (or ``hybrid'')
+sampler, both described in this section.
+
+John Kruschke in ``Doing Bayesian Data Analysis: A Tutorial
+with R and BUGS'' has a simple example that illustrates the
+mechanics of the Metropolis-Hastings algorithm. A politician
+lives on a long chain of islands. The politician's goal is
+to stay in the public eye by traveling to each island
+proportional to their relative population. In other words,
+he will spend more time on highly populated islands and less
+time on less populated islands. He flips a fair coin to
+propose a move to an island east or west of his current
+location. If the proposed island has a higher population
+than his current island he moves. If the proposed island has
+a smaller population than his current island he will only
+move with a probability $P_{proposed} / P_{current}$ where
+$P_{proposed}$ is the population of the proposed island and
+$P_{current}$ is the population of the current island.
+
+All MCMC algorithms work in this same general way. The user
+will start the algorithm at an arbitrary starting point, and
+the algorithm will propose new parameter sets or states. The
+algorithm will propose new states (i.e. parameter draws) and
+move to that state, or not, depending on its density
+relative to the current state. Just like the politician, the
+algorithm will spend most of the time in states with high
+densities.
+
+MCMC algorithms typically need a ``burn-in'' period,
+especially if the starting point is in a region with low
+density. The goal of a MCMC algorithm is to explore areas
+with the highest probabilities in a distribution. It will
+perhaps take thousands of draws for the algorithm to find
+the peaks of the distribution, especially if it starts in a
+low density region. Discarding these intial draws allows the
+algorithm to explore the main regions of the target
+distribution.
+
+Autocorrelated MCMC samples are close together and probably
+not a true represenation of the underlying
+distribution. Samples are typically ``thinned'' every
+nth-step to generate uncorrelated samples. The tradeoff is
+that excessive thinning increases run-time for the
+algorithm.
+
+The R package \texttt{CODA} is a commonly used tool for
+checking MCMC diagnostics such as autocorrelation.
+
 \subsection{Priors}
 As with any Bayesian analysis, priors are a key component of
 the posterior surface and must be considered in ADMB as
@@ -96,7 +154,6 @@ posterior. The difference between the two is subtle, but
 there are important philosophical differences: with Bayesian
 analysis ADMB is integrating across the parameter space,
 while the likelihood framework focuses on maximization.
-
 
 The way MCMC works in ADMB, users need not explicitly define
 and incorporate priors into their model. In this case

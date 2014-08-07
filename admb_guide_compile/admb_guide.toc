@@ -1,23 +1,24 @@
 \contentsline {section}{\numberline {1}Bayesian inference}{1}
-\contentsline {subsection}{\numberline {1.1}Priors}{1}
-\contentsline {section}{\numberline {2}Markov chain Monte Carlo}{2}
-\contentsline {subsection}{\numberline {2.1}Workflow}{2}
-\contentsline {subsection}{\numberline {2.2}MCMC Phases}{2}
-\contentsline {subsection}{\numberline {2.3}Output files}{3}
-\contentsline {subsubsection}{\numberline {2.3.1}Meta data: The hst file}{3}
-\contentsline {subsubsection}{\numberline {2.3.2}Parameter draws: The psv file}{3}
-\contentsline {subsubsection}{\numberline {2.3.3}Derived quantity draws}{3}
-\contentsline {subsection}{\numberline {2.4}Restarting a chain}{4}
-\contentsline {subsection}{\numberline {2.5}Convergence diagnostics}{4}
-\contentsline {subsection}{\numberline {2.6}Starting values and scaling}{4}
-\contentsline {subsection}{\numberline {2.7}Metropolis-Hastings}{4}
-\contentsline {subsubsection}{\numberline {2.7.1}Algorithm}{4}
-\contentsline {subsubsection}{\numberline {2.7.2}MCMC Arguments}{5}
-\contentsline {subsubsection}{\numberline {2.7.3}mcprobe}{5}
-\contentsline {subsubsection}{\numberline {2.7.4}mcrb}{5}
-\contentsline {subsubsection}{\numberline {2.7.5}Example MCMC}{5}
-\contentsline {subsubsection}{\numberline {2.7.6}User-supplied correlation matrix}{6}
-\contentsline {subsection}{\numberline {2.8}Hyrbid}{6}
-\contentsline {subsubsection}{\numberline {2.8.1}Algorithm}{6}
-\contentsline {subsubsection}{\numberline {2.8.2}Arguments}{9}
-\contentsline {subsubsection}{\numberline {2.8.3}Tuning the hybrid algorithm}{9}
+\contentsline {section}{\numberline {2}MCMC}{1}
+\contentsline {subsection}{\numberline {2.1}Priors}{2}
+\contentsline {section}{\numberline {3}Markov chain Monte Carlo}{2}
+\contentsline {subsection}{\numberline {3.1}Workflow}{3}
+\contentsline {subsection}{\numberline {3.2}MCMC Phases}{3}
+\contentsline {subsection}{\numberline {3.3}Output files}{4}
+\contentsline {subsubsection}{\numberline {3.3.1}Meta data: The hst file}{4}
+\contentsline {subsubsection}{\numberline {3.3.2}Parameter draws: The psv file}{4}
+\contentsline {subsubsection}{\numberline {3.3.3}Derived quantity draws}{4}
+\contentsline {subsection}{\numberline {3.4}Restarting a chain}{4}
+\contentsline {subsection}{\numberline {3.5}Convergence diagnostics}{4}
+\contentsline {subsection}{\numberline {3.6}Starting values and scaling}{4}
+\contentsline {subsection}{\numberline {3.7}Metropolis-Hastings}{5}
+\contentsline {subsubsection}{\numberline {3.7.1}Algorithm}{5}
+\contentsline {subsubsection}{\numberline {3.7.2}MCMC Arguments}{5}
+\contentsline {subsubsection}{\numberline {3.7.3}mcprobe}{5}
+\contentsline {subsubsection}{\numberline {3.7.4}mcrb}{5}
+\contentsline {subsubsection}{\numberline {3.7.5}Example MCMC}{6}
+\contentsline {subsubsection}{\numberline {3.7.6}User-supplied correlation matrix}{7}
+\contentsline {subsection}{\numberline {3.8}Hyrbid}{7}
+\contentsline {subsubsection}{\numberline {3.8.1}Algorithm}{7}
+\contentsline {subsubsection}{\numberline {3.8.2}Arguments}{10}
+\contentsline {subsubsection}{\numberline {3.8.3}Tuning the hybrid algorithm}{10}
