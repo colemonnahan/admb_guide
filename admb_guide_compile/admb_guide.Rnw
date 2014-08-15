@@ -36,7 +36,6 @@ fisheries specific context, Bayesian inference allows
 scientists to investigate the consequences of alternative
 management strategies.
 
-\section{MCMC}
 Markov chain Monte Carlo (MCMC) is a common algorithm used
 to sample and compute expectations with respect to complex
 and high-dimensional probability distributions.  ADMB
@@ -89,7 +88,7 @@ algorithm.
 The R package \texttt{CODA} is a commonly used tool for
 checking MCMC diagnostics such as autocorrelation.
 
-\subsection{Priors}
+\section{Priors}
 As with any Bayesian analysis, priors are a key component of
 the posterior surface and must be considered in ADMB as
 well. The posterior density is proportional to the product
