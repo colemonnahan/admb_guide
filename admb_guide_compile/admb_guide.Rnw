@@ -28,7 +28,7 @@
 
 \tableofcontents
 
-\section{Bayesian inference}
+\section{Bayesian inference in ADMB}
 In general, Bayesian inference is used to quantify the full
 range of uncertainty around both models and parameter values
 and incorporate findings from historical studies. In a
@@ -371,7 +371,7 @@ options.
   \begin{tabular}[h]{|cl|}
     \hline
     \texttt{-mcmc N} & Run $N$ MCMC iterations\\
-    \texttt{-mcsave N} & Save every $N$th MCMC iterations\\
+    \texttt{-mcsave N} & Save every $N$th MCMC iteration\\
     \texttt{-mcscale N} & Rescale step size for first $N$ iterations\\
     \texttt{-mcmult N} & Rescale the covariance matrix\\
     \texttt{-mcpin <file>} & Start algorithm from values in <file>\\
@@ -388,7 +388,23 @@ options.
   \caption{ADMB runtime arguments for the Metropolis-Hastings MCMC}
   \label{tab:mh_args}
 \end{table}
+\subsection{Console output}
+\begin{verbatim}
+Initial seed value -36519
+-14.9642 -14.9642
+ mcmc sim 1  acceptance rate 0 0
+-15.4843 -15.4843
+ mcmc sim 201  acceptance rate 0.517413 0.52
+increasing step size -1.32761
+-15.7798 -15.7798
+ mcmc sim 401  acceptance rate 0.428928 0.34
+0.4
+In write empirical covariance matrix
+ 0.0108749 0.579702
 
+Process simple -mcmc 500 finished
+
+\end{verbatim}
 \subsection{Example MCMC}
 We demonstrate these concepts using the ``simple'' model
 packaged with ADMB, which is a contrived two parameter
@@ -613,10 +629,11 @@ surface. By doing so, it (in theory) only proposes states
 that are very likely to be accepted, and as such will have
 less autocorrelation.
 
-In practice, a well tuned hybrid chain will need less
+In some models, a well tuned hybrid chain will need less
 thinning, if any at all, and run faster. The downside of the
 algorithm is that it is more difficult to tune than the MH
 algorithm.
+
 \subsection{Algorithm}
 The algorithm utilizes the properties of a physical system
 known as Hamiltonian dynamics. Hamiltonian dynamics, while
