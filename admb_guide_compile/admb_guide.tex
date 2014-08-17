@@ -68,7 +68,7 @@
 
 \begin{document}
 %% \SweaveOpts{concordance=TRUE}
-\title{A guide for Bayesian analysis in ADMB}
+\title{A guide for Bayesian analysis in AD Model Builder}
 \author{Cole C. Monnahan | monnahc@uw.edu}
 \date{\today{}}
 \maketitle
@@ -78,7 +78,11 @@
 
 \tableofcontents
 
-\section{Bayesian inference}
+\section{Introduction}
+-What ADMB is and good at
+-Add short paragraph about r2admb package
+-encourage further work on this document
+\section{Bayesian inference in ADMB}
 In general, Bayesian inference is used to quantify the full
 range of uncertainty around both models and parameter values
 and incorporate findings from historical studies. In a
@@ -86,7 +90,6 @@ fisheries specific context, Bayesian inference allows
 scientists to investigate the consequences of alternative
 management strategies.
 
-\section{MCMC}
 Markov chain Monte Carlo (MCMC) is a common algorithm used
 to sample and compute expectations with respect to complex
 and high-dimensional probability distributions.  ADMB
@@ -139,7 +142,7 @@ algorithm.
 The R package \texttt{CODA} is a commonly used tool for
 checking MCMC diagnostics such as autocorrelation.
 
-\subsection{Priors}
+\section{Priors}
 As with any Bayesian analysis, priors are a key component of
 the posterior surface and must be considered in ADMB as
 well. The posterior density is proportional to the product
@@ -179,7 +182,7 @@ parameter $a$ could be added as
 \texttt{f+=pow((a-5),2)/(2*1*1)}, where the constants have
 been dropped.
 
-\section{Markov chain Monte Carlo}
+\section{Markov chain Monte Carlo (MCMC) in ADMB}
 Markov chain Monte Carlo (MCMC) is a common algorithm used
 to sample from arbitrary, unscaled posterior
 distributions. ADMB implements two different MCMC
@@ -373,9 +376,9 @@ independent?
 \subsection{Starting values}\label{sec:startvals}
 For many Bayesian software platforms, the MCMC algorithms
 are started at user-chosen or arbitrary places. ADMB has the
-advantage that it can robustly estimate the maximum
-posterior mode and the covariance at that point. This
-information is very valuable in initializing the MCMC chain.
+advantage that it can robustly estimate the posterior mode
+and the covariance at that point. This information is very
+valuable in initializing the MCMC chain.
 
 Specifically, an MCMC chain starts from the posterior mode
 and uses the estimated covariance matrix in its proposed
@@ -438,7 +441,7 @@ options.
   \begin{tabular}[h]{|cl|}
     \hline
     \texttt{-mcmc N} & Run $N$ MCMC iterations\\
-    \texttt{-mcsave N} & Save every $N$th MCMC iterations\\
+    \texttt{-mcsave N} & Save every $N$th MCMC iteration\\
     \texttt{-mcscale N} & Rescale step size for first $N$ iterations\\
     \texttt{-mcmult N} & Rescale the covariance matrix\\
     \texttt{-mcpin <file>} & Start algorithm from values in <file>\\
@@ -449,13 +452,34 @@ options.
     \texttt{-mcdiag} & Use a diagonal covariance matrix\\
     \texttt{-mcnoscale} & Do not scale the algorithm during\\
     \texttt{-mcscale N} & Scale the algorithm during the
-    first $N$ iterations\\
+        first $N$ iterations\\
+    \texttt{-mcu} & Use a uniform distribution as proposal distribution.\\
     \hline
   \end{tabular}
   \caption{ADMB runtime arguments for the Metropolis-Hastings MCMC}
   \label{tab:mh_args}
 \end{table}
-
+\subsection{Console output}
+When running an MCMC chain from the console, the output
+similar to the following will appear.
+\begin{verbatim}
+Initial seed value -36519
+-14.9642 -14.9642
+ mcmc sim 1  acceptance rate 0 0
+-15.4843 -15.4843
+ mcmc sim 201  acceptance rate 0.517413 0.52
+increasing step size -1.32761
+-15.7798 -15.7798
+ mcmc sim 401  acceptance rate 0.428928 0.34
+\end{verbatim}
+ADMB prints the random seed used, and then the negative
+objective function value twice. In this case scaling is
+increased after the first 200 iterations (proposing more
+distant values). This is followed by the log of the
+determinant of the Choleski decomposed covariance matrix. In
+some cases this information may be useful for
+troubleshooting, but for most practical purposes it can be
+ignored.
 \subsection{Example MCMC}
 We demonstrate these concepts using the ``simple'' model
 packaged with ADMB, which is a contrived two parameter
@@ -472,7 +496,7 @@ thinning by specifying \texttt{mcsave}=1 (figure
   \label{fig:simple1}
 \end{figure}
 The MCMC chain is clearly autocorrelated from the acf plots
-and the traces (not show). This MCMC needs to be tuned to
+and the traces (not show). This chain needs to be tuned to
 achieve independent samples.
 \subsection{Tuning the MH algorithm}
 The goal of ``tuning'' the algorithm is to obtain
@@ -528,7 +552,10 @@ up or down, depending on the current acceptance rate, during
 the first part of the chain. By default, it scales during
 the first 500 iterations (and prints this to screen), but
 the user can specify this with \texttt{mcscale N} or turn
-off scaling with \texttt{mcnoscale}.
+off scaling with \texttt{mcnoscale}. ADMB rescales the
+covariance matrix every 200 iterations until the acceptance
+rate is between 0.15 and 0.4, or the scaling period is
+exceeded.
 
 In practice, the defaults work for many models, but the user
 may want to extend the scaling period for some models. Draws
@@ -554,7 +581,7 @@ values being more Cauchy (fatter tails) and lower being
 thinner tails. The range of valid inputs is 0.00001 to
 0.499, and if no value is supplied a default of 0.05 is
 used\footnote{See the function for more information:
-  \url{http://admb-project.org/documentation/api/prmonte_8cpp_source.html#l00014}}
+  \url{http://admb-project.org/documentation/api/prmonte\_8cpp\_source.html\#l00014}}
 
 Figure \ref{fig:mcgrope_example} shows the shape of the
 proposal distribution. Note the extremely fat tails, and
@@ -640,7 +667,7 @@ impact of the \texttt{mcrb} algorithm.
   \label{fig:mcrb}
 \end{figure}
 
-\subsubsection{User-supplied covariance matrix}
+\subsubsection{User-supplied covariance matrix}\label{sec:user.cov}
 The \texttt{mcrb} option is a quick way to try lowering the
 correlation between some parameters. A more flexible (and
 transparent) option is to provide ADMB with a covariance
@@ -680,10 +707,11 @@ surface. By doing so, it (in theory) only proposes states
 that are very likely to be accepted, and as such will have
 less autocorrelation.
 
-In practice, a well tuned hybrid chain will need less
+In some models, a well tuned hybrid chain will need less
 thinning, if any at all, and run faster. The downside of the
 algorithm is that it is more difficult to tune than the MH
 algorithm.
+
 \subsection{Algorithm}
 The algorithm utilizes the properties of a physical system
 known as Hamiltonian dynamics. Hamiltonian dynamics, while
@@ -901,8 +929,105 @@ diagnosing the mixing behavior of a hybrid chain. Samples
 from an MCMC chain that is not in equilibrium, or has other
 issues, can lead to incorrect inference.
 
-\bibliographystyle{unsrt}
-\bibliography{admb_guide}
+\section{An example with non-linear posterior}
+The simple example used above had the characteristic that
+the parameters were correlated, but this correlation was
+constant across the entire posterior. Thus the same proposal
+distribution worked well throughout the parameter space.
+
+Here we look at another example with two parameters, but
+where the correlation changes. This example uses contrived
+data and a discrete theta-logistic model. This is a classic
+example of a simple model which can lead to convergence
+issues for MCMC chains.
+
+We first run it with the default settings and a thinning
+rate of \texttt{mcsave}=100.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=5in]{../plots/logistic_mh.pdf}
+  \caption{The logistic model with 1 in 100 samples saved
+    using the MH algorithm and estimated covariance matrix
+    (red ellipse).}
+  \label{fig:logistic_mh}
+\end{figure}
+We can immediately see the autocorrelation remains high even
+after thinning. One option would be to increase the thinning
+rate. Another is to try a lower correlation. From this
+initial run we calculate the empirical covariance matrix and
+rerun the chain with this option (see \ref{sec:user.cov}).
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=5in]{../plots/logistic_mh2.pdf}
+  \caption{The logistic model with 1 in 100 samples saved
+    using the MH algorithm and empirical covariance matrix
+    (blue ellipse). Note the improvement in acf compared to
+    \ref{fig:logistic_mh}.}
+  \label{fig:logistic_mh2}
+\end{figure}
+Here we see a substantial improvement in the chain
+performance by changing the proposal distribution of the
+Metropolis-Hastings algorithm. This option is far superior
+to increasing the thinning rate because it takes no more
+time to run.
+
+We can also try the hybrid algorithm on this model, starting
+with the default parameters of \texttt{hyeps} and
+\texttt{hynstep} of 0.1 and 10, and using the estimated
+covariance matrix.
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=5in]{../plots/logistic_hy.pdf}
+  \caption{The logistic model using the hybrid method with
+    default tuning parameters and the estimated covariance matrix
+    (red ellipse).}
+  \label{fig:logistic_hy}
+\end{figure}
+The autocorrelation is high, suggesting we need to tune the
+chain. First we try the same as above, and instead use the
+empirical covariance matrix.
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=5in]{../plots/logistic_hy.pdf}
+  \caption{The logistic model using the hybrid method with
+    default tuning parameters and the empirical covariance matrix
+    (blue ellipse).}
+  \label{fig:logistic_hy2}
+\end{figure}
+This chain is performing better, but is still
+autocorrelated. A little trial and error the combination of
+\texttt{hyeps 0.05} and \texttt{hynstep 100} performed
+significantly better, and similarly to the tuned MH chain in
+\ref{fig:logistic_mh2}.
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=5in]{../plots/logistic_hy3.pdf}
+  \caption{The logistic model using the hybrid method and
+    \texttt{hyeps 0.05} and \texttt{hynstep 100} for tuning
+    parameters and the empirical covariance matrix (blue
+    ellipse).}
+  \label{fig:logistic_hy3}
+\end{figure}
+
+Here the hybrid and MH perform similarly with the same
+number of function evaluations per sample (\texttt{hynstep}
+and \texttt{mcsave}, respectively). With a little trial and
+error, and visual exploration of the posterior surface it
+was fairly straightforward to improve on the default
+performance. It is likely possible to further refine the
+hybrid algorithm to outperform the MH, but it is not clear
+which of the parameters to start with. The difficulty in
+tuning \bibliographystyle{unsrt} \bibliography{admb_guide}.
+
+For many problems, the default MH algorithm will work well
+and require no tuning beyond a modest thinning rate. We
+encourage users to start with this algorithm, and explore
+alternatives only if computational efficiency is restrictive
+for the needs at hand. The hybrid method is more
+sophisticated, but much more difficult to tune, and we
+recommend it as an option only when the MH is struggling.
 
 \end{document}
 

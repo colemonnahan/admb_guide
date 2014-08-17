@@ -14,11 +14,17 @@
      "fig:mcgrope_example"
      "sec:mcrb"
      "fig:mcrb"
+     "sec:user.cov"
      "sec:hybrid"
      "eq:motion"
      "fig:hybrid_grid_trace"
      "tab:hy_args"
-     "fig:hybrid_grid_acf")
+     "fig:hybrid_grid_acf"
+     "fig:logistic_mh"
+     "fig:logistic_mh2"
+     "fig:logistic_hy"
+     "fig:logistic_hy2"
+     "fig:logistic_hy3")
     (TeX-run-style-hooks
      "hyperref"
      "float"

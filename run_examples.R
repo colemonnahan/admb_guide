@@ -169,14 +169,19 @@ pairs_admb(admb_mcmc=logistic.mh2,  diag="acf")
 dev.copy2pdf(width=width, height=height,file="Plots/logistic_mh2.pdf")
 ## Try the hybrid algorithm
 logistic.hy <- run_admb_mcmc('examples/logistic', 'logistic', Nout=1000, mcsave=1,
-                          burn.in=1, hybrid=TRUE, hyeps=.05, hynstep=100)
+                          burn.in=1, hybrid=TRUE, hyeps=.1, hynstep=10)
 pairs_admb(admb_mcmc=logistic.hy,  diag="acf")
 dev.copy2pdf(width=width, height=height,file="Plots/logistic_hy.pdf")
 logistic.hy2 <- run_admb_mcmc('examples/logistic', 'logistic', Nout=1000, mcsave=1,
-                          burn.in=1, hybrid=TRUE, hyeps=.05, hynstep=100,
+                          burn.in=1, hybrid=TRUE, hyeps=.1, hynstep=10,
                               cov.user=cov(logistic.mh$mcmc))
 pairs_admb(admb_mcmc=logistic.hy2,  diag="acf")
 dev.copy2pdf(width=width, height=height,file="Plots/logistic_hy2.pdf")
+logistic.hy3 <- run_admb_mcmc('examples/logistic', 'logistic', Nout=1000, mcsave=1,
+                          burn.in=1, hybrid=TRUE, hyeps=.05, hynstep=100,
+                              cov.user=cov(logistic.mh$mcmc))
+pairs_admb(admb_mcmc=logistic.hy3,  diag="acf")
+dev.copy2pdf(width=width, height=height,file="Plots/logistic_hy3.pdf")
 
 ## Run more of the examples as tests
 write.table(x=c(1,1,1,1), file='examples/finance/phases.dat', row.names=FALSE,
