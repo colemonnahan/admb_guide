@@ -17,7 +17,7 @@
 \providecommand\HyField@AuxAddToFields[1]{}
 \providecommand\HyField@AuxAddToCoFields[2]{}
 \@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{2}{section.1}}
-\@writefile{toc}{\contentsline {section}{\numberline {2}Bayesian inference in ADMB}{2}{section.2}}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Bayesian inference}{2}{section.2}}
 \@writefile{toc}{\contentsline {section}{\numberline {3}Priors}{2}{section.3}}
 \@writefile{toc}{\contentsline {section}{\numberline {4}Markov chain Monte Carlo (MCMC) in ADMB}{3}{section.4}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Workflow}{3}{subsection.4.1}}
@@ -68,25 +68,27 @@
 \newlabel{fig:hybrid_grid_trace}{{5}{12}{Leapfrog trajectories for different sets of tuning parameters. The posterior surface is shown as contours, and the posterior mode as a red point. The filled black point is the starting point, and the arrows show the trajectory of the leapfrog steps, ending at the open circle representing the proposed set of parameters}{figure.5}{}}
 \citation{brooks2011}
 \citation{brooks2011}
-\citation{brooks2011}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Leapfrog projections for different random draws from $U$.}}{13}{figure.6}}
+\newlabel{fig:hybrid_seeds}{{6}{13}{Leapfrog projections for different random draws from $U$}{figure.6}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Arguments}{13}{subsection.6.2}}
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces ADMB runtime arguments for the hybrid MCMC}}{13}{table.2}}
-\newlabel{tab:hy_args}{{2}{13}{ADMB runtime arguments for the hybrid MCMC}{table.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Tuning the hybrid algorithm}{13}{subsection.6.3}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces The autocorrelation of the parameter $a$ from the simple model across different tuning parameters of the hybrid method.}}{14}{figure.6}}
-\newlabel{fig:hybrid_grid_acf}{{6}{14}{The autocorrelation of the parameter $a$ from the simple model across different tuning parameters of the hybrid method}{figure.6}{}}
+\citation{brooks2011}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces ADMB runtime arguments for the hybrid MCMC}}{14}{table.2}}
+\newlabel{tab:hy_args}{{2}{14}{ADMB runtime arguments for the hybrid MCMC}{table.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Tuning the hybrid algorithm}{14}{subsection.6.3}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces The autocorrelation of the parameter $a$ from the simple model across different tuning parameters of the hybrid method.}}{15}{figure.7}}
+\newlabel{fig:hybrid_grid_acf}{{7}{15}{The autocorrelation of the parameter $a$ from the simple model across different tuning parameters of the hybrid method}{figure.7}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {7}An example with non-linear posterior}{15}{section.7}}
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces The logistic model with 1 in 100 samples saved using the MH algorithm and estimated covariance matrix (red ellipse).}}{16}{figure.8}}
+\newlabel{fig:logistic_mh}{{8}{16}{The logistic model with 1 in 100 samples saved using the MH algorithm and estimated covariance matrix (red ellipse)}{figure.8}{}}
 \bibstyle{unsrt}
 \bibdata{admb_guide}
-\@writefile{toc}{\contentsline {section}{\numberline {7}An example with non-linear posterior}{15}{section.7}}
-\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces The logistic model with 1 in 100 samples saved using the MH algorithm and estimated covariance matrix (red ellipse).}}{15}{figure.7}}
-\newlabel{fig:logistic_mh}{{7}{15}{The logistic model with 1 in 100 samples saved using the MH algorithm and estimated covariance matrix (red ellipse)}{figure.7}{}}
 \bibcite{roberts2001}{1}
 \bibcite{brooks2011}{2}
-\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces The logistic model with 1 in 100 samples saved using the MH algorithm and empirical covariance matrix (blue ellipse). Note the improvement in acf compared to \ref  {fig:logistic_mh}.}}{16}{figure.8}}
-\newlabel{fig:logistic_mh2}{{8}{16}{The logistic model with 1 in 100 samples saved using the MH algorithm and empirical covariance matrix (blue ellipse). Note the improvement in acf compared to \ref {fig:logistic_mh}}{figure.8}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces The logistic model using the hybrid method with default tuning parameters and the estimated covariance matrix (red ellipse).}}{17}{figure.9}}
-\newlabel{fig:logistic_hy}{{9}{17}{The logistic model using the hybrid method with default tuning parameters and the estimated covariance matrix (red ellipse)}{figure.9}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces The logistic model using the hybrid method with default tuning parameters and the empirical covariance matrix (blue ellipse).}}{17}{figure.10}}
-\newlabel{fig:logistic_hy2}{{10}{17}{The logistic model using the hybrid method with default tuning parameters and the empirical covariance matrix (blue ellipse)}{figure.10}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces The logistic model using the hybrid method and \texttt  {hyeps 0.05} and \texttt  {hynstep 100} for tuning parameters and the empirical covariance matrix (blue ellipse).}}{18}{figure.11}}
-\newlabel{fig:logistic_hy3}{{11}{18}{The logistic model using the hybrid method and \texttt {hyeps 0.05} and \texttt {hynstep 100} for tuning parameters and the empirical covariance matrix (blue ellipse)}{figure.11}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces The logistic model with 1 in 100 samples saved using the MH algorithm and empirical covariance matrix (blue ellipse). Note the improvement in acf compared to \ref  {fig:logistic_mh}.}}{17}{figure.9}}
+\newlabel{fig:logistic_mh2}{{9}{17}{The logistic model with 1 in 100 samples saved using the MH algorithm and empirical covariance matrix (blue ellipse). Note the improvement in acf compared to \ref {fig:logistic_mh}}{figure.9}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces The logistic model using the hybrid method with default tuning parameters and the estimated covariance matrix (red ellipse).}}{18}{figure.10}}
+\newlabel{fig:logistic_hy}{{10}{18}{The logistic model using the hybrid method with default tuning parameters and the estimated covariance matrix (red ellipse)}{figure.10}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces The logistic model using the hybrid method with default tuning parameters and the empirical covariance matrix (blue ellipse).}}{18}{figure.11}}
+\newlabel{fig:logistic_hy2}{{11}{18}{The logistic model using the hybrid method with default tuning parameters and the empirical covariance matrix (blue ellipse)}{figure.11}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces The logistic model using the hybrid method and \texttt  {hyeps 0.05} and \texttt  {hynstep 100} for tuning parameters and the empirical covariance matrix (blue ellipse).}}{19}{figure.12}}
+\newlabel{fig:logistic_hy3}{{12}{19}{The logistic model using the hybrid method and \texttt {hyeps 0.05} and \texttt {hynstep 100} for tuning parameters and the empirical covariance matrix (blue ellipse)}{figure.12}{}}

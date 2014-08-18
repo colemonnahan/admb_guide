@@ -65,7 +65,6 @@
 %% % The above is supposed to enable inline code highlighting using \Sexpr{},
 %% % but i can't get it to work; just , does the same thing as \texttt{}. My tester is on line 58
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
-
 \begin{document}
 %% \SweaveOpts{concordance=TRUE}
 \title{A guide for Bayesian analysis in AD Model Builder}
@@ -79,10 +78,11 @@
 \tableofcontents
 
 \section{Introduction}
+-What this guide is
 -What ADMB is and good at
 -Add short paragraph about r2admb package
 -encourage further work on this document
-\section{Bayesian inference in ADMB}
+\section{Bayesian inference}
 In general, Bayesian inference is used to quantify the full
 range of uncertainty around both models and parameter values
 and incorporate findings from historical studies. In a
@@ -198,8 +198,10 @@ vectors which can be thinned to produce independent samples
 from the posterior distribution of interest.
 
 \subsection{Workflow}
-The following steps outline the basic workflow typically
-used for conducting a MCMC in ADMB.
+The R package \texttt{R2admb} contains some useful functions
+for streamlining the workflow of MCMC in ADMB. For users who
+wish to have more manual control, the following steps
+outline a typical workflow.
 \begin{enumerate}
 \item Build, run, and verify an ADMB model. This model must
   explicitly include the contribution of the priors to the
@@ -274,7 +276,7 @@ for MCMC analyses, it can be coopted for use in other types
 of analyses. In essence it is a convenient framework in
 which to get ADMB to quickly evaluate arbitrary sets of
 parameters, while only initializing once. Examples of
-alternative uses are the SIR algorithm (\ref{sec:sir}),
+alternative uses are the SIR algorithm,
 evaluating a grid of points for plotting and exploration of
 the posterior surface, or trying random parameter sets to
 investigate local minima. Getting ADMB to evaluate these
@@ -295,15 +297,13 @@ using the following commands:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{psv} \hlkwb{<-} \hlkwd{file}\hlstd{(}\hlstr{"<model name>.psv"}\hlstd{,} \hlstr{"rb"}\hlstd{)}
-\hlstd{nparams} \hlkwb{<-} \hlkwd{readBin}\hlstd{(psv,} \hlstr{"integer"}\hlstd{,} \hlkwc{n} \hlstd{=} \hlnum{1}\hlstd{)}
-\hlstd{mcmc} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlkwd{readBin}\hlstd{(psv,} \hlstr{"numeric"}\hlstd{,} \hlkwc{n} \hlstd{= nparams} \hlopt{*} \hlstd{Nout),} \hlkwc{ncol} \hlstd{= nparams,}
-    \hlkwc{byrow} \hlstd{=} \hlnum{TRUE}\hlstd{)}
-\hlkwd{close}\hlstd{(psv)}
+psv <- \hlkwd{file}(\hlstr{"<model name>.psv"}, \hlstr{"rb"})
+nparams <- \hlkwd{readBin}(psv, \hlstr{"integer"}, n=1)
+mcmc <- \hlkwd{matrix}(\hlkwd{readBin}(psv, \hlstr{"numeric"}, n=nparams*<Nout>), ncol=nparams, byrow=TRUE)
+\hlkwd{close}(psv)
 \end{alltt}
 \end{kframe}
 \end{knitrout}
-
 The first element in the \texttt{.psv} file is the number of
 active parameters in the model, which then tells R how to
 parse the following elements into parameter values. Note
@@ -336,7 +336,6 @@ screen.
 \end{alltt}
 \end{kframe}
 \end{knitrout}
-
 Then, inside the \texttt{PROCEDURE\_SECTION} the function
 can be used to write both parameters, derived quantities, or
 other information about the model.
@@ -353,7 +352,6 @@ other information about the model.
 \end{alltt}
 \end{kframe}
 \end{knitrout}
-
 
 In this case the parameters $a$ and $b$ are saved, along with the negative
 log-likelihood and product of the model parameters.  The
@@ -815,6 +813,17 @@ MCMC algorithm, as implemented in ADMB, has three steps:
   rarely into regions of low density for a well tuned chain.
 \end{enumerate}
 
+We can see the first two steps of the algorithm by randomly
+drawing values for $U$ and doing a leapfrog projection to
+the proposed parameters (Fig. \ref{fig:hybrid_seeds}).
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=5in]{../plots/hybrid_seeds.pdf}
+  \caption{Leapfrog projections for different random draws
+    from $U$.}
+  \label{fig:hybrid_seeds}
+\end{figure}
+
 A perhaps intuitive question might be: why bother with the
 momentum variables at all? One issue is that without the
 momentum variables, and the Hamiltonian dynamics in general,
@@ -1019,7 +1028,7 @@ was fairly straightforward to improve on the default
 performance. It is likely possible to further refine the
 hybrid algorithm to outperform the MH, but it is not clear
 which of the parameters to start with. The difficulty in
-tuning \bibliographystyle{unsrt} \bibliography{admb_guide}.
+tuning
 
 For many problems, the default MH algorithm will work well
 and require no tuning beyond a modest thinning rate. We
@@ -1029,6 +1038,9 @@ for the needs at hand. The hybrid method is more
 sophisticated, but much more difficult to tune, and we
 recommend it as an option only when the MH is struggling.
 
+\newpage
+\bibliographystyle{unsrt}
+\bibliography{admb_guide}.
 \end{document}
 
 

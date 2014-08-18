@@ -13,14 +13,14 @@ width <- 7; height <- 5
 ## Demonstrate run_admb_mcmc and pairs_admb. The former runs chains, and
 ## the later is similar to pairs() but works specifically for ADMB model
 ## fits.
-simple1 <- run_admb_mcmc("simple", "simple", Nout=1000, mcsave=1,
+simple1 <- run_admb_mcmc("examples/simple", "simple", Nout=1000, mcsave=1,
                          burn.in=1, verbose=TRUE)
 pairs_admb(admb_mcmc=simple1)
 dev.copy2pdf(width=width, height=height,file="Plots/simple1.pdf")
 pairs_admb(admb_mcmc=simple1,  diag="trace")
 dev.copy2pdf(width=width, height=height,file="Plots/simple1_trace.pdf")
 
-simple2 <- run_admb_mcmc("simple", "simple", Nout=1000, mcsave=100,
+simple2 <- run_admb_mcmc("examples/simple", "simple", Nout=1000, mcsave=100,
                          burn.in=1, verbose=TRUE)
 pairs_admb(admb_mcmc=simple2)
 dev.copy2pdf(width=width, height=height,file="Plots/simple2.pdf")
@@ -32,7 +32,7 @@ dev.copy2pdf(width=width, height=height,file="Plots/simple2_trace.pdf")
 
 ## Demonstrate the hybrid option with simple chain
 simple.hy1 <-
-    run_admb_mcmc("simple", "simple", Nout=1000, mcsave=1,
+    run_admb_mcmc("examples/simple", "simple", Nout=1000, mcsave=1,
                   burn.in=1, hybrid=TRUE, verb=FALSE,
                   hynstep=20, hyeps=.1)
 pairs_admb(simple.hy1)

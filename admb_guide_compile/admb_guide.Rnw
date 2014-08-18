@@ -29,10 +29,11 @@
 \tableofcontents
 
 \section{Introduction}
+-What this guide is
 -What ADMB is and good at
 -Add short paragraph about r2admb package
 -encourage further work on this document
-\section{Bayesian inference in ADMB}
+\section{Bayesian inference}
 In general, Bayesian inference is used to quantify the full
 range of uncertainty around both models and parameter values
 and incorporate findings from historical studies. In a
@@ -148,8 +149,10 @@ vectors which can be thinned to produce independent samples
 from the posterior distribution of interest.
 
 \subsection{Workflow}
-The following steps outline the basic workflow typically
-used for conducting a MCMC in ADMB.
+The R package \texttt{R2admb} contains some useful functions
+for streamlining the workflow of MCMC in ADMB. For users who
+wish to have more manual control, the following steps
+outline a typical workflow.
 \begin{enumerate}
 \item Build, run, and verify an ADMB model. This model must
   explicitly include the contribution of the priors to the
@@ -224,7 +227,7 @@ for MCMC analyses, it can be coopted for use in other types
 of analyses. In essence it is a convenient framework in
 which to get ADMB to quickly evaluate arbitrary sets of
 parameters, while only initializing once. Examples of
-alternative uses are the SIR algorithm (\ref{sec:sir}),
+alternative uses are the SIR algorithm,
 evaluating a grid of points for plotting and exploration of
 the posterior surface, or trying random parameter sets to
 investigate local minima. Getting ADMB to evaluate these
@@ -245,7 +248,7 @@ using the following commands:
 <<readInPSV, eval=FALSE>>=
 psv <- file("<model name>.psv", "rb")
 nparams <- readBin(psv, "integer", n=1)
-mcmc <- matrix(readBin(psv, "numeric", n=nparams*Nout), ncol=nparams, byrow=TRUE)
+mcmc <- matrix(readBin(psv, "numeric", n=nparams*<Nout>), ncol=nparams, byrow=TRUE)
 close(psv)
 @
 The first element in the \texttt{.psv} file is the number of
@@ -754,7 +757,7 @@ drawing values for $U$ and doing a leapfrog projection to
 the proposed parameters (Fig. \ref{fig:hybrid_seeds}).
 \begin{figure}[h]
   \centering
-  \includegrpahics[width=5in]{../plots/hybrid_seeds.pdf}
+  \includegraphics[width=5in]{../plots/hybrid_seeds.pdf}
   \caption{Leapfrog projections for different random draws
     from $U$.}
   \label{fig:hybrid_seeds}
@@ -964,7 +967,7 @@ was fairly straightforward to improve on the default
 performance. It is likely possible to further refine the
 hybrid algorithm to outperform the MH, but it is not clear
 which of the parameters to start with. The difficulty in
-tuning \bibliographystyle{unsrt} \bibliography{admb_guide}.
+tuning
 
 For many problems, the default MH algorithm will work well
 and require no tuning beyond a modest thinning rate. We
@@ -974,6 +977,9 @@ for the needs at hand. The hybrid method is more
 sophisticated, but much more difficult to tune, and we
 recommend it as an option only when the MH is struggling.
 
+\newpage
+\bibliographystyle{unsrt}
+\bibliography{admb_guide}.
 \end{document}
 
 

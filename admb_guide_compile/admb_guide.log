@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.11.17)  17 AUG 2014 15:07
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.12.18)  18 AUG 2014 13:06
 entering extended mode
 **\input admb_guide.tex
 (c:\Users\Cole\admb_guide\admb_guide_compile\admb_guide.tex
@@ -289,20 +289,20 @@ Package: upquote 2012/04/19 v1.3 upright-quote and grave-accent glyphs in verba
 tim
 )
 (c:\Users\Cole\admb_guide\admb_guide_compile\admb_guide.aux)
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 69.
-LaTeX Font Info:    ... okay on input line 69.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 69.
-LaTeX Font Info:    ... okay on input line 69.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 69.
-LaTeX Font Info:    ... okay on input line 69.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 69.
-LaTeX Font Info:    ... okay on input line 69.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 69.
-LaTeX Font Info:    ... okay on input line 69.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 69.
-LaTeX Font Info:    ... okay on input line 69.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 69.
-LaTeX Font Info:    ... okay on input line 69.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 68.
+LaTeX Font Info:    ... okay on input line 68.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 68.
+LaTeX Font Info:    ... okay on input line 68.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 68.
+LaTeX Font Info:    ... okay on input line 68.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 68.
+LaTeX Font Info:    ... okay on input line 68.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 68.
+LaTeX Font Info:    ... okay on input line 68.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 68.
+LaTeX Font Info:    ... okay on input line 68.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 68.
+LaTeX Font Info:    ... okay on input line 68.
 
 (C:\Users\Cole\AppData\Roaming\MiKTeX\2.9\tex\context\base\supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
@@ -353,7 +353,7 @@ LaTeX Font Info:    ... okay on input line 69.
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
 \AtBeginShipoutBox=\box31
-Package hyperref Info: Link coloring OFF on input line 69.
+Package hyperref Info: Link coloring OFF on input line 68.
 ("C:\Program Files\MiKTeX 2.9\tex\latex\hyperref\nameref.sty"
 Package: nameref 2012/10/27 v2.43 Cross-referencing by name of section
 
@@ -362,19 +362,19 @@ Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
 )
 \c@section@level=\count120
 )
-LaTeX Info: Redefining \ref on input line 69.
-LaTeX Info: Redefining \pageref on input line 69.
-LaTeX Info: Redefining \nameref on input line 69.
+LaTeX Info: Redefining \ref on input line 68.
+LaTeX Info: Redefining \pageref on input line 68.
+LaTeX Info: Redefining \nameref on input line 68.
 
 (c:\Users\Cole\admb_guide\admb_guide_compile\admb_guide.out)
 (c:\Users\Cole\admb_guide\admb_guide_compile\admb_guide.out)
 \@outlinefile=\write3
-LaTeX Font Info:    Try loading font information for U+msa on input line 75.
+LaTeX Font Info:    Try loading font information for U+msa on input line 74.
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\amsfonts\umsa.fd"
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 75.
+LaTeX Font Info:    Try loading font information for U+msb on input line 74.
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\amsfonts\umsb.fd"
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
@@ -384,27 +384,25 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
  [1
 
 {C:/Users/Cole/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}] [2] [3]
-
-LaTeX Warning: Reference `sec:sir' on page 4 undefined on input line 277.
-
-Package color Info: Redefining color shadecolor on input line 296.
+Package color Info: Redefining color shadecolor on input line 298.
 LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <10> not available
-(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 298.
+(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 300.
 Package color Info: Redefining color shadecolor on input line 333.
-Package color Info: Redefining color shadecolor on input line 344.
-LaTeX Font Info:    Try loading font information for OMS+cmtt on input line 346
+Package color Info: Redefining color shadecolor on input line 343.
+LaTeX Font Info:    Try loading font information for OMS+cmtt on input line 345
 .
-LaTeX Font Info:    No file OMScmtt.fd. on input line 346.
+LaTeX Font Info:    No file OMScmtt.fd. on input line 345.
+
 
 LaTeX Font Warning: Font shape `OMS/cmtt/m/n' undefined
 (Font)              using `OMS/cmsy/m/n' instead
-(Font)              for symbol `textbraceleft' on input line 346.
+(Font)              for symbol `textbraceleft' on input line 345.
 
 [4] [5] <../plots/simple1.pdf, id=200, 505.89pt x 361.35pt>
 File: ../plots/simple1.pdf Graphic file (type pdf)
 
 <use ../plots/simple1.pdf>
-Package pdftex.def Info: ../plots/simple1.pdf used on input line 491.
+Package pdftex.def Info: ../plots/simple1.pdf used on input line 489.
 (pdftex.def)             Requested size: 361.34999pt x 258.10966pt.
 
 
@@ -414,7 +412,7 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 File: ../plots/simple2.pdf Graphic file (type pdf)
 
 <use ../plots/simple2.pdf>
-Package pdftex.def Info: ../plots/simple2.pdf used on input line 528.
+Package pdftex.def Info: ../plots/simple2.pdf used on input line 526.
 (pdftex.def)             Requested size: 361.34999pt x 258.10966pt.
 
 
@@ -425,7 +423,7 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 File: ../plots/mcgrope_example.png Graphic file (type png)
 
 <use ../plots/mcgrope_example.png>
-Package pdftex.def Info: ../plots/mcgrope_example.png used on input line 592.
+Package pdftex.def Info: ../plots/mcgrope_example.png used on input line 590.
 (pdftex.def)             Requested size: 361.34999pt x 180.67455pt.
 
 
@@ -436,7 +434,7 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 File: ../plots/mcrb_examples.png Graphic file (type png)
 
 <use ../plots/mcrb_examples.png>
-Package pdftex.def Info: ../plots/mcrb_examples.png used on input line 662.
+Package pdftex.def Info: ../plots/mcrb_examples.png used on input line 660.
 (pdftex.def)             Requested size: 361.34999pt x 240.90675pt.
  [9 <c:/Users/Cole/admb_guide/plots/mcgrope_example.png>] [10 <c:/Users/Cole/ad
 mb_guide/plots/mcrb_examples.png>] [11]
@@ -444,50 +442,63 @@ mb_guide/plots/mcrb_examples.png>] [11]
 File: ../plots/hybrid_grid_trace.pdf Graphic file (type pdf)
 
 <use ../plots/hybrid_grid_trace.pdf>
-Package pdftex.def Info: ../plots/hybrid_grid_trace.pdf used on input line 784.
+Package pdftex.def Info: ../plots/hybrid_grid_trace.pdf used on input line 782.
 
 (pdftex.def)             Requested size: 361.34999pt x 258.10966pt.
- [12 <c:/Users/Cole/admb_guide/plots/hybrid_grid_trace.pdf>] [13]
-<../plots/hybrid_grid_acf.pdf, id=313, 505.89pt x 361.35pt>
+ [12 <c:/Users/Cole/admb_guide/plots/hybrid_grid_trace.pdf>] <../plots/hybrid_s
+eeds.pdf, id=300, 505.89pt x 361.35pt>
+File: ../plots/hybrid_seeds.pdf Graphic file (type pdf)
+
+<use ../plots/hybrid_seeds.pdf>
+Package pdftex.def Info: ../plots/hybrid_seeds.pdf used on input line 821.
+(pdftex.def)             Requested size: 361.34999pt x 258.10966pt.
+ [13 <c:/Users/Cole/admb_guide/plots/hybrid_seeds.pdf>] <../plots/hybrid_grid_a
+cf.pdf, id=319, 505.89pt x 361.35pt>
 File: ../plots/hybrid_grid_acf.pdf Graphic file (type pdf)
 
 <use ../plots/hybrid_grid_acf.pdf>
-Package pdftex.def Info: ../plots/hybrid_grid_acf.pdf used on input line 901.
+Package pdftex.def Info: ../plots/hybrid_grid_acf.pdf used on input line 910.
 (pdftex.def)             Requested size: 361.34999pt x 258.10966pt.
- [14 <c:/Users/Cole/admb_guide/plots/hybrid_grid_acf.pdf>] <../plots/logistic_m
-h.pdf, id=324, 505.89pt x 361.35pt>
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[14] <../plots/logistic_mh.pdf, id=328, 505.89pt x 361.35pt>
 File: ../plots/logistic_mh.pdf Graphic file (type pdf)
 
 <use ../plots/logistic_mh.pdf>
-Package pdftex.def Info: ../plots/logistic_mh.pdf used on input line 949.
+Package pdftex.def Info: ../plots/logistic_mh.pdf used on input line 958.
 (pdftex.def)             Requested size: 361.34999pt x 258.10966pt.
 
-<../plots/logistic_mh2.pdf, id=326, 505.89pt x 361.35pt>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<../plots/logistic_mh2.pdf, id=330, 505.89pt x 361.35pt>
 File: ../plots/logistic_mh2.pdf Graphic file (type pdf)
 
 <use ../plots/logistic_mh2.pdf>
-Package pdftex.def Info: ../plots/logistic_mh2.pdf used on input line 963.
+Package pdftex.def Info: ../plots/logistic_mh2.pdf used on input line 972.
 (pdftex.def)             Requested size: 361.34999pt x 258.10966pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<../plots/logistic_hy.pdf, id=329, 505.89pt x 361.35pt>
+<../plots/logistic_hy.pdf, id=333, 505.89pt x 361.35pt>
 File: ../plots/logistic_hy.pdf Graphic file (type pdf)
 
 <use ../plots/logistic_hy.pdf>
-Package pdftex.def Info: ../plots/logistic_hy.pdf used on input line 982.
+Package pdftex.def Info: ../plots/logistic_hy.pdf used on input line 991.
 (pdftex.def)             Requested size: 361.34999pt x 258.10966pt.
 File: ../plots/logistic_hy.pdf Graphic file (type pdf)
  <use ../plots/logistic_hy.pdf>
-Package pdftex.def Info: ../plots/logistic_hy.pdf used on input line 993.
+Package pdftex.def Info: ../plots/logistic_hy.pdf used on input line 1002.
 (pdftex.def)             Requested size: 361.34999pt x 258.10966pt.
 
-<../plots/logistic_hy3.pdf, id=331, 505.89pt x 361.35pt>
+<../plots/logistic_hy3.pdf, id=335, 505.89pt x 361.35pt>
 File: ../plots/logistic_hy3.pdf Graphic file (type pdf)
 
 <use ../plots/logistic_hy3.pdf>
-Package pdftex.def Info: ../plots/logistic_hy3.pdf used on input line 1006.
+Package pdftex.def Info: ../plots/logistic_hy3.pdf used on input line 1015.
 (pdftex.def)             Requested size: 361.34999pt x 258.10966pt.
 
 
@@ -496,37 +507,41 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
+[15 <c:/Users/Cole/admb_guide/plots/hybrid_grid_acf.pdf>]
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-(c:\Users\Cole\admb_guide\admb_guide_compile\admb_guide.bbl [15 <c:/Users/Cole/
-admb_guide/plots/logistic_mh.pdf>])
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1032.
- [16 <c:/Users/Cole/admb_guide/plots/logistic_mh2.pdf>] [17 <c:/Users/Cole/admb
-_guide/plots/logistic_hy.pdf>] [18 <c:/Users/Cole/admb_guide/plots/logistic_hy3
+[16 <c:/Users/Cole/admb_guide/plots/logistic_mh.pdf>]
+(c:\Users\Cole\admb_guide\admb_guide_compile\admb_guide.bbl)
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1044.
+ [17 <c:/Users/Cole/admb_guide/plots/logistic_mh2.pdf>] [18 <c:/Users/Cole/admb
+_guide/plots/logistic_hy.pdf>] [19 <c:/Users/Cole/admb_guide/plots/logistic_hy3
 .pdf>]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 1032.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 1044.
 
 (c:\Users\Cole\admb_guide\admb_guide_compile\admb_guide.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1032.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1032.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1044.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1044.
 
-Package rerunfilecheck Info: File `admb_guide.out' has not changed.
-(rerunfilecheck)             Checksum: 38D07225BB535040C5E79625F389DDE7;1969.
 
+
+Package rerunfilecheck Warning: File `admb_guide.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `admb_guide.out':
+(rerunfilecheck)             Before: 38D07225BB535040C5E79625F389DDE7;1969
+(rerunfilecheck)             After:  484CCFB46434F824B796B1BC3EFE127D;1961.
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
-
-LaTeX Warning: There were undefined references.
-
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1032.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1044.
  ) 
 Here is how much of TeX's memory you used:
- 6685 strings out of 493921
- 96360 string characters out of 3147284
- 188296 words of memory out of 3000000
- 9791 multiletter control sequences out of 15000+200000
+ 6692 strings out of 493921
+ 96520 string characters out of 3147284
+ 188377 words of memory out of 3000000
+ 9795 multiletter control sequences out of 15000+200000
  14538 words of font info for 57 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
  29i,17n,32p,453b,412s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -551,9 +566,9 @@ am Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti12.pfb><C:/Program Files
 /MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmtt10.pfb><C:/Program Files/MiKTeX 
 2.9/fonts/type1/public/amsfonts/cm/cmtt12.pfb><C:/Program Files/MiKTeX 2.9/font
 s/type1/public/amsfonts/cm/cmtt8.pfb>
-Output written on admb_guide.pdf (18 pages, 637301 bytes).
+Output written on admb_guide.pdf (19 pages, 649908 bytes).
 PDF statistics:
- 475 PDF objects out of 1000 (max. 8388607)
- 85 named destinations out of 1000 (max. 500000)
- 283 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 489 PDF objects out of 1000 (max. 8388607)
+ 87 named destinations out of 1000 (max. 500000)
+ 288 words of extra memory for PDF output out of 10000 (max. 10000000)
 
