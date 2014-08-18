@@ -749,6 +749,17 @@ MCMC algorithm, as implemented in ADMB, has three steps:
   rarely into regions of low density for a well tuned chain.
 \end{enumerate}
 
+We can see the first two steps of the algorithm by randomly
+drawing values for $U$ and doing a leapfrog projection to
+the proposed parameters (Fig. \ref{fig:hybrid_seeds}).
+\begin{figure}[h]
+  \centering
+  \includegrpahics[width=5in]{../plots/hybrid_seeds.pdf}
+  \caption{Leapfrog projections for different random draws
+    from $U$.}
+  \label{fig:hybrid_seeds}
+\end{figure}
+
 A perhaps intuitive question might be: why bother with the
 momentum variables at all? One issue is that without the
 momentum variables, and the Hamiltonian dynamics in general,

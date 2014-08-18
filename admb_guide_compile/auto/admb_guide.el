@@ -18,6 +18,7 @@
      "sec:hybrid"
      "eq:motion"
      "fig:hybrid_grid_trace"
+     "fig:hybrid_seeds"
      "tab:hy_args"
      "fig:hybrid_grid_acf"
      "fig:logistic_mh"
