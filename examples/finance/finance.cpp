@@ -1,4 +1,5 @@
 #include <admodel.h>
+#include <contrib.h>
 
   extern "C"  {
     void ad_boundf(int i);
@@ -43,12 +44,18 @@ model_parameters::model_parameters(int sz,int argc,char * argv[]) :
   #endif
   aa.allocate("aa");
   log_likelihood.allocate("log_likelihood");
+  prior_function_value.allocate("prior_function_value");
+  likelihood_function_value.allocate("likelihood_function_value");
 }
 
 void model_parameters::preliminary_calculations(void)
 {
 
+#if defined(USE_ADPVM)
+
   admaster_slave_variable_interface(*this);
+
+#endif
   h0=square(std_dev(r));   // square forms the element-wise square
   sub_r=r(1,T);    // form a subvector so we can use vector operations
   Mean=mean(r);    // calculate the mean of the vector r
@@ -56,6 +63,7 @@ void model_parameters::preliminary_calculations(void)
 
 void model_parameters::userfunction(void)
 {
+  log_likelihood =0.0;
   aa=a0;
   eps2=square(sub_r-Mean);
   h(1)=a0+a2*h0;
@@ -75,7 +83,7 @@ model_data::~model_data()
 model_parameters::~model_parameters()
 {}
 
-void model_parameters::report(void){}
+void model_parameters::report(const dvector& gradients){}
 
 void model_parameters::final_calcs(void){}
 
@@ -98,12 +106,7 @@ int main(int argc,char * argv[])
   ad_exit=&ad_boundf;
     gradient_structure::set_NO_DERIVATIVES();
     gradient_structure::set_YES_SAVE_VARIABLES_VALUES();
-  #if defined(__GNUDOS__) || defined(DOS386) || defined(__DPMI32__)  || \
-     defined(__MSVC32__)
-      if (!arrmblsize) arrmblsize=150000;
-  #else
-      if (!arrmblsize) arrmblsize=25000;
-  #endif
+    if (!arrmblsize) arrmblsize=15000000;
     model_parameters mp(arrmblsize,argc,argv);
     mp.iprint=10;
     mp.preliminary_calculations();

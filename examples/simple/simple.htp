@@ -1,11 +1,11 @@
-#if !defined(_SIMPLE_)
-#  define _SIMPLE_
+#if !defined(_simple_)
+#  define _simple_
 
 class model_data : public ad_comm{
+  ofstream *   pad_leapfrog;
   data_int nobs;
   data_vector Y;
   data_vector x;
-  data_number upb_b;
   ~model_data();
   model_data(int argc,char * argv[]);
   friend class model_parameters;
@@ -40,17 +40,23 @@ public:
     return (initial_params::current_phase
       >=initial_params::max_number_phases);
   }
+  static prevariable current_feval(void)
+  {
+    return *objective_function_value::pobjfun;
+  }
 private:
   ivector integer_control_flags;
   dvector double_control_flags;
   param_init_number a;
-  param_init_bounded_number b;
+  param_init_number b;
   param_stddev_number aa;
   param_vector pred_Y;
+  param_number prior_function_value;
+  param_number likelihood_function_value;
   objective_function_value f;
 public:
   virtual void userfunction(void);
-  virtual void report(void);
+  virtual void report(const dvector& gradients);
   virtual void final_calcs(void);
   model_parameters(int sz,int argc, char * argv[]);
   virtual void initializationfunction(void){}

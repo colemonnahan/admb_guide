@@ -1,4 +1,5 @@
 #include <admodel.h>
+#include <contrib.h>
 
   extern "C"  {
     void ad_boundf(int i);
@@ -7,6 +8,7 @@
 
 model_data::model_data(int argc,char * argv[]) : ad_comm(argc,argv)
 {
+  pad_leapfrog = new ofstream("leapfrog.csv",ios::trunc);;
   nobs.allocate("nobs");
   Y.allocate(1,nobs,"Y");
   x.allocate(1,nobs,"x");
@@ -24,28 +26,50 @@ model_parameters::model_parameters(int sz,int argc,char * argv[]) :
     pred_Y.initialize();
   #endif
   f.allocate("f");
+  prior_function_value.allocate("prior_function_value");
+  likelihood_function_value.allocate("likelihood_function_value");
 }
 
 void model_parameters::userfunction(void)
 {
+  f =0.0;
+  ofstream& leapfrog= *pad_leapfrog;
   pred_Y=a*x+b;
  aa=a;
-  f=(norm2(pred_Y-Y)); 
+  f=(norm2(pred_Y-Y));
   f=nobs/2.*log(f);    // make it a likelihood function so that
                        // covariance matrix is correct
+  leapfrog << a << "," << b << "," << f << endl;
+}
+
+void model_parameters::report(const dvector& gradients)
+{
+ adstring ad_tmp=initial_params::get_reportfile_name();
+  ofstream report((char*)(adprogram_name + ad_tmp));
+  if (!report)
+  {
+    cerr << "error trying to open report file"  << adprogram_name << ".rep";
+    return;
+  }
+ cout << a << ", " << b << endl;
 }
 
 void model_parameters::preliminary_calculations(void){
+#if defined(USE_ADPVM)
+
   admaster_slave_variable_interface(*this);
+
+#endif
 }
 
 model_data::~model_data()
 {}
 
 model_parameters::~model_parameters()
-{}
-
-void model_parameters::report(void){}
+{
+  delete pad_leapfrog;
+  pad_leapfrog = NULL;
+}
 
 void model_parameters::final_calcs(void){}
 
@@ -68,12 +92,7 @@ int main(int argc,char * argv[])
   ad_exit=&ad_boundf;
     gradient_structure::set_NO_DERIVATIVES();
     gradient_structure::set_YES_SAVE_VARIABLES_VALUES();
-  #if defined(__GNUDOS__) || defined(DOS386) || defined(__DPMI32__)  || \
-     defined(__MSVC32__)
-      if (!arrmblsize) arrmblsize=150000;
-  #else
-      if (!arrmblsize) arrmblsize=25000;
-  #endif
+    if (!arrmblsize) arrmblsize=15000000;
     model_parameters mp(arrmblsize,argc,argv);
     mp.iprint=10;
     mp.preliminary_calculations();
