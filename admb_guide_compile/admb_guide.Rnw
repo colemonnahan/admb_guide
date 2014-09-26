@@ -351,7 +351,11 @@ additional values. Modifying the number of iterations, values to save and adding
 simple -mcmc 500 -mcsave 50 -mcr -nosdmcmc
 \end{verbatim}
 
+The saved parameter values from the first and resumed chain are shown in Table 1. The first ten values from
+the first chain and the resumed chain are identical as expected. 
+
 Adding the command \texttt{-noest} can save further computation time as minimization is not necessary. 
+
 
 \begin{table}[ht]
 \centering
@@ -380,7 +384,7 @@ Adding the command \texttt{-noest} can save further computation time as minimiza
   20 & 0.00 & 0.00 & 1.91 & 4.38 \\ 
    \hline
 \end{tabular}
-\caption{Parameter values from example MCMC chain and the resumed MCMC chain}
+\caption{Parameter values from an example MCMC chain and the resumed MCMC chain}
 \label{tab:mcr_table}
 \end{table}
 
