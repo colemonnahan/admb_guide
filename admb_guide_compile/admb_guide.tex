@@ -67,10 +67,15 @@
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 %% \SweaveOpts{concordance=TRUE}
+<<<<<<< HEAD
 \title{Bayesian Analysis in AD Model Builder}
 \author{Cole C. Monnahan | monnahc@uw.edu \\
 Peter T. Kuriyama | ptrkrym@uw.edu}
 
+=======
+\title{A guide for Bayesian analysis in AD Model Builder}
+\author{Cole C. Monnahan | monnahc@uw.edu}
+>>>>>>> 155bf2dbf5b9ed4efac0735a0cb9e05388b4e584
 \date{\today{}}
 \maketitle
 \begin{abstract}
@@ -84,6 +89,7 @@ Peter T. Kuriyama | ptrkrym@uw.edu}
 \tableofcontents
 
 \section{Introduction}
+<<<<<<< HEAD
   The goal of this guide is to outline and describe the steps needed to conduct a Bayesian analysis in AD 
   Model Builder. Included are general descriptions of Bayesian inference, Priors, and two MCMC algorithms. We
   hope that the guide will enable users to take fuller advantage of the features of ADMB that are built in
@@ -102,6 +108,12 @@ Peter T. Kuriyama | ptrkrym@uw.edu}
   Something about about where to make code suggestions?
   
   
+=======
+-What this guide is
+-What ADMB is and good at
+-Add short paragraph about r2admb package
+-encourage further work on this document
+>>>>>>> 155bf2dbf5b9ed4efac0735a0cb9e05388b4e584
 \section{Bayesian inference}
 In general, Bayesian inference is used to quantify the full
 range of uncertainty around both models and parameter values
@@ -386,6 +398,7 @@ appended with \texttt{ios::app}. New draws are appended to the
 \texttt{MCMCreport.csv} file so that it must be deleted in between MCMC
 runs.
 
+<<<<<<< HEAD
 \subsection{Convergence diagnostics} \label{sec:diag}
 Burn-in and thinning, how to check this? What happens if not
 independent?
@@ -461,6 +474,13 @@ Adding the command \texttt{-noest} can save further computation time as minimiza
 %%# print(xtable(out))
 %%# @
 
+=======
+\subsection{Restarting a chain}\label{sec:restart}
+Peter: todo
+\subsection{Convergence diagnostics} \label{sec:diag}
+Burn-in and thinning, how to check this? What happens if not
+independent?
+>>>>>>> 155bf2dbf5b9ed4efac0735a0cb9e05388b4e584
 \subsection{Starting values}\label{sec:startvals}
 For many Bayesian software platforms, the MCMC algorithms
 are started at user-chosen or arbitrary places. ADMB has the
@@ -478,8 +498,11 @@ The user can specify starting values via the command line
 option \texttt{mcpin <file>} which must point to a file with
 starting values for parameters.
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 155bf2dbf5b9ed4efac0735a0cb9e05388b4e584
 \section{Metropolis-Hastings MCMC}\label{sec:MH}
 The default MCMC algorithm used by ADMB is the
 Metropolis-Hastings (MH) algorithm\footnote{Technically it
@@ -593,6 +616,7 @@ The goal of ``tuning'' the algorithm is to obtain
 independent samples from the posterior, with as few of
 calculations as possible (to keep runtime manageable). For
 the MH algorithm, there are several ways the user can tune a chain.
+<<<<<<< HEAD
 
 \subsubsection{Thinning rate}
 For the MH algorithm, the most important tuning option
@@ -664,6 +688,79 @@ very distant parameters (i.e. ``probes''). The
   this \texttt{mcgrope} -- this is now deprecated} argument
 initiates this option.
 
+=======
+
+\subsubsection{Thinning rate}
+For the MH algorithm, the most important tuning option
+available to the user is the thinning rate. This is the rate
+at which parameters are saved, such that thinning is
+effectively discarding draws. This tuning option is critical
+since this algorithm generates autocorrelated parameters, by
+design.
+
+The user controls the thinning rate by the argument
+\texttt{mcsave N}. If $N=1$, as in figure \ref{fig:simple1},
+every single draw is saved. As we saw with that example, the
+autocorrelation is high, suggesting the need to thin more
+(save fewer).
+
+We now rerun the chain with \texttt{mcsave}=100 (figure
+\ref{fig:simple2}), in effect running 100 times the samples
+and saving every $100^{\text{th}}$. This helps reduce the
+autocorrelation and produces independent draws from the
+posterior of interest.
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=5in]{../plots/simple2.pdf}
+  \caption{The samples from a simple model with
+    \texttt{mcsave}=100. Note the negligible autocorrelation
+    of both parameters.The red ellipses show the estimated
+    pairwise parameter covariances, and the red point the
+    MPD.}
+  \label{fig:simple2}
+\end{figure}
+
+\subsubsection{Opitmize the acceptance rate}
+Studies have shown that there is an optimal range for
+acceptance rate for the MH algorithm
+(e.g. \cite{roberts2001}). If the proposal distribution
+generates values too close to the current state, the chain
+will accept them (high acceptance rate) but explore the
+posterior slowly and need more thinning. Alternatively, if
+proposals are too far away into regions of low density (low
+acceptance rate) the chain will not explore the space. The
+optimal acceptance rate varies by model, but is roughly
+40\%. The general advice is to tune the proposal
+distribution to achieve an efficient acceptance rate.
+
+ADMB accomplishes this by ``scaling'' the covariance matrix
+up or down, depending on the current acceptance rate, during
+the first part of the chain. By default, it scales during
+the first 500 iterations (and prints this to screen), but
+the user can specify this with \texttt{mcscale N} or turn
+off scaling with \texttt{mcnoscale}. ADMB rescales the
+covariance matrix every 200 iterations until the acceptance
+rate is between 0.15 and 0.4, or the scaling period is
+exceeded.
+
+In practice, the defaults work for many models, but the user
+may want to extend the scaling period for some models. Draws
+from this tuning phase should be discarded as part of the
+burn-in.
+\subsubsection{mcprobe}\label{sec:mcprobe}
+\large{[if someone wanted to write this up more formally
+  that'd be great]}
+For some models, there may be concern of being ``stuck'' in
+a local minimum and simply never proposing a value far
+enough away to escape it and find other regions of high
+density. ADMB has a built-in algorithm which modifies the
+default proposal distribution so it occasionally proposes
+very distant parameters (i.e. ``probes''). The
+\texttt{mcprobe X}\footnote{Previous versions of ADMB called
+  this \texttt{mcgrope} -- this is now deprecated} argument
+initiates this option.
+
+>>>>>>> 155bf2dbf5b9ed4efac0735a0cb9e05388b4e584
 The modified proposal distribution is a mixture distribution
 of normal and Cauchy distributions. The argument \texttt{X}
 controls how the two distributions are mixed, with larger
@@ -1073,6 +1170,7 @@ performance by changing the proposal distribution of the
 Metropolis-Hastings algorithm. This option is far superior
 to increasing the thinning rate because it takes no more
 time to run.
+<<<<<<< HEAD
 
 We can also try the hybrid algorithm on this model, starting
 with the default parameters of \texttt{hyeps} and
@@ -1112,6 +1210,47 @@ significantly better, and similarly to the tuned MH chain in
   \label{fig:logistic_hy3}
 \end{figure}
 
+=======
+
+We can also try the hybrid algorithm on this model, starting
+with the default parameters of \texttt{hyeps} and
+\texttt{hynstep} of 0.1 and 10, and using the estimated
+covariance matrix.
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=5in]{../plots/logistic_hy.pdf}
+  \caption{The logistic model using the hybrid method with
+    default tuning parameters and the estimated covariance matrix
+    (red ellipse).}
+  \label{fig:logistic_hy}
+\end{figure}
+The autocorrelation is high, suggesting we need to tune the
+chain. First we try the same as above, and instead use the
+empirical covariance matrix.
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=5in]{../plots/logistic_hy.pdf}
+  \caption{The logistic model using the hybrid method with
+    default tuning parameters and the empirical covariance matrix
+    (blue ellipse).}
+  \label{fig:logistic_hy2}
+\end{figure}
+This chain is performing better, but is still
+autocorrelated. A little trial and error the combination of
+\texttt{hyeps 0.05} and \texttt{hynstep 100} performed
+significantly better, and similarly to the tuned MH chain in
+\ref{fig:logistic_mh2}.
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=5in]{../plots/logistic_hy3.pdf}
+  \caption{The logistic model using the hybrid method and
+    \texttt{hyeps 0.05} and \texttt{hynstep 100} for tuning
+    parameters and the empirical covariance matrix (blue
+    ellipse).}
+  \label{fig:logistic_hy3}
+\end{figure}
+
+>>>>>>> 155bf2dbf5b9ed4efac0735a0cb9e05388b4e584
 Here the hybrid and MH perform similarly with the same
 number of function evaluations per sample (\texttt{hynstep}
 and \texttt{mcsave}, respectively). With a little trial and
