@@ -1,33 +1,30 @@
-\contentsline {section}{\numberline {1}Introduction}{3}{section.1}
-\contentsline {section}{\numberline {2}Bayesian inference}{3}{section.2}
-\contentsline {section}{\numberline {3}Priors}{4}{section.3}
-\contentsline {section}{\numberline {4}Markov chain Monte Carlo (MCMC) in ADMB}{4}{section.4}
-\contentsline {subsection}{\numberline {4.1}Workflow}{4}{subsection.4.1}
-\contentsline {subsection}{\numberline {4.2}MCMC Phases}{5}{subsection.4.2}
-\contentsline {subsection}{\numberline {4.3}Output files}{5}{subsection.4.3}
-\contentsline {subsubsection}{\numberline {4.3.1}Meta data: The hst file}{5}{subsubsection.4.3.1}
-\contentsline {subsubsection}{\numberline {4.3.2}Parameter draws: The psv file}{5}{subsubsection.4.3.2}
-\contentsline {subsubsection}{\numberline {4.3.3}Derived quantity draws}{5}{subsubsection.4.3.3}
-\contentsline {subsection}{\numberline {4.4}Convergence diagnostics}{6}{subsection.4.4}
-\contentsline {subsection}{\numberline {4.5}Resuming a chain}{6}{subsection.4.5}
-\contentsline {subsection}{\numberline {4.6}Restarting a chain}{7}{subsection.4.6}
-\contentsline {subsection}{\numberline {4.7}Convergence diagnostics}{7}{subsection.4.7}
-\contentsline {subsection}{\numberline {4.8}Starting values}{7}{subsection.4.8}
-\contentsline {section}{\numberline {5}Metropolis-Hastings MCMC}{8}{section.5}
-\contentsline {subsection}{\numberline {5.1}Algorithm}{8}{subsection.5.1}
-\contentsline {subsection}{\numberline {5.2}MCMC Arguments}{8}{subsection.5.2}
-\contentsline {subsection}{\numberline {5.3}Console output}{9}{subsection.5.3}
-\contentsline {subsection}{\numberline {5.4}Example MCMC}{9}{subsection.5.4}
-\contentsline {subsection}{\numberline {5.5}Tuning the MH algorithm}{9}{subsection.5.5}
-\contentsline {subsubsection}{\numberline {5.5.1}Thinning rate}{10}{subsubsection.5.5.1}
-\contentsline {subsubsection}{\numberline {5.5.2}Opitmize the acceptance rate}{10}{subsubsection.5.5.2}
-\contentsline {subsubsection}{\numberline {5.5.3}mcprobe}{11}{subsubsection.5.5.3}
-\contentsline {subsubsection}{\numberline {5.5.4}Opitmize the acceptance rate}{11}{subsubsection.5.5.4}
-\contentsline {subsubsection}{\numberline {5.5.5}mcprobe}{11}{subsubsection.5.5.5}
-\contentsline {subsubsection}{\numberline {5.5.6}mcrb}{12}{subsubsection.5.5.6}
-\contentsline {subsubsection}{\numberline {5.5.7}User-supplied covariance matrix}{14}{subsubsection.5.5.7}
-\contentsline {section}{\numberline {6}Hyrbid MCMC}{14}{section.6}
-\contentsline {subsection}{\numberline {6.1}Algorithm}{14}{subsection.6.1}
-\contentsline {subsection}{\numberline {6.2}Arguments}{16}{subsection.6.2}
-\contentsline {subsection}{\numberline {6.3}Tuning the hybrid algorithm}{17}{subsection.6.3}
-\contentsline {section}{\numberline {7}An example with non-linear posterior}{19}{section.7}
+\contentsline {section}{\numberline {1}Introduction}{2}{section.1}
+\contentsline {section}{\numberline {2}Bayesian inference}{2}{section.2}
+\contentsline {section}{\numberline {3}Priors}{2}{section.3}
+\contentsline {section}{\numberline {4}Markov chain Monte Carlo (MCMC) in ADMB}{3}{section.4}
+\contentsline {subsection}{\numberline {4.1}Workflow}{3}{subsection.4.1}
+\contentsline {subsection}{\numberline {4.2}MCMC Phases}{4}{subsection.4.2}
+\contentsline {subsection}{\numberline {4.3}Output files}{4}{subsection.4.3}
+\contentsline {subsubsection}{\numberline {4.3.1}Meta data: The hst file}{4}{subsubsection.4.3.1}
+\contentsline {subsubsection}{\numberline {4.3.2}Parameter draws: The psv file}{4}{subsubsection.4.3.2}
+\contentsline {subsubsection}{\numberline {4.3.3}Derived quantity draws}{4}{subsubsection.4.3.3}
+\contentsline {subsection}{\numberline {4.4}Convergence diagnostics}{5}{subsection.4.4}
+\contentsline {subsection}{\numberline {4.5}Resuming a chain}{5}{subsection.4.5}
+\contentsline {subsection}{\numberline {4.6}Convergence diagnostics}{6}{subsection.4.6}
+\contentsline {subsection}{\numberline {4.7}Starting values}{6}{subsection.4.7}
+\contentsline {section}{\numberline {5}Metropolis-Hastings MCMC}{6}{section.5}
+\contentsline {subsection}{\numberline {5.1}Algorithm}{7}{subsection.5.1}
+\contentsline {subsection}{\numberline {5.2}MCMC Arguments}{7}{subsection.5.2}
+\contentsline {subsection}{\numberline {5.3}Console output}{7}{subsection.5.3}
+\contentsline {subsection}{\numberline {5.4}Example MCMC}{8}{subsection.5.4}
+\contentsline {subsection}{\numberline {5.5}Tuning the MH algorithm}{8}{subsection.5.5}
+\contentsline {subsubsection}{\numberline {5.5.1}Thinning rate}{8}{subsubsection.5.5.1}
+\contentsline {subsubsection}{\numberline {5.5.2}Opitmize the acceptance rate}{9}{subsubsection.5.5.2}
+\contentsline {subsubsection}{\numberline {5.5.3}mcprobe}{9}{subsubsection.5.5.3}
+\contentsline {subsubsection}{\numberline {5.5.4}mcrb}{10}{subsubsection.5.5.4}
+\contentsline {subsubsection}{\numberline {5.5.5}User-supplied covariance matrix}{12}{subsubsection.5.5.5}
+\contentsline {section}{\numberline {6}Hyrbid MCMC}{12}{section.6}
+\contentsline {subsection}{\numberline {6.1}Algorithm}{12}{subsection.6.1}
+\contentsline {subsection}{\numberline {6.2}Arguments}{14}{subsection.6.2}
+\contentsline {subsection}{\numberline {6.3}Tuning the hybrid algorithm}{15}{subsection.6.3}
+\contentsline {section}{\numberline {7}An example with non-linear posterior}{17}{section.7}
