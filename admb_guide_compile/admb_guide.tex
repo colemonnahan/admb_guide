@@ -398,67 +398,84 @@ appended with \texttt{ios::app}. New draws are appended to the
 \texttt{MCMCreport.csv} file so that it must be deleted in between MCMC
 runs.
 
-<<<<<<< HEAD
 \subsection{Convergence diagnostics} \label{sec:diag}
 Burn-in and thinning, how to check this? What happens if not
 independent?
 
 \subsection{Resuming a chain}\label{sec:restart}
 The MC resume command, \texttt{-mcr}, allows the user continue sampling along 
-a previuosly run MCMC chain. Say that the user has run a chain, checked diagnostics, and 
-concluded that the chain needs to thinned further as samples appear to be correlated.
-Rather than restarting a new chain, the user can save computation time by using \texttt{-mcr} 
-to pick up an existing chain where it left off. 
+a previuosly run MCMC chain. Say that the user has run a chain, checked 
+diagnostics, and concluded that the chain needs to thinned further as samples 
+appear to be correlated. Rather than restarting a new chain, the user can pick 
+up an existing chain where it left off with the command \texttt{-mcr}. If 
+further thinning is needed, the user can continue an existing chain and 
+thin after the chain is complete. Another benefit of \texttt{-mcr} is that
+the user can run a short chain, check diagnostics, then continue the chain if 
+the thinning rate looks appropriate.
 
-Resuming a chain is simple, and only requires \texttt{-mcr} to an MCMC statement. 
+Resuming a chain is simple, and only requires adding \texttt{-mcr} to an MCMC 
+statement. 
 Let's save ten values from a chain, saving every 20th value with a seed of 30.
 
 \begin{verbatim}
 simple -mcmc 200 -mcsave 20 -mcseed 30
 \end{verbatim}
 
-Now say that we want to thin the chain, saving every 50 values until we have
-additional values. Modifying the number of iterations, values to save and adding \texttt{-mcr} and 
-\texttt{-nosdmcmc} (per the ADMB manual) will achieve this. 
+Now say that we want to resume the chain, still saving every 20 values until we 
+have 20 saved parameter draws. In order to save ten additional draws we will 
+run 200 more additional iterations by adding \texttt{-mcr} and 
+\texttt{-nosdmcmc} (see Section 2.1 in the ADMB manual) will achieve this. 
 
 \begin{verbatim}
-simple -mcmc 500 -mcsave 50 -mcr -nosdmcmc
+simple -mcmc 200 -mcsave 20 -mcr -nosdmcmc
 \end{verbatim}
 
-The saved parameter values from the first and resumed chain are shown in Table 1. The first ten values from
-the first chain and the resumed chain are identical as expected. 
+One nuance of \texttt{-mcr} is that starting then resuming a chain does not
+result in the same samples as a long chain. For example if we run 400 iteration
+s of a chain, saving every 20, and setting the seed at 30 with the command:
 
-Adding the command \texttt{-noest} can save further computation time as minimization is not necessary. 
+\begin{verbatim}
+simple -mcmc 400 -mcsave 20 -mcseed 30
+\end{verbatim}
 
+we end up with different values as the started and resumed chain (Table 1). 
+Users should note the differences between the last half of the resumed chain 
+and the long chain. This disparity can have important implications for
+reproducibility.
+
+Resuming chains with \texttt{-mcr} can reduce computation time. Adding the comm
+and \texttt{-noest} can save further computation time as minimization is 
+unnecessary for resumed chains.
 
 \begin{table}[ht]
 \centering
-\begin{tabular}{r r r r r}
-  \hline & a-first & b-first & a-resumed & b-resumed \\ 
+\begin{tabular}{rrrrrr}
   \hline
-  1 & 1.91 & 4.08 & 1.91 & 4.08 \\ 
-  2 & 2.00 & 4.78 & 2.00 & 4.78 \\ 
-  3 & 2.08 & 3.40 & 2.08 & 3.40 \\ 
-  4 & 1.85 & 4.35 & 1.85 & 4.35 \\ 
-  5 & 1.88 & 4.31 & 1.88 & 4.31 \\ 
-  6 & 1.86 & 4.94 & 1.86 & 4.94 \\ 
-  7 & 1.89 & 2.18 & 1.89 & 2.18 \\ 
-  8 & 2.62 & 0.78 & 2.62 & 0.78 \\ 
-  9 & 2.16 & 2.99 & 2.16 & 2.99 \\ 
-  10 & 1.94 & 3.49 & 1.94 & 3.49 \\ 
-  11 & 0.00 & 0.00 & 0.33 & -1.25 \\ 
-  12 & 0.00 & 0.00 & 1.75 & 4.59 \\ 
-  13 & 0.00 & 0.00 & 1.74 & 4.80 \\ 
-  14 & 0.00 & 0.00 & 1.94 & 2.62 \\ 
-  15 & 0.00 & 0.00 & 2.16 & 3.08 \\ 
-  16 & 0.00 & 0.00 & 1.99 & 4.18 \\ 
-  17 & 0.00 & 0.00 & 2.09 & 2.95 \\ 
-  18 & 0.00 & 0.00 & 1.94 & 4.17 \\ 
-  19 & 0.00 & 0.00 & 1.52 & 5.87 \\ 
-  20 & 0.00 & 0.00 & 1.91 & 4.38 \\ 
+  a-first & b-first & a-resumed & b-resumed & a-long & b-long \\ 
+  \hline
+  1.91 & 4.08 & 1.91 & 4.08 & 1.91 & 4.08 \\ 
+  2.00 & 4.78 & 2.00 & 4.78 & 2.00 & 4.78 \\ 
+  2.08 & 3.40 & 2.08 & 3.40 & 2.08 & 3.40 \\ 
+  1.85 & 4.35 & 1.85 & 4.35 & 1.85 & 4.35 \\ 
+  1.88 & 4.31 & 1.88 & 4.31 & 1.88 & 4.31 \\ 
+  1.86 & 4.94 & 1.86 & 4.94 & 1.86 & 4.94 \\ 
+  1.89 & 2.18 & 1.89 & 2.18 & 1.89 & 2.18 \\ 
+  2.62 & 0.78 & 2.62 & 0.78 & 2.62 & 0.78 \\ 
+  2.16 & 2.99 & 2.16 & 2.99 & 2.16 & 2.99 \\ 
+  1.94 & 3.49 & 1.94 & 3.49 & 1.94 & 3.49 \\ 
+  0.00 & 0.00 & 0.33 & -1.25 & 2.10 & 2.71 \\ 
+  0.00 & 0.00 & 2.31 & 1.02 & 1.90 & 4.38 \\ 
+  0.00 & 0.00 & 1.93 & 3.36 & 1.91 & 4.00 \\ 
+  0.00 & 0.00 & 1.73 & 5.22 & 2.08 & 4.00 \\ 
+  0.00 & 0.00 & 1.59 & 6.24 & 1.59 & 5.48 \\ 
+  0.00 & 0.00 & 2.16 & 3.08 & 1.72 & 5.47 \\ 
+  0.00 & 0.00 & 1.83 & 3.24 & 1.66 & 5.69 \\ 
+  0.00 & 0.00 & 1.95 & 4.12 & 2.26 & 3.02 \\ 
+  0.00 & 0.00 & 1.76 & 4.55 & 1.74 & 4.69 \\ 
+  0.00 & 0.00 & 1.82 & 5.21 & 2.38 & 2.51 \\ 
    \hline
 \end{tabular}
-\caption{Parameter values from an example MCMC chain and the resumed MCMC chain}
+\caption{Parameter draws from the "simple" example. The first columns are from the first half of a chain. The resumed chains contain 10 values from the second half of a chain. The long chain is a long chain that has not been resumed with \texttt{-mcr}.}
 \label{tab:mcr_table}
 \end{table}
 
@@ -480,7 +497,7 @@ Peter: todo
 \subsection{Convergence diagnostics} \label{sec:diag}
 Burn-in and thinning, how to check this? What happens if not
 independent?
->>>>>>> 155bf2dbf5b9ed4efac0735a0cb9e05388b4e584
+
 \subsection{Starting values}\label{sec:startvals}
 For many Bayesian software platforms, the MCMC algorithms
 are started at user-chosen or arbitrary places. ADMB has the
@@ -616,38 +633,38 @@ The goal of ``tuning'' the algorithm is to obtain
 independent samples from the posterior, with as few of
 calculations as possible (to keep runtime manageable). For
 the MH algorithm, there are several ways the user can tune a chain.
+
+\subsubsection{Thinning rate}
+For the MH algorithm, the most important tuning option
+available to the user is the thinning rate. This is the rate
+at which parameters are saved, such that thinning is
+effectively discarding draws. This tuning option is critical
+since this algorithm generates autocorrelated parameters, by
+design.
+
+The user controls the thinning rate by the argument
+\texttt{mcsave N}. If $N=1$, as in figure \ref{fig:simple1},
+every single draw is saved. As we saw with that example, the
+autocorrelation is high, suggesting the need to thin more
+(save fewer).
+
+We now rerun the chain with \texttt{mcsave}=100 (figure
+\ref{fig:simple2}), in effect running 100 times the samples
+and saving every $100^{\text{th}}$. This helps reduce the
+autocorrelation and produces independent draws from the
+posterior of interest.
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=5in]{../plots/simple2.pdf}
+  \caption{The samples from a simple model with
+    \texttt{mcsave}=100. Note the negligible autocorrelation
+    of both parameters.The red ellipses show the estimated
+    pairwise parameter covariances, and the red point the
+    MPD.}
+  \label{fig:simple2}
+\end{figure}
 <<<<<<< HEAD
 
-\subsubsection{Thinning rate}
-For the MH algorithm, the most important tuning option
-available to the user is the thinning rate. This is the rate
-at which parameters are saved, such that thinning is
-effectively discarding draws. This tuning option is critical
-since this algorithm generates autocorrelated parameters, by
-design.
-
-The user controls the thinning rate by the argument
-\texttt{mcsave N}. If $N=1$, as in figure \ref{fig:simple1},
-every single draw is saved. As we saw with that example, the
-autocorrelation is high, suggesting the need to thin more
-(save fewer).
-
-We now rerun the chain with \texttt{mcsave}=100 (figure
-\ref{fig:simple2}), in effect running 100 times the samples
-and saving every $100^{\text{th}}$. This helps reduce the
-autocorrelation and produces independent draws from the
-posterior of interest.
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=5in]{../plots/simple2.pdf}
-  \caption{The samples from a simple model with
-    \texttt{mcsave}=100. Note the negligible autocorrelation
-    of both parameters.The red ellipses show the estimated
-    pairwise parameter covariances, and the red point the
-    MPD.}
-  \label{fig:simple2}
-\end{figure}
-
 \subsubsection{Opitmize the acceptance rate}
 Studies have shown that there is an optimal range for
 acceptance rate for the MH algorithm
@@ -688,79 +705,6 @@ very distant parameters (i.e. ``probes''). The
   this \texttt{mcgrope} -- this is now deprecated} argument
 initiates this option.
 
-=======
-
-\subsubsection{Thinning rate}
-For the MH algorithm, the most important tuning option
-available to the user is the thinning rate. This is the rate
-at which parameters are saved, such that thinning is
-effectively discarding draws. This tuning option is critical
-since this algorithm generates autocorrelated parameters, by
-design.
-
-The user controls the thinning rate by the argument
-\texttt{mcsave N}. If $N=1$, as in figure \ref{fig:simple1},
-every single draw is saved. As we saw with that example, the
-autocorrelation is high, suggesting the need to thin more
-(save fewer).
-
-We now rerun the chain with \texttt{mcsave}=100 (figure
-\ref{fig:simple2}), in effect running 100 times the samples
-and saving every $100^{\text{th}}$. This helps reduce the
-autocorrelation and produces independent draws from the
-posterior of interest.
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=5in]{../plots/simple2.pdf}
-  \caption{The samples from a simple model with
-    \texttt{mcsave}=100. Note the negligible autocorrelation
-    of both parameters.The red ellipses show the estimated
-    pairwise parameter covariances, and the red point the
-    MPD.}
-  \label{fig:simple2}
-\end{figure}
-
-\subsubsection{Opitmize the acceptance rate}
-Studies have shown that there is an optimal range for
-acceptance rate for the MH algorithm
-(e.g. \cite{roberts2001}). If the proposal distribution
-generates values too close to the current state, the chain
-will accept them (high acceptance rate) but explore the
-posterior slowly and need more thinning. Alternatively, if
-proposals are too far away into regions of low density (low
-acceptance rate) the chain will not explore the space. The
-optimal acceptance rate varies by model, but is roughly
-40\%. The general advice is to tune the proposal
-distribution to achieve an efficient acceptance rate.
-
-ADMB accomplishes this by ``scaling'' the covariance matrix
-up or down, depending on the current acceptance rate, during
-the first part of the chain. By default, it scales during
-the first 500 iterations (and prints this to screen), but
-the user can specify this with \texttt{mcscale N} or turn
-off scaling with \texttt{mcnoscale}. ADMB rescales the
-covariance matrix every 200 iterations until the acceptance
-rate is between 0.15 and 0.4, or the scaling period is
-exceeded.
-
-In practice, the defaults work for many models, but the user
-may want to extend the scaling period for some models. Draws
-from this tuning phase should be discarded as part of the
-burn-in.
-\subsubsection{mcprobe}\label{sec:mcprobe}
-\large{[if someone wanted to write this up more formally
-  that'd be great]}
-For some models, there may be concern of being ``stuck'' in
-a local minimum and simply never proposing a value far
-enough away to escape it and find other regions of high
-density. ADMB has a built-in algorithm which modifies the
-default proposal distribution so it occasionally proposes
-very distant parameters (i.e. ``probes''). The
-\texttt{mcprobe X}\footnote{Previous versions of ADMB called
-  this \texttt{mcgrope} -- this is now deprecated} argument
-initiates this option.
-
->>>>>>> 155bf2dbf5b9ed4efac0735a0cb9e05388b4e584
 The modified proposal distribution is a mixture distribution
 of normal and Cauchy distributions. The argument \texttt{X}
 controls how the two distributions are mixed, with larger
@@ -770,6 +714,58 @@ thinner tails. The range of valid inputs is 0.00001 to
 used\footnote{See the function for more information:
   \url{http://admb-project.org/documentation/api/prmonte\_8cpp\_source.html\#l00014}}
 
+=======
+
+\subsubsection{Opitmize the acceptance rate}
+Studies have shown that there is an optimal range for
+acceptance rate for the MH algorithm
+(e.g. \cite{roberts2001}). If the proposal distribution
+generates values too close to the current state, the chain
+will accept them (high acceptance rate) but explore the
+posterior slowly and need more thinning. Alternatively, if
+proposals are too far away into regions of low density (low
+acceptance rate) the chain will not explore the space. The
+optimal acceptance rate varies by model, but is roughly
+40\%. The general advice is to tune the proposal
+distribution to achieve an efficient acceptance rate.
+
+ADMB accomplishes this by ``scaling'' the covariance matrix
+up or down, depending on the current acceptance rate, during
+the first part of the chain. By default, it scales during
+the first 500 iterations (and prints this to screen), but
+the user can specify this with \texttt{mcscale N} or turn
+off scaling with \texttt{mcnoscale}. ADMB rescales the
+covariance matrix every 200 iterations until the acceptance
+rate is between 0.15 and 0.4, or the scaling period is
+exceeded.
+
+In practice, the defaults work for many models, but the user
+may want to extend the scaling period for some models. Draws
+from this tuning phase should be discarded as part of the
+burn-in.
+\subsubsection{mcprobe}\label{sec:mcprobe}
+\large{[if someone wanted to write this up more formally
+  that'd be great]}
+For some models, there may be concern of being ``stuck'' in
+a local minimum and simply never proposing a value far
+enough away to escape it and find other regions of high
+density. ADMB has a built-in algorithm which modifies the
+default proposal distribution so it occasionally proposes
+very distant parameters (i.e. ``probes''). The
+\texttt{mcprobe X}\footnote{Previous versions of ADMB called
+  this \texttt{mcgrope} -- this is now deprecated} argument
+initiates this option.
+
+The modified proposal distribution is a mixture distribution
+of normal and Cauchy distributions. The argument \texttt{X}
+controls how the two distributions are mixed, with larger
+values being more Cauchy (fatter tails) and lower being
+thinner tails. The range of valid inputs is 0.00001 to
+0.499, and if no value is supplied a default of 0.05 is
+used\footnote{See the function for more information:
+  \url{http://admb-project.org/documentation/api/prmonte\_8cpp\_source.html\#l00014}}
+
+>>>>>>> 155bf2dbf5b9ed4efac0735a0cb9e05388b4e584
 Figure \ref{fig:mcgrope_example} shows the shape of the
 proposal distribution. Note the extremely fat tails, and
 that the standard proposal itself is bounded.
@@ -1155,6 +1151,7 @@ after thinning. One option would be to increase the thinning
 rate. Another is to try a lower correlation. From this
 initial run we calculate the empirical covariance matrix and
 rerun the chain with this option (see \ref{sec:user.cov}).
+<<<<<<< HEAD
 
 \begin{figure}[h]
   \centering
@@ -1170,48 +1167,25 @@ performance by changing the proposal distribution of the
 Metropolis-Hastings algorithm. This option is far superior
 to increasing the thinning rate because it takes no more
 time to run.
-<<<<<<< HEAD
-
-We can also try the hybrid algorithm on this model, starting
-with the default parameters of \texttt{hyeps} and
-\texttt{hynstep} of 0.1 and 10, and using the estimated
-covariance matrix.
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=5in]{../plots/logistic_hy.pdf}
-  \caption{The logistic model using the hybrid method with
-    default tuning parameters and the estimated covariance matrix
-    (red ellipse).}
-  \label{fig:logistic_hy}
-\end{figure}
-The autocorrelation is high, suggesting we need to tune the
-chain. First we try the same as above, and instead use the
-empirical covariance matrix.
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=5in]{../plots/logistic_hy.pdf}
-  \caption{The logistic model using the hybrid method with
-    default tuning parameters and the empirical covariance matrix
-    (blue ellipse).}
-  \label{fig:logistic_hy2}
-\end{figure}
-This chain is performing better, but is still
-autocorrelated. A little trial and error the combination of
-\texttt{hyeps 0.05} and \texttt{hynstep 100} performed
-significantly better, and similarly to the tuned MH chain in
-\ref{fig:logistic_mh2}.
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=5in]{../plots/logistic_hy3.pdf}
-  \caption{The logistic model using the hybrid method and
-    \texttt{hyeps 0.05} and \texttt{hynstep 100} for tuning
-    parameters and the empirical covariance matrix (blue
-    ellipse).}
-  \label{fig:logistic_hy3}
-\end{figure}
 
 =======
 
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=5in]{../plots/logistic_mh2.pdf}
+  \caption{The logistic model with 1 in 100 samples saved
+    using the MH algorithm and empirical covariance matrix
+    (blue ellipse). Note the improvement in acf compared to
+    \ref{fig:logistic_mh}.}
+  \label{fig:logistic_mh2}
+\end{figure}
+Here we see a substantial improvement in the chain
+performance by changing the proposal distribution of the
+Metropolis-Hastings algorithm. This option is far superior
+to increasing the thinning rate because it takes no more
+time to run.
+
+>>>>>>> 155bf2dbf5b9ed4efac0735a0cb9e05388b4e584
 We can also try the hybrid algorithm on this model, starting
 with the default parameters of \texttt{hyeps} and
 \texttt{hynstep} of 0.1 and 10, and using the estimated
@@ -1250,7 +1224,6 @@ significantly better, and similarly to the tuned MH chain in
   \label{fig:logistic_hy3}
 \end{figure}
 
->>>>>>> 155bf2dbf5b9ed4efac0735a0cb9e05388b4e584
 Here the hybrid and MH perform similarly with the same
 number of function evaluations per sample (\texttt{hynstep}
 and \texttt{mcsave}, respectively). With a little trial and
