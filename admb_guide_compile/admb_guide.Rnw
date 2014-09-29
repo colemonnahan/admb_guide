@@ -20,14 +20,15 @@
 %% \SweaveOpts{concordance=TRUE}
 \title{Bayesian Analysis in AD Model Builder}
 \author{Cole C. Monnahan | monnahc@uw.edu \\
-Peter T. Kuriyama | ptrkrym@uw.edu}
+Peter T. Kuriyama | ptrkrym@uw.edu \\
+Melissa L. Muradian | murad17@uw.edu}
 
 \date{\today{}}
 \maketitle
 \begin{abstract}
   The goal of this guide is to outline and describe the steps needed to conduct a Bayesian analysis in AD 
-  Model Builder. Included are general descriptions of Bayesian inference, Priors, and two MCMC algorithms. We
-  hope that the guide will enable users to take fuller advantage of the features of ADMB that are built in
+  Model Builder (ADMB). Included are general descriptions of Bayesian inference, priors, and two MCMC algorithms. We
+  hope that the guide will enable users to take full advantage of the features of ADMB that are built-in,
   but not well-documented.
   
 \end{abstract}
