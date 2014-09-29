@@ -39,7 +39,7 @@ Melissa L. Muradian | murad17@uw.edu}
 
   The goal of this guide is to outline and describe the steps needed to conduct a Bayesian analysis in AD 
   Model Builder (ADMB). Included are general descriptions of Bayesian inference, priors, and two MCMC algorithms. We
-  hope that the guide will enable users to take full advantage of the features of ADMB that are built-in
+  hope that the guide will enable users to take full advantage of the features of ADMB that are built-in,
   but not well-documented.
 
   AD Model Builder is the fastest, most powerful software for fitting general nonlinear statistical models.
@@ -120,7 +120,7 @@ As with any Bayesian analysis, priors are a key component of
 the posterior surface and must be considered in ADMB as
 well. The posterior density is proportional to the product
 of the likelihood and priors. ADMB works in the negative log
-space, so he contribution of priors is incorporated into the
+space, so the contribution of priors is incorporated into the
 model by adding the negative log of the prior density to the
 objective function. At this point the minimum point is no
 longer the maximum likelihood estimate, but rather what we
@@ -131,11 +131,11 @@ there are important philosophical differences: with Bayesian
 analysis ADMB is integrating across the parameter space,
 while the likelihood framework focuses on maximization.
 
-The way MCMC works in ADMB, users need not explicitly define
+When running an MCMC in ADMB, users need not explicitly define
 and incorporate priors into their model. In this case
 ``implicit'' priors are still affecting the posterior. In
 particular, unbounded parameters without explicit priors
-have infinitely broad uniform priors (an example of an
+have infinitely-broad uniform priors (an example of an
 ``improper'' prior because it will not integrate to
 1). Another example is a variance parameter estimated in log
 space and then exponentiated within the model to keep it
@@ -146,12 +146,11 @@ beyond the scope of this guide. We caution users to
 carefully consider and explicitly acknowledge their priors
 -- ADMB will not force you to.
 
-Uniform priors can be incorporated without changing the
-objective function calculation by bounding the
-parameter. Other forms of prior distributions need to be
-added manually by the user, with our without any
-constants. For instance, a normal ($N(5,1)$) prior on a
-parameter $a$ could be added as
+Bounding a parameter incorporates a Uniform prior without 
+changing the objective function calculation. Other forms of 
+prior distributions must be added manually with,
+or without, any constants. For instance, a normal ($N(5,1)$) 
+prior on a parameter $a$ could be added as
 \texttt{f+=pow((a-5),2)/(2*1*1)}, where the constants have
 been dropped.
 
@@ -166,8 +165,8 @@ below.
 All MCMC algorithms work by proposing new states
 (i.e. parameter vectors) and moving to that state, or not,
 depending on its density relative to the current state. The
-algorithm thus generates series of autocorrelated parameter
-vectors which can be thinned to produce independent samples
+algorithm thus generates a series of autocorrelated parameter
+vectors, which can be thinned to produce independent samples
 from the posterior distribution of interest.
 
 \subsection{Workflow}
@@ -181,8 +180,8 @@ outline a typical workflow.
   objective function, such that the ADMB estimate is the
   posterior mode, rather than a maximum likelihood estimate.
 \item Run an MCMC using the command line argument
-  \texttt{-mcmc $N$ -mcsave $N_{\text{save}}$} (among other
-  options, see below). The thinned draws are discarded,
+  \texttt{-mcmc $N$ -mcsave $N_{\text{save}}$} (see Table 2 
+  for more runtime options). The thinned draws are discarded,
   leaving a total of $N_{\text{out}}=N/N_{\text{save}}$
   saved draws. For example \texttt{-mcmc 1e6 -mcsave 1000}
   will run 1 million draws but only save (i.e.``thin'')
@@ -339,9 +338,9 @@ to the file as ADMB iterates through each saved parameter. The variable
 header is set to 1 in the \texttt{GLOBALS\_SECTION} as \texttt{int header =
   1;}. Naturally this code can be used anywhere in the procedure section,
 and this may be a useful diagnostic tool in some situations. The file is
-recreated at each execution \texttt{ios::trunc} is used, or new draws are
-appended to the bottom of the \texttt{.csv} with \texttt{ios::app}. The
-latter option is useful when restarting an MCMC chain.
+recreated at each execution if \texttt{ios::trunc} is used. Alternatively, 
+new draws are appended to the bottom of the \texttt{.csv} with \texttt{ios::app}; 
+this option is particularly useful when restarting an MCMC chain.
 
 \subsection{Convergence diagnostics} \label{sec:diag}
 Burn-in and thinning, how to check this? What happens if not
