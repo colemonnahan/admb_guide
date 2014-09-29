@@ -270,14 +270,30 @@ then scaling the area under the curve to equal 1. In the \texttt{.hst}, the
 first column reports the mid-point of each bin and the second column reports 
 the associated density.
 
-The structure of the \texttt{.hst} file is organized so that if a chain is restarted
-using the \texttt{-mcr} option, all values needed to bin the 
-subsequent MCMC samples into the original histogram are automatically read, so that the values
-in the final \texttt{.hst} file reflect the observed values, and therefore the marginal distribution, of the complete chain. The firt value reported in the \texttt{.hst} file is the total number of iterations of the MCMC chain used to create the reported marginal distribution.
+The structure of the \texttt{.hst} file is organized so that if a chain is 
+restarted using the \texttt{-mcr} option, all values needed to bin the 
+subsequent MCMC samples into the original histogram are automatically read, 
+so that the values in the final \texttt{.hst} file reflect the observed values, 
+and therefore the marginal distribution, of the complete chain. The first value 
+reported in the \texttt{.hst} file is the total number of iterations of the 
+MCMC chain used to create the reported marginal distribution.
 
-An important note about using the \texttt{.hst} file: The reported means and standard deviations are necessary to the internal algorithm that creates each \texttt{sdreport} variable's histogram and are calculated using only a small number of the initial iterations of the chain. Therefore these values are inappropriate to report as model results. The user has two ways to obtain the posterior median and credible intervals for each \texttt{sdreport} variable: the user can manually export the marginal distribution from the \texttt{.hst} file into an input file external to ADMB (e.g. \texttt{.csv} to \texttt{R}) and calculate the quantiles, etc., or the user can write each \texttt{sdreport} variable's (saved or total) draws during the \texttt{mceval} phase to a \texttt{.csv} using the information in the 'derived quantity draws' section. This \texttt{.csv} can then be read into \texttt{R} and manipulated, using the code below, to produce a histogram of the observed values.
+An important note about using the \texttt{.hst} file: The reported means and 
+standard deviations are necessary to the internal algorithm that creates 
+each \texttt{sdreport} variable's histogram and are calculated using only a 
+small number of the initial iterations of the chain. Therefore these values 
+are inappropriate to report as model results. The user has two ways to obtain 
+the posterior median and credible intervals for each \texttt{sdreport} variable. 
+The user can manually export the marginal distribution from the \texttt{.hst} 
+file into an input file external to ADMB (e.g. \texttt{.csv} to \texttt{R}) and 
+calculate the quantiles, etc. Alternatively, the user can write each \texttt{sdreport} 
+variable's (saved or total) draws during the \texttt{mceval} phase to a \texttt{.csv} 
+bydeclaring an IO object. More information can be found in the 'derived quantity draws' 
+section. This \texttt{.csv} can then be read into \texttt{R} and manipulated, 
+using the code below, to produce a histogram of the observed values.
 
-Melissa todo: Include R code to re-create the histogram and report the median and CI's using the user defined .csv.
+Melissa todo: Include R code to re-create the histogram and report the median 
+and CI's using the user defined .csv.
 
 \subsubsection{Parameter draws: The psv file}
 During the \texttt{mcmc} phase, saved parameter values, in
@@ -337,30 +353,30 @@ log-likelihood and product of the model parameters.  The
 only during the \texttt{mceval} phase so that only saved values are written
 to the file as ADMB iterates through each saved parameter. The variable
 header is set to 1 in the \texttt{GLOBALS\_SECTION} as \texttt{int header =
-  1;}. Naturally this code can be used anywhere in the procedure section,
-and this may be a useful diagnostic tool in some situations. The file is
-recreated at each execution if \texttt{ios::trunc} is used. Alternatively, 
-new draws are appended to the bottom of the \texttt{.csv} with \texttt{ios::app}; 
-this option is particularly useful when restarting an MCMC chain.
+  1;}. Naturally, this code can be used anywhere in the procedure section,
+and this may be a useful diagnostic tool in some situations. The \texttt{csv} 
+is recreated at each execution if \texttt{ios::trunc} is used. Alternatively, 
+new draws are appended to the bottom of the \texttt{csv} with \texttt{ios::app}; 
+this option is particularly useful when restarting an MCMC chain. If the append 
+option is used, but the corresponding \texttt{csv} doesn't exist in the working 
+directory, the file is created and filled.
 
 \subsection{Convergence diagnostics} \label{sec:diag}
 Burn-in and thinning, how to check this? What happens if not
-independent?
+independent? Melissa todo - I can write this up. 
 
 \subsection{Resuming a chain}\label{sec:restart}
 The MC resume command, \texttt{-mcr}, allows the user continue sampling along 
-a previuosly run MCMC chain. Say that the user has run a chain, checked 
-diagnostics, and concluded that the chain needs to thinned further as samples 
-appear to be correlated. Rather than restarting a new chain, the user can pick 
-up an existing chain where it left off with the command \texttt{-mcr}. If 
-further thinning is needed, the user can continue an existing chain and 
-thin after the chain is complete. Another benefit of \texttt{-mcr} is that
-the user can run a short chain, check diagnostics, then continue the chain if 
-the thinning rate looks appropriate.
+a previuosly run MCMC chain. Say that the user has run a short ($N$=10,000) chain, 
+checked autocorrelation diagnostics, and concluded that the thinning rate is
+approprite. Rather than restarting a new chain and discarding these 10,000 
+iterations, the user can pick up an existing chain where it left off with the 
+command \texttt{-mcr}. Alternatively, if further thinning is needed, the user
+can continue an existing chain and thin after the chain is complete. 
 
 Resuming a chain is simple, and only requires adding \texttt{-mcr} to an MCMC 
-statement. 
-Let's save ten values from a chain, saving every 20th value with a seed of 30.
+statement. Let's save ten values from a chain, saving every 20th value with 
+a seed of 30.
 
 \begin{verbatim}
 simple -mcmc 200 -mcsave 20 -mcseed 30
@@ -369,7 +385,7 @@ simple -mcmc 200 -mcsave 20 -mcseed 30
 Now say that we want to resume the chain, still saving every 20 values until we 
 have 20 saved parameter draws. In order to save ten additional draws we will 
 run 200 more additional iterations by adding \texttt{-mcr} and 
-\texttt{-nosdmcmc} (see Section 2.1 in the ADMB manual) will achieve this. 
+\texttt{-nosdmcmc} (see Section 2.1 in the ADMB manual). 
 
 \begin{verbatim}
 simple -mcmc 200 -mcsave 20 -mcr -nosdmcmc
@@ -383,9 +399,9 @@ s of a chain, saving every 20, and setting the seed at 30 with the command:
 simple -mcmc 400 -mcsave 20 -mcseed 30
 \end{verbatim}
 
-we end up with different values as the started and resumed chain (Table 1). 
-Users should note the differences between the last half of the resumed chain 
-and the long chain. This disparity can have important implications for
+we end up with different values from the started and resumed chain (Table 1). 
+Users should note the differences between the last half of the "resumed" chains 
+and the "long" chains. This disparity can have important implications for
 reproducibility.
 
 Resuming chains with \texttt{-mcr} can reduce computation time. Adding the comm
@@ -420,7 +436,12 @@ unnecessary for resumed chains.
   0.00 & 0.00 & 1.82 & 5.21 & 2.38 & 2.51 \\ 
    \hline
 \end{tabular}
-\caption{Parameter draws from the "simple" example. The first columns are from the first half of a chain. The resumed chains contain 10 values from the second half of a chain. The long chain is a long chain that has not been resumed with \texttt{-mcr}.}
+\caption{Parameter draws from the "simple" example. The "first" columns are saved 
+parameter draws from a short chain, $Nout=10$. The values from the "resumed" chain
+were created using the \texttt{-mcr} option, where they pick up from where the 
+"first" chain left off, $Nout=20$. The values shown from the "long" chain 
+were completed in a single run (not resumed with \texttt{-mcr} and set to match 
+the total number of iterations and thinning rate from the "reduced" chain.}
 \label{tab:mcr_table}
 \end{table}
 
