@@ -233,9 +233,9 @@ outline a typical workflow.
   \texttt{-mcmc $N$ -mcsave $N_{\text{save}}$} (see Table 2 
   for more runtime options). The thinned draws are discarded,
   leaving a total of $N_{\text{out}}=N/N_{\text{save}}$
-  saved draws. For example \texttt{-mcmc 1e6 -mcsave 1000}
+  saved draws. For example, \texttt{-mcmc 1e6 -mcsave 2000}
   will run 1 million draws but only save (i.e.``thin'')
-  every 1000th, for a total kept of $Nout=1000$.
+  every 2000th, for a total kept of $Nout=500$.
 \item After completion, run the model again with argument
   \texttt{-mceval}. This command tells ADMB to loop through
   the saved iterations (in the \texttt{.psv} file) and
@@ -258,13 +258,15 @@ common (is this true??) among other MCMC software, and may
 be a source of confusion for new ADMB users, they provide a
 powerful and efficient framework for MCMC analyses.
 
-The \texttt{mcmc} phase is the one with which most people
-are already familiar. This is where ADMB generates new
-parameter sets by proposing a set, and then determining
-whether to move there or stay at the current set. This
-process is repeated $N$ times, and how sets are proposed
-depend on the algorithm used (see section \ref{sec:MH} and
-\ref{sec:hybrid}). During this phase, the $Nout$ saved
+Most people are already familiar with the operations preformed 
+in the \texttt{mcmc} phase. This is where ADMB proposes a new 
+set of parameter values, then uses an acceptance criteria to
+decide whether to stay at its current state or move to the new
+state defined by the proposed set of parameter values. This
+process is repeated until a chain of $N$ states, formed by 
+accepting $N$ parameter sets, is formed. New states are 
+proposed using one of two built-in algorithms: see section \ref{sec:MH} 
+and \ref{sec:hybrid}. During this phase, the $Nout$ saved
 parameter values are written to a \texttt{.psv} file
 (described below). Note that if \texttt{-mcsave $nsave$} is
 not specified, ADMB will run the MCMC but no values will be
@@ -274,24 +276,23 @@ The \texttt{mceval} is an optional phase that is designed to
 be run after the \texttt{.psv} file has been
 produced. During this phase, ADMB loops through the $Nout$
 parameter combinations in the \texttt{.psv} file and reruns
-the \texttt{PROCEDURE\_SECTION} in the \texttt{mceval()}
-phase. This phase is extremely powerful because it allows
-the user to minimize wasted calculations by parsing
-calculations into two groups: those that affect the
+the \texttt{PROCEDURE\_SECTION}. This phase is extremely powerful 
+because it allows the user to minimize unused calculations by 
+parsing calculations into two groups: those that affect the
 objective function (i.e. posterior calculations for Bayesian
 analyses) and those that do not. Calculations done for
-discarded draws (which often is most iterations) simply slow
-down the analysis. Thus, an analysis can be made to run
-faster by minimizing calculations in the \texttt{mcmc}
-phase.  For example, a user may want to extrapolate
+discarded draws (which often comprises most iterations) simply 
+slow down the analysis. For example, a user may want to extrapolate
 (e.g. project a time series into the future) or calculate
 values derived from the parameters and intermediate
-values. By putting these calculations inside an
-\texttt{mceval\_phase} clause they are only done for saved
-draws and the MCMC will run faster. In practice, some chains
-need to be thinned significantly more than 1 in 1000, so the
-time saved can be substantial, especially if the
-\texttt{mceval\_phase} calculations are time-consuming.
+values. Placing these calculations inside an
+\texttt{mceval\_phase} clause means they will only be preformed 
+on each saved draw. Thus, an analysis can be made to run
+faster by minimizing total calculations in the \texttt{mcmc}
+phase. In practice, some chains need to be thinned significantly 
+more than 1 in 1000, so the runtime saved can be substantial, 
+especially if the \texttt{mceval\_phase} calculations are 
+time-consuming.
 
 While the \texttt{mceval} phase was designed specifically
 for MCMC analyses, it can be coopted for use in other types
