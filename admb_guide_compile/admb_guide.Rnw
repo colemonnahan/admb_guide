@@ -38,8 +38,8 @@ Melissa L. Muradian | murad17@uw.edu}
 \section{Introduction}
 
   The goal of this guide is to outline and describe the steps needed to conduct a Bayesian analysis in AD 
-  Model Builder. Included are general descriptions of Bayesian inference, Priors, and two MCMC algorithms. We
-  hope that the guide will enable users to take fuller advantage of the features of ADMB that are built in
+  Model Builder (ADMB). Included are general descriptions of Bayesian inference, priors, and two MCMC algorithms. We
+  hope that the guide will enable users to take full advantage of the features of ADMB that are built-in
   but not well-documented.
 
   AD Model Builder is the fastest, most powerful software for fitting general nonlinear statistical models.
@@ -261,7 +261,24 @@ details on how to do this.
 
 \subsection{Output files}\label{sec:outfiles}
 \subsubsection{Meta data: The hst file}
-Melissa todo
+A file named \texttt{<model name>.hst} is produced which contains the
+marginal distribution of each object of type \texttt{sdreport} displayed 
+as two columns under the header of the associated \texttt{sdreport} variable. 
+This distribution is created by binning the observed values of each 
+\texttt{sdreport} variable, over the entire MCMC chain, into a histogram and 
+then scaling the area under the curve to equal 1. In the \texttt{.hst}, the 
+first column reports the mid-point of each bin and the second column reports 
+the associated density.
+
+The structure of the \texttt{.hst} file is organized so that if a chain is restarted
+using the \texttt{-mcr} option, all values needed to bin the 
+subsequent MCMC samples into the original histogram are automatically read, so that the values
+in the final \texttt{.hst} file reflect the observed values, and therefore the marginal distribution, of the complete chain. The firt value reported in the \texttt{.hst} file is the total number of iterations of the MCMC chain used to create the reported marginal distribution.
+
+An important note about using the \texttt{.hst} file: The reported means and standard deviations are necessary to the internal algorithm that creates each \texttt{sdreport} variable's histogram and are calculated using only a small number of the initial iterations of the chain. Therefore these values are inappropriate to report as model results. The user has two ways to obtain the posterior median and credible intervals for each \texttt{sdreport} variable: the user can manually export the marginal distribution from the \texttt{.hst} file into an input file external to ADMB (e.g. \texttt{.csv} to \texttt{R}) and calculate the quantiles, etc., or the user can write each \texttt{sdreport} variable's (saved or total) draws during the \texttt{mceval} phase to a \texttt{.csv} using the information in the 'derived quantity draws' section. This \texttt{.csv} can then be read into \texttt{R} and manipulated, using the code below, to produce a histogram of the observed values.
+
+Melissa todo: Include R code to re-create the histogram and report the median and CI's using the user defined .csv.
+
 \subsubsection{Parameter draws: The psv file}
 During the \texttt{mcmc} phase, saved parameter values, in
 bounded space, are written to a binary file called
@@ -322,10 +339,9 @@ to the file as ADMB iterates through each saved parameter. The variable
 header is set to 1 in the \texttt{GLOBALS\_SECTION} as \texttt{int header =
   1;}. Naturally this code can be used anywhere in the procedure section,
 and this may be a useful diagnostic tool in some situations. The file is
-recreated at each execution if \texttt{ios::trunc} is used, or it can be
-appended with \texttt{ios::app}. New draws are appended to the
-\texttt{MCMCreport.csv} file so that it must be deleted in between MCMC
-runs.
+recreated at each execution \texttt{ios::trunc} is used, or new draws are
+appended to the bottom of the \texttt{.csv} with \texttt{ios::app}. The
+latter option is useful when restarting an MCMC chain.
 
 \subsection{Convergence diagnostics} \label{sec:diag}
 Burn-in and thinning, how to check this? What happens if not
