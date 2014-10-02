@@ -65,7 +65,6 @@
 %% % The above is supposed to enable inline code highlighting using \Sexpr{},
 %% % but i can't get it to work; just , does the same thing as \texttt{}. My tester is on line 58
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
-
 \begin{document}
 %% \SweaveOpts{concordance=TRUE}
 \title{Bayesian Analysis in AD Model Builder}
@@ -360,7 +359,6 @@ mcmc <- \hlkwd{matrix}(\hlkwd{readBin}(psv, \hlstr{"numeric"}, n=nparams*<Nout>)
 \end{alltt}
 \end{kframe}
 \end{knitrout}
-
 The first element in the \texttt{.psv} file is the number of
 active parameters in the model, which then tells R how to
 parse the following elements into parameter values. Note
@@ -393,7 +391,6 @@ screen.
 \end{alltt}
 \end{kframe}
 \end{knitrout}
-
 Then, inside the \texttt{PROCEDURE\_SECTION} the function
 can be used to write both parameters, derived quantities, or
 other information about the model.
@@ -410,7 +407,6 @@ other information about the model.
 \end{alltt}
 \end{kframe}
 \end{knitrout}
-
 
 In this case the parameters $a$ and $b$ are saved, along with the negative
 log-likelihood and product of the model parameters.  The

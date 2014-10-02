@@ -39,20 +39,19 @@ Melissa L. Muradian | murad17@uw.edu}
 
   The goal of this guide is to outline and describe the steps needed to conduct a Bayesian analysis in AD 
   Model Builder (ADMB). Included are general descriptions of Bayesian inference, priors, and two MCMC algorithms. We
-  hope that the guide will enable users to take full advantage of the features of ADMB that are built-in,
+  hope that the guide will enable users to take full advantage of the features of ADMB that are built-in
   but not well-documented.
 
   AD Model Builder is the fastest, most powerful software for fitting general nonlinear statistical models.
   The "AD" refers to automatic differentiation that comes from a C++ library which implements reverse mode 
   automatic differentiation. 
   
--Add short paragraph about r2admb package
+% -Add short paragraph about r2admb package
 
   We encourage others to contribute to this guide and further document the Bayesian capabilites of ADMB.
   The contents of this document available on a \href{https://github.com/colemonnahan/admb_guide}{github
-  repository} maintained by Cole Monnahan. 
+  repository} maintained by Cole Monnahan. Code suggestions can be submitted as issues on the github page.
   
-  Something about about where to make code suggestions?
   
   
 \section{Bayesian inference}
@@ -369,7 +368,7 @@ independent? Melissa todo - I can write this up.
 The MC resume command, \texttt{-mcr}, allows the user continue sampling along 
 a previuosly run MCMC chain. Say that the user has run a short ($N$=10,000) chain, 
 checked autocorrelation diagnostics, and concluded that the thinning rate is
-approprite. Rather than restarting a new chain and discarding these 10,000 
+appropriate. Rather than restarting a new chain and discarding these 10,000 
 iterations, the user can pick up an existing chain where it left off with the 
 command \texttt{-mcr}. Alternatively, if further thinning is needed, the user
 can continue an existing chain and thin after the chain is complete. 
@@ -384,11 +383,10 @@ simple -mcmc 200 -mcsave 20 -mcseed 30
 
 Now say that we want to resume the chain, still saving every 20 values until we 
 have 20 saved parameter draws. In order to save ten additional draws we will 
-run 200 more additional iterations by adding \texttt{-mcr} and 
-\texttt{-nosdmcmc} (see Section 2.1 in the ADMB manual). 
+run 200 more additional iterations by adding \texttt{-mcr} (see Section 2.1 in the ADMB manual). 
 
 \begin{verbatim}
-simple -mcmc 200 -mcsave 20 -mcr -nosdmcmc
+simple -mcmc 200 -mcsave 20 -mcr
 \end{verbatim}
 
 One nuance of \texttt{-mcr} is that starting then resuming a chain does not
@@ -400,13 +398,13 @@ simple -mcmc 400 -mcsave 20 -mcseed 30
 \end{verbatim}
 
 we end up with different values from the started and resumed chain (Table 1). 
-Users should note the differences between the last half of the "resumed" chains 
-and the "long" chains. This disparity can have important implications for
+Users should note the differences between the last half of the ``resumed'' chains 
+and the ``long'' chains. This disparity can have important implications for
 reproducibility.
 
 Resuming chains with \texttt{-mcr} can reduce computation time. Adding the comm
 and \texttt{-noest} can save further computation time as minimization is 
-unnecessary for resumed chains.
+unnecessary for resumed chains. Adding the command \texttt{-nosdmcmc} can also save computation time, but the original chain must have been run with \texttt{-nosdmcmc}. Otherwise, ADMB will try to read non-existent histogram data (found in the \texttt{.hst} file).
 
 \begin{table}[ht]
 \centering
@@ -622,7 +620,7 @@ posterior of interest.
 \end{figure}
 
 
-\subsubsection{Opitmize the acceptance rate}
+\subsubsection{Optimize the acceptance rate}
 Studies have shown that there is an optimal range for
 acceptance rate for the MH algorithm
 (e.g. \cite{roberts2001}). If the proposal distribution
@@ -774,7 +772,7 @@ file structure of ADMB. The steps to do this can be found in
 the document at
 \url{http://www.admb-project.org/examples/admb-tricks/covariance-calculations.}
 
-\section{Hyrbid MCMC}\label{sec:hybrid}
+\section{Hybrid MCMC}\label{sec:hybrid}
 The ``hybrid'' option in ADMB is an implementation of an
 MCMC algorithm based on Hamiltonian dynamics. Here we provid
 a simplified overview \footnote{Ignoring, for example, the
@@ -814,7 +812,7 @@ described by the Hamiltonian function,
 $H(\mathbf{q},\mathbf{p})$. This system can be
 conceptualized as a frictionless surface about which an
 object moves. At some time $t$ an object has a certain
-height (position) and momemtum. The height of the surface is
+height (position) and momentum. The height of the surface is
 equal to the objective function of our model, and the
 momentum variables are introduced parameters to ensure the
 Hamiltonian dynamics are met. Samples from a posterior are
