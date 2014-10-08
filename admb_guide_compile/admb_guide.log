@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2013.5.30)  8 OCT 2014 14:42
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2013.5.30)  8 OCT 2014 14:46
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -293,9 +293,6 @@ tim
 )
 (./admb_guide.aux
 
-LaTeX Warning: Label `sec:diag' multiply defined.
-
-
 LaTeX Warning: Label `fig:logistic_mh2' multiply defined.
 
 )
@@ -427,102 +424,102 @@ File: omscmtt.fd
 LaTeX Font Info:    Font shape `OMS/cmtt/m/n' in size <10> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 413.
 
-[5] [6] [7] <../plots/simple1.pdf, id=220, 505.89pt x 361.35pt>
+[5] [6] [7] <../plots/simple1.pdf, id=215, 505.89pt x 361.35pt>
 File: ../plots/simple1.pdf Graphic file (type pdf)
 
 <use ../plots/simple1.pdf>
-Package pdftex.def Info: ../plots/simple1.pdf used on input line 662.
+Package pdftex.def Info: ../plots/simple1.pdf used on input line 658.
 (pdftex.def)             Requested size: 361.34999pt x 258.10966pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[8] <../plots/simple2.pdf, id=230, 505.89pt x 361.35pt>
+[8] <../plots/simple2.pdf, id=225, 505.89pt x 361.35pt>
 File: ../plots/simple2.pdf Graphic file (type pdf)
 
 <use ../plots/simple2.pdf>
-Package pdftex.def Info: ../plots/simple2.pdf used on input line 699.
+Package pdftex.def Info: ../plots/simple2.pdf used on input line 695.
 (pdftex.def)             Requested size: 361.34999pt x 258.10966pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 
-LaTeX Warning: Citation `roberts2001' on page 9 undefined on input line 712.
+LaTeX Warning: Citation `roberts2001' on page 9 undefined on input line 708.
 
 [9 <../plots/simple1.pdf>]
-<../plots/mcgrope_example.png, id=247, 578.16pt x 289.08pt>
+<../plots/mcgrope_example.png, id=242, 578.16pt x 289.08pt>
 File: ../plots/mcgrope_example.png Graphic file (type png)
 
 <use ../plots/mcgrope_example.png>
-Package pdftex.def Info: ../plots/mcgrope_example.png used on input line 765.
+Package pdftex.def Info: ../plots/mcgrope_example.png used on input line 761.
 (pdftex.def)             Requested size: 361.34999pt x 180.67455pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 [10 <../plots/simple2.pdf>]
-<../plots/mcrb_examples.png, id=263, 650.43pt x 433.62pt>
+<../plots/mcrb_examples.png, id=258, 650.43pt x 433.62pt>
 File: ../plots/mcrb_examples.png Graphic file (type png)
 
 <use ../plots/mcrb_examples.png>
-Package pdftex.def Info: ../plots/mcrb_examples.png used on input line 835.
+Package pdftex.def Info: ../plots/mcrb_examples.png used on input line 831.
 (pdftex.def)             Requested size: 361.34999pt x 240.90675pt.
  [11 <../plots/mcgrope_example.png>]
 
-LaTeX Warning: Citation `brooks2011' on page 12 undefined on input line 869.
+LaTeX Warning: Citation `brooks2011' on page 12 undefined on input line 865.
 
 [12 <../plots/mcrb_examples.png>] [13]
-<../plots/hybrid_grid_trace.pdf, id=296, 505.89pt x 361.35pt>
+<../plots/hybrid_grid_trace.pdf, id=291, 505.89pt x 361.35pt>
 File: ../plots/hybrid_grid_trace.pdf Graphic file (type pdf)
 
 <use ../plots/hybrid_grid_trace.pdf>
-Package pdftex.def Info: ../plots/hybrid_grid_trace.pdf used on input line 957.
+Package pdftex.def Info: ../plots/hybrid_grid_trace.pdf used on input line 953.
 
 (pdftex.def)             Requested size: 361.34999pt x 258.10966pt.
  [14 <../plots/hybrid_grid_trace.pdf>]
-<../plots/hybrid_seeds.pdf, id=315, 505.89pt x 361.35pt>
+<../plots/hybrid_seeds.pdf, id=310, 505.89pt x 361.35pt>
 File: ../plots/hybrid_seeds.pdf Graphic file (type pdf)
 
 <use ../plots/hybrid_seeds.pdf>
-Package pdftex.def Info: ../plots/hybrid_seeds.pdf used on input line 996.
+Package pdftex.def Info: ../plots/hybrid_seeds.pdf used on input line 992.
 (pdftex.def)             Requested size: 361.34999pt x 258.10966pt.
 
 
-LaTeX Warning: Citation `brooks2011' on page 15 undefined on input line 1006.
+LaTeX Warning: Citation `brooks2011' on page 15 undefined on input line 1002.
 
 
-LaTeX Warning: Citation `brooks2011' on page 15 undefined on input line 1013.
+LaTeX Warning: Citation `brooks2011' on page 15 undefined on input line 1009.
 
 [15 <../plots/hybrid_seeds.pdf>]
 
-LaTeX Warning: Citation `brooks2011' on page 16 undefined on input line 1056.
+LaTeX Warning: Citation `brooks2011' on page 16 undefined on input line 1052.
 
-<../plots/hybrid_grid_acf.pdf, id=330, 505.89pt x 361.35pt>
+<../plots/hybrid_grid_acf.pdf, id=325, 505.89pt x 361.35pt>
 File: ../plots/hybrid_grid_acf.pdf Graphic file (type pdf)
 
 <use ../plots/hybrid_grid_acf.pdf>
-Package pdftex.def Info: ../plots/hybrid_grid_acf.pdf used on input line 1085.
+Package pdftex.def Info: ../plots/hybrid_grid_acf.pdf used on input line 1081.
 (pdftex.def)             Requested size: 361.34999pt x 258.10966pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[16] <../plots/logistic_mh.pdf, id=339, 505.89pt x 361.35pt>
+[16] <../plots/logistic_mh.pdf, id=334, 505.89pt x 361.35pt>
 File: ../plots/logistic_mh.pdf Graphic file (type pdf)
 
 <use ../plots/logistic_mh.pdf>
-Package pdftex.def Info: ../plots/logistic_mh.pdf used on input line 1133.
+Package pdftex.def Info: ../plots/logistic_mh.pdf used on input line 1129.
 (pdftex.def)             Requested size: 361.34999pt x 258.10966pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<../plots/logistic_mh2.pdf, id=341, 505.89pt x 361.35pt>
+<../plots/logistic_mh2.pdf, id=336, 505.89pt x 361.35pt>
 File: ../plots/logistic_mh2.pdf Graphic file (type pdf)
 
 <use ../plots/logistic_mh2.pdf>
-Package pdftex.def Info: ../plots/logistic_mh2.pdf used on input line 1148.
+Package pdftex.def Info: ../plots/logistic_mh2.pdf used on input line 1144.
 (pdftex.def)             Requested size: 361.34999pt x 258.10966pt.
 
 
@@ -530,28 +527,28 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 
 File: ../plots/logistic_mh2.pdf Graphic file (type pdf)
 <use ../plots/logistic_mh2.pdf>
-Package pdftex.def Info: ../plots/logistic_mh2.pdf used on input line 1165.
+Package pdftex.def Info: ../plots/logistic_mh2.pdf used on input line 1161.
 (pdftex.def)             Requested size: 361.34999pt x 258.10966pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<../plots/logistic_hy.pdf, id=346, 505.89pt x 361.35pt>
+<../plots/logistic_hy.pdf, id=341, 505.89pt x 361.35pt>
 File: ../plots/logistic_hy.pdf Graphic file (type pdf)
 
 <use ../plots/logistic_hy.pdf>
-Package pdftex.def Info: ../plots/logistic_hy.pdf used on input line 1185.
+Package pdftex.def Info: ../plots/logistic_hy.pdf used on input line 1181.
 (pdftex.def)             Requested size: 361.34999pt x 258.10966pt.
 File: ../plots/logistic_hy.pdf Graphic file (type pdf)
  <use ../plots/logistic_hy.pdf>
-Package pdftex.def Info: ../plots/logistic_hy.pdf used on input line 1196.
+Package pdftex.def Info: ../plots/logistic_hy.pdf used on input line 1192.
 (pdftex.def)             Requested size: 361.34999pt x 258.10966pt.
 
-<../plots/logistic_hy3.pdf, id=348, 505.89pt x 361.35pt>
+<../plots/logistic_hy3.pdf, id=343, 505.89pt x 361.35pt>
 File: ../plots/logistic_hy3.pdf Graphic file (type pdf)
 
 <use ../plots/logistic_hy3.pdf>
-Package pdftex.def Info: ../plots/logistic_hy3.pdf used on input line 1209.
+Package pdftex.def Info: ../plots/logistic_hy3.pdf used on input line 1205.
 (pdftex.def)             Requested size: 361.34999pt x 258.10966pt.
  [17 <../plots/hybrid_grid_acf.pdf>]
 
@@ -564,17 +561,17 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 [18 <../plots/logistic_mh.pdf>] (./admb_guide.bbl)
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1238.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1234.
  [19 <../plots/logistic_mh2.pdf>] [20 <../plots/logistic_hy.pdf>] [21 <../plots
 /logistic_hy3.pdf>]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 1238.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 1234.
 
 (./admb_guide.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1238.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1238.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1234.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1234.
 
 Package rerunfilecheck Info: File `admb_guide.out' has not changed.
-(rerunfilecheck)             Checksum: B5DAFE3AB298818B80444142C491E707;2003.
+(rerunfilecheck)             Checksum: 67BFA38ABB7CF94479466905C3FC2BF9;1930.
 
 
 LaTeX Warning: There were undefined references.
@@ -582,13 +579,13 @@ LaTeX Warning: There were undefined references.
 
 LaTeX Warning: There were multiply-defined labels.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1238.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1234.
  ) 
 Here is how much of TeX's memory you used:
- 6820 strings out of 493315
- 98962 string characters out of 6137904
- 199850 words of memory out of 5000000
- 10067 multiletter control sequences out of 15000+600000
+ 6818 strings out of 493315
+ 98932 string characters out of 6137904
+ 198850 words of memory out of 5000000
+ 10066 multiletter control sequences out of 15000+600000
  14538 words of font info for 57 fonts, out of 8000000 for 9000
  957 hyphenation exceptions out of 8191
  29i,17n,32p,590b,412s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -615,10 +612,10 @@ t/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/local/texlive/2013/texmf-dist
 /fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texlive/2013/texmf-dist/
 fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/local/texlive/2013/texmf-dist/f
 onts/type1/public/amsfonts/cm/cmtt8.pfb>
-Output written on admb_guide.pdf (21 pages, 606312 bytes).
+Output written on admb_guide.pdf (21 pages, 606103 bytes).
 PDF statistics:
- 509 PDF objects out of 1000 (max. 8388607)
- 434 compressed objects within 5 object streams
- 92 named destinations out of 1000 (max. 500000)
- 296 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 504 PDF objects out of 1000 (max. 8388607)
+ 429 compressed objects within 5 object streams
+ 91 named destinations out of 1000 (max. 500000)
+ 288 words of extra memory for PDF output out of 10000 (max. 10000000)
 

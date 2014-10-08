@@ -475,10 +475,6 @@ the total number of iterations and thinning rate from the "reduced" chain.}
 %%# print(xtable(out))
 %%# @
 
-\subsection{Convergence diagnostics} \label{sec:diag}
-Burn-in and thinning, how to check this? What happens if not
-independent?
-
 \subsection{Starting values}\label{sec:startvals}
 For many Bayesian software platforms, the MCMC algorithms
 are started at user-specified or arbitrary places. ADMB has the
