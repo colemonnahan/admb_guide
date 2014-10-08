@@ -426,7 +426,7 @@ parameter intervals of greater and lesser frequency (figure ~). If a parameter's
 histogram is strongly skewed and pushed up against a bound (figure ~), then the 
 covariance calculations will be affected, and the chain cannot be trusted to 
 have explored the entire likelihood space. Widening the bounds on this parameter 
-may solve the problem, but this may conflict with $a priori$ assumptions about 
+may solve the problem, but this may conflict with $a$ $priori$ assumptions about 
 biologically meaningful priors, or could introduce numerical errors. Widening 
 the bounds on correlated parameters can also ``unstick'' a parameter. However, 
 this may not be an easilly solvable issue, may require expert and informed 
