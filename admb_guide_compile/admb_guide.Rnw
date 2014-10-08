@@ -20,8 +20,8 @@
 %% \SweaveOpts{concordance=TRUE}
 \title{Bayesian Analysis in AD Model Builder}
 \author{Cole C. Monnahan | monnahc@uw.edu \\
-Peter T. Kuriyama | ptrkrym@uw.edu \\
-Melissa L. Muradian | murad17@uw.edu}
+Melissa L. Muradian | murad17@uw.edu \\
+Peter T. Kuriyama | ptrkrym@uw.edu}
 
 \date{\today{}}
 \maketitle
@@ -46,7 +46,10 @@ Melissa L. Muradian | murad17@uw.edu}
   The "AD" refers to automatic differentiation that comes from a C++ library which implements reverse mode 
   automatic differentiation. 
   
-% -Add short paragraph about r2admb package
+  ADMB executables are compiled from C++ templates and data files can be written in your favorite, or the 
+  default, IDE. Compiling and running executables can be done through the terminal, or R users can take 
+  advantage of the \texttt{R2admb} package availble on CRAN. This package creates an R to ADMB interface 
+  useful for compiling and running models, and reading results back for ploting or post-processing.
 
   We encourage others to contribute to this guide and further document the Bayesian capabilites of ADMB.
   The contents of this document available on a \href{https://github.com/colemonnahan/admb_guide}{github
