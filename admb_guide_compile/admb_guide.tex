@@ -93,7 +93,7 @@ Peter T. Kuriyama | ptrkrym@uw.edu}
   but not well-documented.
 
   AD Model Builder is the fastest, most powerful software for fitting general nonlinear statistical models.
-  The "AD" refers to automatic differentiation that comes from a C++ library which implements reverse mode 
+  The ``AD" refers to automatic differentiation that comes from a C++ library which implements reverse mode 
   automatic differentiation. 
   
   ADMB executables are compiled from C++ templates and data files can be written in your favorite, or the 
@@ -326,9 +326,11 @@ The structure of the \texttt{.hst} file is organized so that if a chain is
 restarted using the \texttt{-mcr} option, all values needed to bin the 
 subsequent MCMC samples into the original histogram are automatically read, 
 so that the values in the final \texttt{.hst} file reflect the observed values, 
-and therefore the marginal distribution, of the complete chain. The first value 
+and therefore the marginal distribution, of the complete chain. The first element 
 reported in the \texttt{.hst} file is the total number of iterations of the 
-MCMC chain used to create the reported marginal distribution.
+MCMC chain ($Nmcmc$) used to create the reported marginal distribution, and the second 
+element is the final step-size scaling factor used for the jump function. The
+remainder of the elements are only useful for constructing the reported histogram.
 
 An important note about using the \texttt{.hst} file: The reported means and 
 standard deviations are necessary to the internal algorithm that creates 
@@ -340,12 +342,17 @@ The user can manually export the marginal distribution from the \texttt{.hst}
 file into an input file external to ADMB (e.g. \texttt{.csv} to \texttt{R}) and 
 calculate the quantiles, etc. Alternatively, the user can write each \texttt{sdreport} 
 variable's (saved or total) draws during the \texttt{mceval} phase to a \texttt{.csv} 
-bydeclaring an IO object. More information can be found in the 'derived quantity draws' 
-section. This \texttt{.csv} can then be read into \texttt{R} and manipulated, 
-using the code below, to produce a histogram of the observed values.
+by declaring an IO object. More information can be found in the ``derived quantity 
+draws'' section. This \texttt{.csv} can then be read into \texttt{R} and manipulated 
+to produce a histogram of the observed values.
 
-Melissa todo: Include R code to re-create the histogram and report the median 
-and CI's using the user defined .csv.
+If the user is writing the saved \texttt{sdreport} variables to file, then the only 
+pieces of information in the \texttt{.hst} file that are useful are the first two 
+elements, $Nmcmc$ and the final step-size scaling factor. Therefore, we propose a few 
+improvements to the general usability of the \texttt{.hst} file: adding elements that 
+report the date and time that the associated MCMC chain was started, the 
+\texttt{-mcsave $nsave$} used, and the date and time the chain finished would be useful 
+data to have associated with each chain.
 
 \subsubsection{Parameter draws: The psv file}
 During the \texttt{mcmc} phase, saved parameter values, in
@@ -397,8 +404,9 @@ screen.
 \end{knitrout}
 
 Then, inside the \texttt{PROCEDURE\_SECTION} the function
-can be used to write both parameters, derived quantities, or
-other information about the model.
+can be used to write both parameters, derived quantities 
+(\texttt{sdreport} varaibles, etc.), or other information 
+about the model.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -427,6 +435,13 @@ new draws are appended to the bottom of the \texttt{csv} with \texttt{ios::app};
 this option is particularly useful when restarting an MCMC chain. If the append 
 option is used, but the corresponding \texttt{csv} doesn't exist in the working 
 directory, the file is created and filled.
+
+We would like to recommend a user-friendly addition to the ADMB output files: 
+something like an \texttt{.sdsv} file that would be similar to the \texttt{.psv} 
+file, in that each saved \texttt{sdreport} value is written to a binary file. This 
+file could then be read into R using the same code as for the \texttt{.psv} file 
+and used to create histograms of the posterior distributions and calculate the 
+median and credible intervals for each \texttt{sdreport} vaariable.
 
 \subsection{Convergence diagnostics} \label{sec:diag}
 Burn-in and thinning, how to check this? What happens if not
@@ -472,7 +487,10 @@ reproducibility.
 
 Resuming chains with \texttt{-mcr} can reduce computation time. Adding the comm
 and \texttt{-noest} can save further computation time as minimization is 
-unnecessary for resumed chains. Adding the command \texttt{-nosdmcmc} can also save computation time, but the original chain must have been run with \texttt{-nosdmcmc}. Otherwise, ADMB will try to read non-existent histogram data (found in the \texttt{.hst} file).
+unnecessary for resumed chains. Adding the command \texttt{-nosdmcmc} can also 
+save computation time, but the original chain must have been run with 
+\texttt{-nosdmcmc}. Otherwise, ADMB will try to read non-existent histogram 
+data (found in the \texttt{.hst} file).
 
 \begin{table}[ht]
 \centering
@@ -528,7 +546,7 @@ independent?
 
 \subsection{Starting values}\label{sec:startvals}
 For many Bayesian software platforms, the MCMC algorithms
-are started at user-chosen or arbitrary places. ADMB has the
+are started at user-specified or arbitrary places. ADMB has the
 advantage that it can robustly estimate the posterior mode
 and the covariance at that point. This information is very
 valuable in initializing the MCMC chain.
@@ -548,7 +566,7 @@ The default MCMC algorithm used by ADMB is the
 Metropolis-Hastings (MH) algorithm\footnote{Technically it
   has a symmetric proposal, a special case known as the
   Metropolis algorithm.}. This algorithm has been around for
-decades, is simple to implement and used widely.
+decades, is simple to implement, and used widely.
 
 This algorithm will be most efficient when the posterior
 surface mimics a multivariate Normal distribution.
