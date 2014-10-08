@@ -444,8 +444,70 @@ and used to create histograms of the posterior distributions and calculate the
 median and credible intervals for each \texttt{sdreport} vaariable.
 
 \subsection{Convergence diagnostics} \label{sec:diag}
-Burn-in and thinning, how to check this? What happens if not
-independent? Melissa todo - I can write this up. 
+There exist important convergence diagnostics to assess whether an MCMC chain has not
+converged. A few key diagnostics to check are 1) whether enough of the initial samples 
+have been discarded as ``burn-in", 2) how much auto-correlation exists in the saved 
+samples, and 3) whether parameters are ``stuck'' at thier bounds. Using the saved 
+parameter values, histograms and trace plots for each parameter should be created 
+and reviewed. Below is helpful code to produce the diagnostic plots discussed in 
+this section. Please note the code below assumes that the code from the ``The psv 
+file'' section above has been executed and uses the same \texttt{mcmc} object 
+created in that code chunk. 
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{# Produce all trace plots}
+\hlkwd{plot}\hlstd{(mcmc[,} \hlnum{1}\hlopt{:}\hlstd{nparams],} \hlkwc{type} \hlstd{=} \hlstr{"l"}\hlstd{,} \hlkwc{xaxs} \hlstd{=} \hlstr{"i"}\hlstd{)}
+\hlcom{# Produce all histograms}
+\hlkwd{hist}\hlstd{(mcmc[,} \hlnum{1}\hlopt{:}\hlstd{nparams],} \hlkwc{breaks} \hlstd{=} \hlnum{50}\hlstd{)}
+\hlcom{# Produce all two-dimensional sample-spaces}
+\hlkwd{pairs}\hlstd{(mcmc[,} \hlnum{1}\hlopt{:}\hlstd{nparams],} \hlkwc{pch} \hlstd{=} \hlstr{"."}\hlstd{)}
+\hlcom{# Produce all plots of lag 0+ autocorrelation}
+\hlkwd{acf}\hlstd{(mcmc[,} \hlnum{1}\hlopt{:}\hlstd{nparams])}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+The first few iterations of a chain should be discarded as ``burn-in''; the 
+period where the algorithm is adjusting the jump function in order to best 
+explore the posterior space (figure ~). A rule of thumb of 20\% exists for 
+the proprtion of the total iterations that should be droped as burn-in. 
+After the samples judged to be from the burn-in period have been manually 
+discarded, trace plots should be trendless, in that each consequetive saved 
+sample's value should not be correlated with the previous value (figure ~).
+
+[Insert a two-panel figure where the first has a strong burn-in trend and 
+a 2nd which has no trends and is the example trace plot to strive for, and 
+add correct figure references in paragraph above.]
+
+If trends exist in the histogram even after the burn-in has been removed, 
+then the chain should be run over again with a greater thinning rate, i.e. 
+increase \texttt{$nsave$} from \texttt{-mcsave 10000} to \texttt{-mcsave 50000}. 
+This step is crucial to obtain a final chain of independant samples. If there 
+still exist strong trends in the trace plots, there is correlation between 
+two or more parameters. Correlation between parameters can be seen using the 
+\texttt{pairs()} plotting function on an mcmc object in R. See code chunk above.
+
+Histograms for each parameter's complete chain of saved values should display 
+parameter intervals of greater and lesser frequency (figure ~). If a parameter's
+histogram is strongly skewed and pushed up against a bound (figure ~), then the 
+covariance calculations will be affected, and the chain cannot be trusted to 
+have explored the entire likelihood space. Widening the bounds on this parameter 
+may solve the problem, but this may conflict with $a priori$ assumptions about 
+biologically meaningful priors, or could introduce numerical errors. Widening 
+the bounds on correlated parameters can also ``unstick'' a parameter. However, 
+this may not be an easilly solvable issue, may require expert and informed 
+tinkering, revisiting model assumptions, and could be beyond the scope of this 
+guide.
+
+[Insert a two-panel figure where the first clearly has a param stuck at a 
+bound and a 2nd which is the example histogram to strive for, and add correct 
+figure references in paragraph above.]
+
+More information on these concepts is discussed in section 5.5 ``Tuning the 
+MH algorithm''.
 
 \subsection{Resuming a chain}\label{sec:restart}
 The MC resume command, \texttt{-mcr}, allows the user continue sampling along 

@@ -10,20 +10,20 @@
 \contentsline {subsubsection}{\numberline {4.3.3}Derived quantity draws}{5}{subsubsection.4.3.3}
 \contentsline {subsection}{\numberline {4.4}Convergence diagnostics}{6}{subsection.4.4}
 \contentsline {subsection}{\numberline {4.5}Resuming a chain}{6}{subsection.4.5}
-\contentsline {subsection}{\numberline {4.6}Starting values}{6}{subsection.4.6}
-\contentsline {section}{\numberline {5}Metropolis-Hastings MCMC}{7}{section.5}
-\contentsline {subsection}{\numberline {5.1}Algorithm}{7}{subsection.5.1}
+\contentsline {subsection}{\numberline {4.6}Starting values}{8}{subsection.4.6}
+\contentsline {section}{\numberline {5}Metropolis-Hastings MCMC}{8}{section.5}
+\contentsline {subsection}{\numberline {5.1}Algorithm}{8}{subsection.5.1}
 \contentsline {subsection}{\numberline {5.2}MCMC Arguments}{8}{subsection.5.2}
 \contentsline {subsection}{\numberline {5.3}Console output}{8}{subsection.5.3}
-\contentsline {subsection}{\numberline {5.4}Example MCMC}{8}{subsection.5.4}
+\contentsline {subsection}{\numberline {5.4}Example MCMC}{9}{subsection.5.4}
 \contentsline {subsection}{\numberline {5.5}Tuning the MH algorithm}{9}{subsection.5.5}
 \contentsline {subsubsection}{\numberline {5.5.1}Thinning rate}{9}{subsubsection.5.5.1}
 \contentsline {subsubsection}{\numberline {5.5.2}Optimize the acceptance rate}{9}{subsubsection.5.5.2}
 \contentsline {subsubsection}{\numberline {5.5.3}mcprobe}{10}{subsubsection.5.5.3}
-\contentsline {subsubsection}{\numberline {5.5.4}mcrb}{10}{subsubsection.5.5.4}
+\contentsline {subsubsection}{\numberline {5.5.4}mcrb}{11}{subsubsection.5.5.4}
 \contentsline {subsubsection}{\numberline {5.5.5}User-supplied covariance matrix}{12}{subsubsection.5.5.5}
-\contentsline {section}{\numberline {6}Hybrid MCMC}{12}{section.6}
-\contentsline {subsection}{\numberline {6.1}Algorithm}{13}{subsection.6.1}
-\contentsline {subsection}{\numberline {6.2}Arguments}{15}{subsection.6.2}
-\contentsline {subsection}{\numberline {6.3}Tuning the hybrid algorithm}{16}{subsection.6.3}
-\contentsline {section}{\numberline {7}An example with non-linear posterior}{17}{section.7}
+\contentsline {section}{\numberline {6}Hybrid MCMC}{13}{section.6}
+\contentsline {subsection}{\numberline {6.1}Algorithm}{14}{subsection.6.1}
+\contentsline {subsection}{\numberline {6.2}Arguments}{16}{subsection.6.2}
+\contentsline {subsection}{\numberline {6.3}Tuning the hybrid algorithm}{17}{subsection.6.3}
+\contentsline {section}{\numberline {7}An example with non-linear posterior}{18}{section.7}
