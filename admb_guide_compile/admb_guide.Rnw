@@ -6,22 +6,20 @@
 \usepackage{float}
 \usepackage{hyperref}
 
-%% <<setup, include=FALSE>>=
-%% library(highr)
-%% knit_hooks$set(inline = function(x) {
-%%   if (is.numeric(x)) return(knitr:::format_sci(x, 'latex'))
-%%   highr:::hi_latex(x)
-%% })
-%% @
-%% % The above is supposed to enable inline code highlighting using \Sexpr{},
-%% % but i can't get it to work; just , does the same thing as \texttt{}. My tester is on line 58
+%% This is a knitr file for creating the ADMB Bayesian guide. We originally
+%% did it in knitr to have it be reproducible but in the end I don't think
+%% it makes sense to run everything each time we recompile. Instead, simply
+%% run the run_examples.R script and it will run everything and recreate
+%% the plots (we think!). We could strip out knitr in future versions, but
+%% for now it's left this way. NOTE: I had to knit the Rnw file and then
+%% run BibTex manually on the produced .TeX file. Couldn't find a way to do
+%% it within AucTex. CCM 10/12/2014.
 
 \begin{document}
 %% \SweaveOpts{concordance=TRUE}
-\title{Bayesian Analysis in AD Model Builder} \author{Cole
-  C. Monnahan\footnote{corresonding author; monnahc@uw.edu}, Melissa
+\title{A Guide for Bayesian Analysis in \\AD Model Builder} \author{Cole
+  C. Monnahan\footnote{corresponding author; monnahc@uw.edu},\\ Melissa
   L. Muradian, Peter T. Kuriyama }
-
 \date{\today{}}
 \maketitle
 \begin{abstract}
@@ -37,49 +35,58 @@
 \tableofcontents
 
 \section{Introduction}
-AD Model Builder is the fastest, most powerful software for
-fitting complex, nonlinear statistical
+AD Model Builder is a fast, powerful software for fitting
+complex, nonlinear statistical
 models\cite{fournier2012}\footnote{see
   \url{http://admb-project.org/}}.  The ``AD" refers to
 automatic differentiation, a powerful method for calculating
 derivatives of the likelihood to aid in quickly fitting
 models. While ADMB is designed for maximum likelihood
-inference, it also contains the capability of sampling from
-the posterior distribution of a model in the Bayesian
-framework. This option may be of interest, however the
-capabilities and options available may be unclear,
+inference, it also contains the capability of Bayesian
+inference by numerically sampling from the posterior
+distribution of a model. This option may be desired, however
+the capabilities and options available may be unclear,
 particularly for new users. This guide is an attempt to
-clarify how to run Bayesian analyses using ADMB.
+clarify how to run Bayesian analyses for models built with
+ADMB.
 
 ADMB models, which are compiled C++ executables with a wide
 variety of runtime arguments, can be developed in your
 favorite text editor, or the packaged ADMB IDE. Compiling
 and running executables can be done through the terminal, or
 R users can take advantage of the \texttt{R2admb} package
-availble on CRAN. This package creates an R to ADMB
+available on CRAN. This package creates an R to ADMB
 interface useful for compiling and running models, and
-reading results back for ploting or post-processing. This
+reading results back for plotting or post-processing. This
 guide assumes the user is comfortable building, compiling
 and running ADMB models to get maximum likelihood estimates
 of parameters and standard errors. See the official
 documentation on the ADMB website for more information if
 you are unfamiliar with this aspect of the software. We
 further assume a base level of knowledge of the Bayesian
-philosophy and techniques, although we do provide a brief
-introduction.
+philosophy and numerical techniques, although we do provide
+a brief introduction and description of the algorithms
+available to the user.
 
 
-This unofficial guide arose because we use ADMB to run
-Bayesian models for our own research, but found we needed to
-look into the source code to fully understand some of the
-behavior and options available. The guide is open source and
-we encourage others to contribute back to the ADMB project
-and further document the Bayesian capabilites of ADMB.  The
-contents of this document available on a
-\href{https://github.com/colemonnahan/admb_guide}{github
-  repository} maintained by Cole Monnahan. Suggestions or
-improvements can be submitted as issues on the github page.
-
+This guide began because we use ADMB to run Bayesian models
+for our own research, and we needed to look into the source
+code to fully understand some of the behavior and options
+available\footnote{See the API for a convenient way to
+  explore the
+  \href{http://admb-project.org/documentation/api/index.html}{source
+  code}}. The writeup arose as a way to cement our
+understanding of the internal workings of ADMB, and as a way
+to give back to a free product.  This guide is unofficial,
+informal, and most importantly open source; we welcome and
+encourage users to contribute to this guide to further
+document the Bayesian capabilities of ADMB, or other parts
+of the ADMB project.  The development contents of this
+document available on a
+\href{https://github.com/colemonnahan/admb_guide}{Github
+  repository} maintained by Cole Monnahan. Improvements can
+be merged directly to the Rnw file (\texttt{knitr}), and
+suggestions submitted as issues on the Github page.
 
 \section{Bayesian inference}
 A full description of Bayesian inference is beyond the scope
@@ -87,56 +94,63 @@ of this guide, and we encourage users unfamiliar with it to
 seek more appropriate sources. In general, Bayesian
 inference is a method of statistical inference used to
 quantify the full range of uncertainty around both models
-and parameter values and incorporate findings from
-historical studies. It uses the same likelihood function as
-the maximum likelihood method, but also formally combines
-prior information to create a probability distribution for
-the parameters (called the ``posterior'').
+and parameter values, and formally incorporate prior
+information with observed data. It uses the same likelihood
+function as the maximum likelihood method of inference, but
+also explicitly combines prior information, typically as
+posterior probability distributions from previous studies,
+to create a probability distribution for the parameters
+(called the ``posterior'').
 
-Markov chain Monte Carlo (MCMC) is a common algorithm used
-to sample from posteriors of complex and high-dimensional
-probability distributions, particularly where an analytical
-solution is intractable.  ADMB implements two different MCMC
-algorithms: the ubiqitous Metropolis-Hastings and a
-Hamiltonian (or ``hybrid'') sampler, both briefly described
-in this guide.
+Markov chain Monte Carlo (MCMC) is a common numerical
+algorithm used to sample from posteriors of complex and
+high-dimensional probability distributions, particularly
+where an analytical solution is intractable.  ADMB
+implements two different MCMC algorithms: the ubiquitous
+Metropolis-Hastings and a Hamiltonian (or ``hybrid'')
+sampler, both briefly described in this guide.
 
 The goal of MCMC algorithms is to draw samples from the
-posterior distribution, from which inference (e.g. parameter
-estimates and credible intervals) can be done. In that sense
-it can be thought of as a numerical integration
+posterior distribution, from which inference (e.g.\
+parameter estimates and credible intervals) can be done. In
+a sense it can be thought of as a numerical integration
 technique. While MCMC is very flexible, it can be highly
 inefficient, needing thousands or millions of function calls
-to get a sufficiently well-defined posterior. As such, the
-idea of tuning the MCMC chain to be more efficient can be
-important to reduce runtime, and we discuss this in the
-context of ADMB for both MCMC algorithms. If the chain is
-not tuned properly, samples taken from it could lead to
-invalid inference. The onus is on the user to verify the
-validity of samples from a chain. The R package
-\texttt{CODA} is a commonly used tool for checking MCMC
-diagnostics such as autocorrelation.
+to get a sufficiently well-defined posterior for reliable
+inference. As such, the idea of tuning the MCMC chain to be
+more efficient can be important to reduce runtime, and we
+discuss this in the context of ADMB for both MCMC
+algorithms. If the chain is not tuned properly, samples
+taken from it could lead to invalid inference. \textbf{The
+  responsibility is on the user to verify the validity of
+  samples from a MCMC chain.} The R package \texttt{CODA} is
+a commonly used tool for checking MCMC diagnostics such as
+autocorrelation. Think of ADMB as a tool to generate
+posterior samples, and these must then be validated and
+inference calculated by the user.
 
 \section{Priors}
 As with any Bayesian analysis, priors are a key component of
-the posterior and should be explicitly declared in ADMB as
-well. The posterior density is proportional to the product
-of the likelihood and priors. ADMB works in the negative log
-space, so the contribution of priors is incorporated into
-the model by adding the negative log of the prior density to
-the objective function. If priors are added, the minimum
-point is no longer the maximum likelihood estimate, but
-rather what we informally refer to as the posterior mode --
-i.e. the parameters corresponding to the highest point of
-the posterior (or lowest point on the $-\log$ posterior. The
-difference between the two is subtle, but there are
-important philosophical differences: with Bayesian analysis
-ADMB is integrating across the parameter space, while the
-likelihood framework uses minimization and assymptotic
-assumptions.
+the posterior for ADMB and should be explicitly declared in
+the \texttt{.tpl} file. The posterior density is
+proportional to the product of the likelihood and
+priors. ADMB works in the negative log space, so the
+contribution of priors is incorporated into the model by
+adding the negative log of the prior density to the
+objective function. If priors are added, the minimum point
+is no longer the maximum likelihood estimate, but rather
+what we informally refer to as the posterior mode -- i.e.\
+the parameters corresponding to the highest point of the
+posterior (or lowest point on the $-\log$ posterior
+surface). The difference between the two is subtle, but
+there are important philosophical differences: with Bayesian
+analysis ADMB is integrating across the posterior parameter
+space, while the likelihood framework uses minimization of
+the likelihood to get parameter estimates and asymptotic
+assumptions for confidence intervals.
 
-When running an MCMC in ADMB, users are not forced to
-explicitly define and incorporate priors into their
+When running an MCMC in ADMB, users are \textbf{not} forced
+to explicitly define and incorporate priors into their
 model. In this case ``implicit'' priors are still affecting
 the posterior. In particular, unbounded parameters without
 explicit priors have infinitely-broad uniform priors (an
@@ -144,11 +158,12 @@ example of an ``improper'' prior because it will not
 integrate to 1). Another example is a variance parameter
 estimated in log space and then exponentiated within the
 model to keep it above zero. An implicit uniform prior on
-the log parameter may not be uninformative on the natural
-scale. The implications of these issues are contentious and
-certainly beyond the scope of this guide. We caution users
-to carefully consider and explicitly acknowledge their
-priors -- ADMB will not force you to.
+the log parameter will provide different prior information
+than if the parameter were on the natural scale. The
+implications of these issues are contentious and certainly
+beyond the scope of this guide. We caution users to
+carefully consider and explicitly acknowledge their priors
+-- ADMB will not force you to.
 
 Bounding a parameter automatically incorporates a uniform
 prior without changing the objective function calculation,
@@ -156,26 +171,28 @@ since values outside the bounds have zero probability. Other
 forms of prior distributions must be added manually with, or
 without, any constants. For instance, a normal
 ($N(\mu,\sigma^2)$) prior on a parameter $a$ could be added
-as \texttt{f+=pow((a-$\mu$),2)/(2*$\sigma^2$);}, where the
+as \texttt{f+=pow((a-$\mu$),2)/(2*pow($\sigma$,2));}, where the
 constants have been dropped and \texttt{f} is the objective
 function.
 
 \section{Markov chain Monte Carlo (MCMC) in ADMB}
-John Kruschke has a simple example that illustrates the
-mechanics of the Metropolis-Hastings
-algorithm\cite{kruschke2011}. A politician lives on a long
-chain of islands. The politician's goal is to stay in the
-public eye by traveling to each island proportional to their
-relative population. In other words, he will spend more time
-on highly populated islands and less time on less populated
-islands. He flips a fair coin to propose a move to an island
-east or west of his current location. If the proposed island
-has a higher population than his current island he moves. If
-the proposed island has a smaller population than his
-current island he will only move with a probability
-$P_{proposed} / P_{current}$ where $P_{proposed}$ is the
-population of the proposed island and $P_{current}$ is the
-population of the current island.
+MCMC is the only form of built-in Bayesian analysis
+available to users of ADMB, although a wide variety of
+algorithms exist for other software platforms. John Kruschke
+has a simple example that illustrates the mechanics of the
+Metropolis-Hastings algorithm\cite{kruschke2011}. A
+politician lives on a long chain of islands. The
+politician's goal is to stay in the public eye by traveling
+to each island proportional to their relative population. In
+other words, he will spend more time on highly populated
+islands and less time on less populated islands. He flips a
+fair coin to propose a move to an island east or west of his
+current location. If the proposed island has a higher
+population than his current island he moves. If the proposed
+island has a smaller population than his current island he
+will only move with a probability $P_{prop} / P_{cur}$ where
+$P_{prop}$ is the population of the proposed island and
+$P_{cur}$ is the population of the current island.
 
 MCMC algorithms work in this same general way. The algorithm
 starts at a set of parameters, and then proposes a new
@@ -183,15 +200,15 @@ parameter set. The algorithm moves to the proposed state, or
 not, depending on its density relative to the current
 state. Just like the politician, the algorithm will spend
 most of the time in states with high densities.
-\subsection{Workflow}
+\subsection{Work flow}
 The R package \texttt{R2admb} contains some useful functions
-for streamlining the workflow of MCMC in ADMB by using
+for streamlining the work flow of MCMC in ADMB by using
 R. For users who wish to have more manual control, the
-following steps outline a typical workflow.
+following steps outline a typical work flow.
 \begin{enumerate}
 \item Build, run, and verify your ADMB model. This model should
   explicitly include the contribution of the priors to the
-  objective function, such that the ADMB estimate is the
+  objective function, such that the ADMB point estimates are the
   posterior mode, rather than a maximum likelihood estimate.
 \item Run an MCMC using the command line argument
   \texttt{-mcmc $N$ -mcsave $N_{\text{save}}$} (see Table 2
@@ -205,7 +222,7 @@ following steps outline a typical workflow.
   \texttt{-mceval}. This command tells ADMB to loop through
   the saved iterations (in the \texttt{.psv} file) and
   execute in the \texttt{mceval\_phase()}.
-\item Pull results into R or other program to ensure the
+\item Pull results into R, Excel or other program to ensure the
   sample is sufficiently thinned, either visually or with
   tools using, for example, the \texttt{CODA} package.
 \item If necessary, rerun the chain with more thinning, drop
@@ -245,25 +262,26 @@ produced. During this phase, ADMB loops through the
 $N_\text{out}$ parameter combinations in the \texttt{.psv}
 file and reruns the \texttt{PROCEDURE\_SECTION}. This phase
 is extremely powerful because it allows the user to minimize
-unused calculations by partitioning calculations into two
-groups: those that affect the objective function
-(i.e. posterior calculations) and those that do
-not. Calculations done for discarded draws (which typically
-comprises most iterations) simply slow down the
-analysis. For example, a user may want to extrapolate
-(e.g. project a value into the future given parameters) or
-calculate values derived from the parameters and
-intermediate values. Placing these calculations inside an
-\texttt{mceval\_phase} clause means they will only be
-preformed on each saved draw. Thus, an analysis can be made
-to run faster by minimizing total calculations in the
-\texttt{mcmc} phase. In practice, some chains need to be
-thinned significantly more than 1 in 1000, so the runtime
-saved can be substantial, especially if the calculations in
-the \texttt{mceval\_phase} are time consuming.
+runtime by partitioning calculations into two groups: those
+that affect the objective function (i.e.\ posterior
+calculations) and those that do not. Calculations done for
+discarded draws (which typically comprises most iterations)
+simply slow down the analysis, and as such should be
+minimized as much as possible. For example, a user may want
+to extrapolate (e.g.\ project a value into the future, given
+current parameters) or calculate values derived from the
+parameters and intermediate values. Placing these
+calculations inside an \texttt{mceval\_phase} clause means
+they will only be performed on each saved draw. Thus, an
+analysis can be made to run faster by minimizing total
+calculations in the \texttt{mcmc} phase. In practice, some
+chains need to be thinned significantly more than 1 in 1000,
+so the runtime saved can be substantial, especially if the
+calculations in the \texttt{mceval\_phase} are time
+consuming.
 
 While the \texttt{mceval} phase was designed specifically
-for MCMC analyses, it can be coopted for use in other types
+for MCMC analyses, it can be co-opted for use in other types
 of analyses. In essence it is a convenient framework in
 which to get ADMB to quickly evaluate arbitrary sets of
 parameters, while only initializing once. Examples of
@@ -298,7 +316,7 @@ automatically read, so that the values in the final
 therefore the marginal distribution, of the complete
 chain. The first element reported in the \texttt{.hst} file
 is the total number of iterations of the MCMC chain,
-$N_{\text{mcmc}$, used to create the reported marginal
+$N_\text{mcmc}$, used to create the reported marginal
   distribution, and the second element is the final
   step-size scaling factor used for the jump function. The
   remainder of the elements are only useful for constructing
@@ -314,7 +332,7 @@ The user has two ways to obtain the posterior median and
 credible intervals for each \texttt{sdreport} variable.  The
 user can manually export the marginal distribution from the
 \texttt{.hst} file into an input file external to ADMB
-(e.g. \texttt{.csv} to \texttt{R}) and calculate the
+(e.g.\ \texttt{.csv} to \texttt{R}) and calculate the
 quantiles, etc. Alternatively, the user can write each
 \texttt{sdreport} variable's (saved or total) draws during
 the \texttt{mceval} phase to a \texttt{.csv} by declaring an
@@ -336,7 +354,7 @@ using the following commands:
 <<readInPSV, eval=FALSE>>=
 psv <- file("<model name>.psv", "rb")
 nparams <- readBin(psv, "integer", n=1)
-mcmc <- matrix(readBin(psv, "numeric", n=nparams*<Nout>), ncol=nparams, byrow=TRUE)
+mcmc <- matrix(readBin(psv, "numeric", n=nparams*Nout), ncol=nparams, byrow=TRUE)
 close(psv)
 @
 The first element in the \texttt{.psv} file is the number of
@@ -347,9 +365,9 @@ $N\text{mcmc}$ and \texttt{mcsave} and must be specified
 manually. This is the main file that was designed to be used
 to extract MCMC draws from ADMB. However, this file only
 contains parameter values and not derived quantities or
-other quantities of interest (e.g. $MSY$ or biomass
+other quantities of interest (e.g.\ $MSY$ or biomass
 trajectories) which often are of interest.
-\subsubsection{Derived quantity draws}
+\subsubsection{Derived quantity draws}\label{sec:derived.quantities}
 Often the posterior distribution for quantities other than
 the parameters are desired. Examples of derived quantities
 are: functions of parameters, properties of the model, or
@@ -364,9 +382,10 @@ are desired. This can be accomplished inside the ADMB
 create an IO object that writes values to a \texttt{.csv}
 file, similar to the function \texttt{cout} which prints to
 screen.
-<<declareOutputFile, eval=FALSE>>=
+\begin{verbatim}
   !!CLASS ofstream MCMCreport("MCMCreport.csv",ios::trunc);
-@ Then, inside the \texttt{PROCEDURE\_SECTION} the function can be used to
+\end{verbatim}
+Then, inside the \texttt{PROCEDURE\_SECTION} the function can be used to
 write both parameters, derived quantities (\texttt{sdreport} varaibles,
 etc.), or other information about the model. For example, during the
 \texttt{mceval} phase we may want to write the model parameters, model
@@ -406,10 +425,11 @@ check: 1) whether enough of the initial samples have been discarded as
 ``burn-in", 2) how much auto-correlation exists in the saved samples. Using
 the saved parameter values, histograms and trace plots for each parameter
 should be created and reviewed, perhaps using the CODA package
-\ref{plummer2006}. Invalid samples (e.g. not converged, stuck on bounds,
+\cite{plummer2006}. Invalid samples (e.g.\ not converged, stuck on bounds,
 during tuning phase) can lead to invalid inference, so we stress the
 importance of diligently checking properties of the chain outside of ADMB.
 
+%% Took this out: 10/12/2014 CCM
 %% Below is helpful code to produce the
 %% diagnostic plots discussed in this section. Please note the code below
 %% assumes that the code from the psv section above has been executed and uses
@@ -435,12 +455,12 @@ software platforms start from arbitrary places and the chain spends a long
 time moving to the area of high density. At a minimum values during which
 the chain is being tuned should be discarded.  After the samples judged to
 be from the burn-in period have been manually discarded, trace plots should
-be trendless, in that consequetive samples should not be correlated.
+be trendless, in that consecutive samples should not be correlated.
 
 If autocorrelation exist in the histogram even after the burn-in has been
 removed, then the chain should be run over again with a greater thinning
-rate, e.g. from \texttt{-mcsave 10000} to \texttt{-mcsave 50000}.  This
-step is crucial to obtain a final chain of independant samples. If there
+rate, e.g.\ from \texttt{-mcsave 10000} to \texttt{-mcsave 50000}.  This
+step is crucial to obtain a final chain of independent samples. If there
 still exist strong trends in the trace plots, there is correlation between
 two or more parameters. Correlation between parameters can be seen using
 the \texttt{pairs()} plotting function on an mcmc object in R.
@@ -450,7 +470,7 @@ More information on these concepts and examples are given in sections
 
 \subsection{Resuming a chain}\label{sec:mcr}
 The MC resume command, \texttt{-mcr}, allows the user continue sampling
-along a previuosly run MCMC chain. Say that the user has run a short
+along a previously run MCMC chain. Say that the user has run a short
 ($N=10,000$) chain, checked autocorrelation diagnostics, and concluded that
 the thinning rate is appropriate. Rather than restarting a new chain and
 discarding these 10,000 iterations, the user can pick up an existing chain
@@ -499,7 +519,7 @@ histogram data (found in the \texttt{.hst} file).
 
 \begin{table}[ht]
 \centering
-\begin{tabular}{rrrrrr}\label{tab:mcr}
+\begin{tabular}{rrrrrr}
   \hline
   a-first & b-first & a-resumed & b-resumed & a-long & b-long \\
   \hline
@@ -531,10 +551,10 @@ were created using the \texttt{-mcr} option, where they pick up from where the
 "first" chain left off, $N_\text{out}=20$. The values shown from the "long" chain
 were completed in a single run (not resumed with \texttt{-mcr} and set to match
 the total number of iterations and thinning rate from the "reduced" chain.}
-\label{tab:mcr_table}
+\label{tab:mcr}
 \end{table}
 
-
+%% Turned this off: 10/12/2014; CCM
 %%# <<makeTable, eval=TRUE, echo=FALSE, results = 'asis', warning = FALSE, message = FALSE >>=
 %%# setwd('/Users/peterkuriyama/School/Research/admb_guide/examples/simple')
 %%# source('mcr_test_main.r')
@@ -605,11 +625,11 @@ the current vector:
 
 \subsection{MCMC Arguments}
 ADMB has a suite of arguments available to the user at run time. We cover
-the most commonly used ones in table \ref{tab:MHarguments}, and refer the
+the most commonly used ones in table \ref{tab:mh_args}, and refer the
 user to the ADMB manual and other documentation for further options.
 \begin{table}[H]
   \centering
-  \begin{tabular}[H]{|cl|}\label{tab:MHarguments}
+  \begin{tabular}[H]{|cl|}
     \hline
     \texttt{-mcmc N} & Run $N$ MCMC iterations\\
     \texttt{-mcsave N} & Save every $N$th MCMC iteration\\
@@ -647,7 +667,7 @@ ADMB prints the random seed used, and then the negative
 objective function value twice. In this case scaling is
 increased after the first 200 iterations (proposing more
 distant values). This is followed by the log of the
-determinant of the Choleski decomposed covariance matrix. In
+determinant of the Cholesky decomposed covariance matrix. In
 some cases this information may be useful for
 troubleshooting, but for most practical purposes it can be
 ignored.
@@ -657,7 +677,7 @@ packaged with ADMB, which is a contrived two parameter
 linear model ($y=ax+b$). First we run the model without any
 thinning by specifying \texttt{mcsave}=1 (figure
 \ref{fig:simple1}).
-\begin{figure}[H]
+\begin{figure}[h]
   \centering
   \includegraphics[width=5in]{../plots/simple1.pdf}
   \caption{The samples from a simple model with
@@ -669,7 +689,7 @@ thinning by specifying \texttt{mcsave}=1 (figure
 The MCMC chain is clearly autocorrelated from the acf plots
 and the traces (not show). This chain needs to be tuned to
 achieve independent samples.
-\subsection{Tuning the MH algorithm}
+\subsection{Tuning the MH algorithm}\label{sec:MHtuning}
 The goal of ``tuning'' the algorithm is to obtain
 independent samples from the posterior, with as few of
 calculations as possible (to keep runtime manageable). For
@@ -677,24 +697,24 @@ the MH algorithm, there are several ways the user can tune a chain.
 
 \subsubsection{Thinning rate}
 For the MH algorithm, the most important tuning option
-available to the user is the thinning rate. This is the rate
-at which parameters are saved, such that thinning is
-effectively discarding draws. This tuning option is critical
-since this algorithm generates autocorrelated parameters, by
-design.
+available to the user is the saving rate (the inverse of the
+thinning rate). This is the rate at which parameters are
+saved, such that thinning is effectively discarding
+draws. This tuning option is critical since this algorithm
+generates autocorrelated parameters by design.
 
 The user controls the thinning rate by the argument
 \texttt{mcsave N}. If $N=1$, as in figure \ref{fig:simple1},
-every single draw is saved. As we saw with that example, the
-autocorrelation is high, suggesting the need to thin more
-(save fewer).
+every single draw is saved (none are thinned out). As we saw
+with that example, the autocorrelation is high, suggesting
+the need to thin more (save fewer).
 
-We now rerun the chain with \texttt{mcsave}=100 (figure
-\ref{fig:simple2}), in effect running 100 times the samples
-and saving every $100^{\text{th}}$. This helps reduce the
-autocorrelation and produces independent draws from the
+We now rerun the chain with \texttt{mcsave 100} (figure
+\ref{fig:simple2}), by increasing the total samples by
+100 and saving every $100^{\text{th}}$. This helps reduce
+the autocorrelation and produces independent draws from the
 posterior of interest.
-\begin{figure}[H]
+\begin{figure}[h]
   \centering
   \includegraphics[width=5in]{../plots/simple2.pdf}
   \caption{The samples from a simple model with
@@ -709,7 +729,7 @@ posterior of interest.
 \subsubsection{Optimize the acceptance rate}
 Studies have shown that there is an optimal range for
 acceptance rate for the MH algorithm
-(e.g. \cite{roberts2001}). If the proposal distribution
+(e.g.\ \cite{roberts2001}). If the proposal distribution
 generates values too close to the current state, the chain
 will accept them (high acceptance rate) but explore the
 posterior slowly and need more thinning. Alternatively, if
@@ -721,10 +741,12 @@ distribution to achieve an efficient acceptance rate.
 
 ADMB accomplishes this by ``scaling'' the covariance matrix
 up or down, depending on the current acceptance rate, during
-the first part of the chain. By default, it scales during
-the first 500 iterations (and prints this to screen), but
-the user can specify this with \texttt{mcscale N} or turn
-off scaling with \texttt{mcnoscale}. ADMB rescales the
+the first part of the chain. Scaling the covariance matrix
+down produces proposed sets closer to the current set, and
+vice versa for scaling up. By default, it scales during the
+first 500 iterations (and prints this to screen), but the
+user can specify this with \texttt{mcscale N} or turn off
+scaling with \texttt{mcnoscale}. ADMB rescales the
 covariance matrix every 200 iterations until the acceptance
 rate is between 0.15 and 0.4, or the scaling period is
 exceeded.
@@ -734,22 +756,26 @@ may want to extend the scaling period for some models. Draws
 from this tuning phase should be discarded as part of the
 burn-in.
 \subsubsection{mcprobe}\label{sec:mcprobe}
-For some models, there may be concern of being ``stuck'' in a local minimum
-and simply never proposing a value far enough away to escape it and find
-other regions of high density. ADMB has a built-in algorithm which modifies
-the default proposal distribution so it occasionally proposes very distant
-parameters (i.e. ``probes'')\footnote{Previous versions of ADMB called this
-  \texttt{mcgrope} -- this is now deprecated}. The \texttt{mcprobe X}
-argument initiates this option.
+For some models, there may be concern of being ``stuck'' in
+a local minimum and simply never proposing a value far
+enough away to escape it and find other regions of high
+density. Obviously this problem would present issues for
+maximum likelihood inference as well. ADMB has a built-in
+algorithm which modifies the default proposal distribution
+so it occasionally proposes very distant parameters
+(i.e.\ ``probes'')\footnote{Previous versions of ADMB called
+  this \texttt{mcgrope} -- this is now deprecated}. The
+\texttt{mcprobe X} argument initiates this option.
 
 The modified proposal distribution is a mixture distribution
 of normal and Cauchy distributions. The argument \texttt{X}
 controls how the two distributions are mixed, with larger
-values being more Cauchy (fatter tails) and lower being
-thinner tails. The range of valid inputs is 0.00001 to
-0.499, and if no value is supplied a default of 0.05 is
-used\footnote{See the function for more information:
-  \url{http://admb-project.org/documentation/api/prmonte\_8cpp\_source.html\#l00014}}
+values being more Cauchy (fatter tails, larger jumps). The
+range of valid inputs is 0.00001 to 0.499, and if no value
+is supplied a default of 0.05 is used\footnote{See
+  \href{http://admb-project.org/documentation/api/prmonte\_8cpp\_source.html\#l00014}{the
+    function} for more on how the distribution is created}
+
 
 
 Figure \ref{fig:mcgrope_example} shows the shape of the
@@ -773,14 +799,14 @@ create a more efficient MCMC sampler so the analyses run
 faster.
 
 The option will be most effective under circumstances where
-the correlation between parameters at the MPD is higher than
-other regions of the parameter space. In this case, the
-algorithm may make efficient proposals at the MPD, but
-inefficient proposals in other parts of the space. By
-reducing the correlation using \texttt{mcrb} the proposal
-function may be more efficient on average across the entire
-parameter space and require less thinning.
-
+the correlation between parameters at the posterior mode is
+higher than other regions of the parameter space. In this
+case, the algorithm may make efficient proposals near the
+posterior mode, but inefficient proposals in other parts of
+the parameter space. By reducing the correlation using
+\texttt{mcrb} the proposal function may be more efficient on
+average across the entire parameter space and require less
+thinning (and hence run faster).
 
 The \texttt{mcrb} option is a set of calculations performed
 on the original correlation matrix, as follows.
@@ -815,16 +841,15 @@ on the original correlation matrix, as follows.
   \quad\text{Calculate new correlation matrix}
 \end{align*}
 
-By working with the Choleski decomposition of the
+By working with the Cholesky decomposition of the
 correlation matrix, the algorithm ensures that the rescaled
 bounded matrix used in the MCMC remains a valid correlation
-matrix (i.e. positive definite). The impacts on a
-correlation matrix can be difficult to anticipate, but
-fortunately ADMB writes the resulting covariance matrix to
-the file \texttt{corrtest} (a text file with no ending)
-under the label ``modified S''. The user can plot this
-against the estimated covariance to visually gauge the
-impact of the \texttt{mcrb} algorithm.
+matrix. The impacts on a correlation matrix can be difficult
+to anticipate, but fortunately ADMB writes the resulting
+covariance matrix to the file \texttt{corrtest} (a text file
+with no ending) under the label \texttt{modified S}. The
+user can plot this against the estimated covariance to
+visually gauge the impact of the \texttt{mcrb} algorithm.
 
 \begin{figure}[h]
   \centering
@@ -836,24 +861,68 @@ impact of the \texttt{mcrb} algorithm.
   \label{fig:mcrb}
 \end{figure}
 
-\subsubsection{User-supplied covariance matrix}\label{sec:user.cov}
+If poor performance is suspected to be caused by
+correlations that are too high, the \texttt{mcrb} option
+provides a quick, convenient to try a reduced correlation
+matrix in the algorithm.
+
+\subsubsection{User-specified covariance matrix}\label{sec:user.cov}
 The \texttt{mcrb} option is a quick way to try lowering the
 correlation between some parameters. A more flexible (and
 transparent) option is to provide ADMB with a covariance
-matrix chosen by the user. By examining preliminary chains
+matrix specified by the user. By examining preliminary chains
 or using information gained from other simple models, it may
 be possible for the user to define a covariance matrix that
 is more efficient than the estimated one, or modified via
 the built-in options. We demonstrate the improved
-perofrmance using this option in the next section.
+performance using this option in the next section.
 
 Providing user-supplied covariance is a more advanced
 technique that is not built in to ADMB. It requires a
 slightly more detailed understand of the underlying output
 file structure of ADMB. The steps to do this can be found in
-the document at
-\url{http://www.admb-project.org/examples/admb-tricks/covariance-calculations.}
+a
+\href{http://www.admb-project.org/examples/admb-tricks/covariance-calculations}{separate
+  document} on the ADMB website.  The key is that the
+\texttt{admodel.cov} file is in the unbounded space and thus
+the user specified covariance matrix must be converted using
+the following function or something similar:
+\begin{verbatim}
+write.admb.cov <- function(cov.user, model.path=getwd()){
+    temp <- file.exists(paste0(model.path, "/admodel.cov"))
+    if(!temp) stop(paste0("Couldn't find file ",model.path, "/admodel.cov"))
+    temp <- file.copy(from=paste0(model.path, "/admodel.cov"),
+                      to=paste0(model.path, "/admodel_original.cov"))
+    wd.old <- getwd()
+    on.exit(setwd(wd.old))
+    setwd(model.path)
+    ## Read in the output files
+    results <- get.admb.cov()
+    scale <- results$scale
+    num.pars <- results$num.pars
+    if(NROW(cov.user) != num.pars)
+        stop(paste0("Invalid size of covariance matrix, should be: ", num.pars,
+                   "instead of ",NROW(cov.user)))
+    cov.unbounded <- cov.user/(scale %o% scale)
+    ## Write it back to file
+    file.new <- file(paste0(model.path, "/admodel.cov"),"wb")
+    on.exit(close(file.new))
+    writeBin(as.integer(num.pars), con=file.new)
+    writeBin(as.vector(as.numeric(cov.unbounded)), con=file.new)
+    writeBin(as.integer(results$hybrid_bounded_flag), con=file.new)
+    writeBin(as.vector(scale), con=file.new)
+}
+\end{verbatim}
 
+We note that the user is responsible for checking whether
+the covariance matrix passed is valid. In R this can be done
+with the \texttt{matrixcalc} package:
+\begin{verbatim}
+matrixcalc::is.positive.definite(x, tol=1e-8)
+\end{verbatim}
+If the covariance matrix is not valid, ADMB will throw an
+error and perhaps proceed but the output from the MCMC would
+likely be unusable.
 \section{Hybrid MCMC}\label{sec:hybrid}
 The ``hybrid'' option in ADMB is an implementation of an
 MCMC algorithm based on Hamiltonian dynamics. Here we provid
@@ -903,9 +972,9 @@ surface through time, governed by $H$.
 
 For use with MCMC, $H$ is assumed to be
 $H(\mathbf{q},\mathbf{p})=U(\mathbf{q})+K(\mathbf{p})$,
-where $U$ is analagous to the potential energy and $K$
+where $U$ is analogous to the potential energy and $K$
 kinetic energy. $U$ is set equal to the ADMB objective
-function (i.e. the negative log of the posterior density)
+function (i.e.\ the negative log of the posterior density)
 and $K$ to a diagonal multivariate normal distribution. The
 hybrid MCMC algorithm samples from the joint posterior, $H$,
 but we are only interested in the posterior for $U$, so $K$
@@ -936,7 +1005,7 @@ method, for the $i^{\text{th}}$ variable, and is repeated
 \end{align*}
 
 The leapfrog algorithm moves deterministically through the
-joint surface along a contour of (appoximately) constant
+joint surface along a contour of (approximately) constant
 $H$. That is, for a given starting value of $(q_0,p_0)$ and
 tuning parameters the trajectory will always end in the same
 place. Examples of trajectories under different tuning
@@ -968,17 +1037,17 @@ stochastic MCMC algorithm. A single iteration of the hybrid
 MCMC algorithm, as implemented in ADMB, has three steps:
 \begin{enumerate}
 \item \textbf{Propose new momentum variables.} New momentum
-  values, $p^*$ are generated from a normal distribution
+  values, $p^*$, are generated from a normal distribution
   based on the estimated covariance matrix, and independent
   of the current position variables.
 \item \textbf{Propose new position variables.} Given the
   current state of the system, $(q,p^*)$, new position
   variables $q^*$ are generated with the leapfrog algorithm
   using \texttt{hynstep} \footnote{Actually a random
-    integers is generated around this value} steps and a
+    integer is generated around this value} steps and a
   step size of \texttt{hyeps}.
 \item \textbf{Accept or reject the new state.} The new state
-  is then updated with a Metropolis step (i.e. accepted or
+  is then updated with a Metropolis step (i.e.\ accepted or
   rejected) in the same way as above. Acceptance is expected
   to be high because the proposed values $(q^*, p^*)$ are
   rarely into regions of low density for a well tuned chain.
@@ -1039,11 +1108,11 @@ algorithm, the \texttt{mcdiag}, \texttt{mcrb N}, and
 hybrid algorithm.
 
 Note that \texttt{mcsave N} is \textbf{not} an argument for
-the hybrid and will be ignored. Each MCMC iteration of the
-hybrid algorithm is saved, such that the user may need to
-thin the chain manually after running.
+the hybrid algorithm and will be ignored. \textbf{Each MCMC
+iteration of the hybrid algorithm is saved, such that any
+thinning must be done manually by the user after running.}
 
-\subsection{Tuning the hybrid algorithm}
+\subsection{Tuning the hybrid algorithm}\label{sec:Hybridtuning}
 A tuned hybrid MCMC algorithm often provides a more
 efficient (computationally) chain than the random walk
 behavior of the Metropolis-Hastings algorithm. However, the
@@ -1059,7 +1128,7 @@ intuition about reasonable values\footnote{The ADMB
 In most practical applications the hybrid method is tuned
 via trial and error. That is, values for \texttt{hynstep}
 and \texttt{hyeps} are tried on a short chain, and the
-output diagnosed. ADMB uses default values of 0.1 and 10,
+output diagnosed. ADMB uses default values of 10 and 0.1,
 respectively, and these may be good starting values for most
 problems. The end goal is to find a set of tuning parameters
 that produces a well mixing chain with the fewest leapfrog
@@ -1100,7 +1169,7 @@ lead to near periodicity. That is, the leapfrog trajectory
 ends very near to where it began, after one or more
 steps. In pathological cases it could cycle forever and
 never be able to sample regions of the posterior space
-(i.e. not be ergodic). In practice near periodicity will
+(i.e.\ not be ergodic). In practice near periodicity will
 make for a very slow mixing chain. ADMB mitigates this
 possibility by randomly drawing the number of leapfrog steps
 at each MCMC iteration. However, the user should still be
@@ -1122,9 +1191,9 @@ example of a simple model which can lead to convergence
 issues for MCMC chains.
 
 We first run it with the default settings and a thinning
-rate of \texttt{mcsave}=100.
+rate of \texttt{mcsave 100}.
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \includegraphics[width=5in]{../plots/logistic_mh.pdf}
   \caption{The logistic model with 1 in 100 samples saved
@@ -1138,8 +1207,7 @@ rate. Another is to try a lower correlation. From this
 initial run we calculate the empirical covariance matrix and
 rerun the chain with this option (see \ref{sec:user.cov}).
 
-
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \includegraphics[width=5in]{../plots/logistic_mh2.pdf}
   \caption{The logistic model with 1 in 100 samples saved
@@ -1154,29 +1222,11 @@ Metropolis-Hastings algorithm. This option is far superior
 to increasing the thinning rate because it takes no more
 time to run.
 
-
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=5in]{../plots/logistic_mh2.pdf}
-  \caption{The logistic model with 1 in 100 samples saved
-    using the MH algorithm and empirical covariance matrix
-    (blue ellipse). Note the improvement in acf compared to
-    \ref{fig:logistic_mh}.}
-  \label{fig:logistic_mh2}
-\end{figure}
-Here we see a substantial improvement in the chain
-performance by changing the proposal distribution of the
-Metropolis-Hastings algorithm. This option is far superior
-to increasing the thinning rate because it takes no more
-time to run.
-
->>>>>>> 155bf2dbf5b9ed4efac0735a0cb9e05388b4e584
 We can also try the hybrid algorithm on this model, starting
 with the default parameters of \texttt{hyeps} and
 \texttt{hynstep} of 0.1 and 10, and using the estimated
 covariance matrix.
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \includegraphics[width=5in]{../plots/logistic_hy.pdf}
   \caption{The logistic model using the hybrid method with
@@ -1187,7 +1237,7 @@ covariance matrix.
 The autocorrelation is high, suggesting we need to tune the
 chain. First we try the same as above, and instead use the
 empirical covariance matrix.
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \includegraphics[width=5in]{../plots/logistic_hy.pdf}
   \caption{The logistic model using the hybrid method with
@@ -1200,7 +1250,7 @@ autocorrelated. A little trial and error the combination of
 \texttt{hyeps 0.05} and \texttt{hynstep 100} performed
 significantly better, and similarly to the tuned MH chain in
 \ref{fig:logistic_mh2}.
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \includegraphics[width=5in]{../plots/logistic_hy3.pdf}
   \caption{The logistic model using the hybrid method and
@@ -1218,7 +1268,7 @@ was fairly straightforward to improve on the default
 performance. It is likely possible to further refine the
 hybrid algorithm to outperform the MH, but it is not clear
 which of the parameters to start with. The difficulty in
-tuning
+tuning illustrates a common issue with the hybrid method.
 
 For many problems, the default MH algorithm will work well
 and require no tuning beyond a modest thinning rate. We

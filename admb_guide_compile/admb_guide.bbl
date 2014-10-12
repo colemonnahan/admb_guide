@@ -1,0 +1,31 @@
+\begin{thebibliography}{1}
+
+\bibitem{fournier2012}
+David~A Fournier, Hans~J Skaug, Johnoel Ancheta, James Ianelli, Arni Magnusson,
+  Mark~N Maunder, Anders Nielsen, and John Sibert.
+\newblock Ad model builder: using automatic differentiation for statistical
+  inference of highly parameterized complex nonlinear models.
+\newblock {\em Optimization Methods and Software}, 27(2):233--249, 2012.
+
+\bibitem{kruschke2011}
+Kimberly~F. Colvin.
+\newblock Kruschke, j. k. (2011). doing bayesian data analysis: A tutorial with
+  r and bugs. burlington, ma: Academic press.
+\newblock {\em Journal of Educational Measurement}, 50(4):469--471, 2013.
+
+\bibitem{plummer2006}
+Martyn Plummer, Nicky Best, Kate Cowles, and Karen Vines.
+\newblock Coda: Convergence diagnosis and output analysis for mcmc.
+\newblock {\em R news}, 6(1):7--11, 2006.
+
+\bibitem{roberts2001}
+G.~O. Roberts and J.~S. Rosenthal.
+\newblock Optimal scaling for various metropolis-hastings algorithms.
+\newblock {\em Statistical Science}, 16(4):351--367, 2001.
+
+\bibitem{brooks2011}
+Steve Brooks, Andrew Gelman, Galin Jones, and Xiao-Li Meng.
+\newblock {\em Handbook of Markov Chain Monte Carlo}.
+\newblock CRC Press, 2011.
+
+\end{thebibliography}
