@@ -2,6 +2,7 @@
  (lambda ()
     (LaTeX-add-bibliographies)
     (LaTeX-add-labels
+     "tab:mh_args"
      "sec:outfiles"
      "sec:derived.quantities"
      "sec:diag"
@@ -9,12 +10,12 @@
      "tab:mcr"
      "sec:startvals"
      "sec:MH"
-     "tab:mh_args"
      "fig:simple1"
      "sec:MHtuning"
      "fig:simple2"
+     "sec:accept.rate"
      "sec:mcprobe"
-     "fig:mcgrope_example"
+     "fig:mcprobe_example"
      "sec:mcrb"
      "fig:mcrb"
      "sec:user.cov"

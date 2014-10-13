@@ -5,3 +5,12 @@
 *.psv
 *.pin
 *sims
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.toc
+admb_guide_compile/texput.log
+*.Rhistory
+admb_guide_compile/auto
