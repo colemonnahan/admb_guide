@@ -731,12 +731,13 @@ calculations as possible (to keep runtime manageable). For
 the Metropolis-Hastings algorithm, there are several ways the user can tune a chain.
 
 \subsubsection{Thinning rate}
-For the Metropolis-Hastings algorithm, the most important tuning option
-available to the user is the saving rate (the inverse of the
-thinning rate). This is the rate at which parameters are
-saved, such that thinning is effectively discarding
-draws. This tuning option is critical since this algorithm
-generates autocorrelated parameters by design.
+For the Metropolis-Hastings algorithm, the most important tuning
+option available to the user is the saving rate (the inverse of
+the thinning rate). This is the rate at which parameters are
+saved, such that thinning is effectively discarding draws. This
+tuning option is critical since this algorithm generates
+autocorrelated parameters by design, although it may not
+necessary to thin in some cases (\cite{link2012}).
 
 The user controls the thinning rate by the argument
 \texttt{mcsave N}. If $N=1$, as in figure \ref{fig:simple1},
@@ -956,7 +957,7 @@ write.admb.cov <- function(cov.user, model.path=getwd()){
 We note that the user is responsible for checking whether
 the covariance matrix passed is valid. In R this can be done
 with the \texttt{matrixcalc} package:
-<<checkPosDef>>=
+<<checkPosDef, eval=FALSE>>=
 matrixcalc::is.positive.definite(x, tol=1e-8)
 @
 If the covariance matrix is not valid, ADMB will throw an error and
@@ -1275,7 +1276,7 @@ chain. First we try the same as above, and instead use the
 empirical covariance matrix.
 \begin{figure}[H]
   \centering
-  \includegraphics[width=5in]{../plots/logistic_hy.pdf}
+  \includegraphics[width=5in]{../plots/logistic_hy2.pdf}
   \caption{The logistic model using the hybrid method with
     default tuning parameters and the empirical covariance matrix
     (blue ellipse).}
@@ -1314,7 +1315,6 @@ for the needs at hand. The hybrid method is more
 sophisticated, but much more difficult to tune, and we
 recommend it as an option only when the Metropolis-Hastings is struggling.
 
-\newpage
 \bibliographystyle{unsrt}
 \bibliography{admb_guide}.
 \end{document}

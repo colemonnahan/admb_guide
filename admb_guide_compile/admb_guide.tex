@@ -64,6 +64,7 @@
 %% run BibTex manually on the produced .TeX file. Couldn't find a way to do
 %% it within AUCTeX. CCM 10/12/2014.
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+
 \begin{document}
 %% \SweaveOpts{concordance=TRUE}
 \title{A Guide for Bayesian Analysis in \\AD Model Builder} \author{Cole
@@ -448,12 +449,14 @@ using the following commands:
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlstd{psv} \hlkwb{<-} \hlkwd{file}\hlstd{(}\hlstr{"<model name>.psv"}\hlstd{,} \hlstr{"rb"}\hlstd{)}
-\hlstd{nparams} \hlkwb{<-} \hlkwd{readBin}\hlstd{(psv,} \hlstr{"integer"}\hlstd{,} \hlkwc{n}\hlstd{=}\hlnum{1}\hlstd{)}
-\hlstd{mcmc} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlkwd{readBin}\hlstd{(psv,} \hlstr{"numeric"}\hlstd{,} \hlkwc{n}\hlstd{=nparams}\hlopt{*}\hlstd{Nout),} \hlkwc{ncol}\hlstd{=nparams,} \hlkwc{byrow}\hlstd{=}\hlnum{TRUE}\hlstd{)}
+\hlstd{nparams} \hlkwb{<-} \hlkwd{readBin}\hlstd{(psv,} \hlstr{"integer"}\hlstd{,} \hlkwc{n} \hlstd{=} \hlnum{1}\hlstd{)}
+\hlstd{mcmc} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlkwd{readBin}\hlstd{(psv,} \hlstr{"numeric"}\hlstd{,} \hlkwc{n} \hlstd{= nparams} \hlopt{*} \hlstd{Nout),} \hlkwc{ncol} \hlstd{= nparams,}
+    \hlkwc{byrow} \hlstd{=} \hlnum{TRUE}\hlstd{)}
 \hlkwd{close}\hlstd{(psv)}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
+
 The first element in the \texttt{.psv} file is the number of
 active parameters in the model, which then tells R how to
 parse the following elements into parameter values. Note
@@ -501,6 +504,7 @@ accomplished as follows:
 \end{alltt}
 \end{kframe}
 \end{knitrout}
+
 
 In this case the parameters $a$ and $b$ are saved, along
 with the negative log-likelihood ($f$) and product of the
@@ -788,12 +792,13 @@ calculations as possible (to keep runtime manageable). For
 the Metropolis-Hastings algorithm, there are several ways the user can tune a chain.
 
 \subsubsection{Thinning rate}
-For the Metropolis-Hastings algorithm, the most important tuning option
-available to the user is the saving rate (the inverse of the
-thinning rate). This is the rate at which parameters are
-saved, such that thinning is effectively discarding
-draws. This tuning option is critical since this algorithm
-generates autocorrelated parameters by design.
+For the Metropolis-Hastings algorithm, the most important tuning
+option available to the user is the saving rate (the inverse of
+the thinning rate). This is the rate at which parameters are
+saved, such that thinning is effectively discarding draws. This
+tuning option is critical since this algorithm generates
+autocorrelated parameters by design, although it may not
+necessary to thin in some cases (\cite{link2012}).
 
 The user controls the thinning rate by the argument
 \texttt{mcsave N}. If $N=1$, as in figure \ref{fig:simple1},
@@ -986,11 +991,12 @@ the following function or something similar:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{write.admb.cov} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{cov.user}\hlstd{,} \hlkwc{model.path}\hlstd{=}\hlkwd{getwd}\hlstd{())\{}
+\hlstd{write.admb.cov} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{cov.user}\hlstd{,} \hlkwc{model.path} \hlstd{=} \hlkwd{getwd}\hlstd{()) \{}
     \hlstd{temp} \hlkwb{<-} \hlkwd{file.exists}\hlstd{(}\hlkwd{paste0}\hlstd{(model.path,} \hlstr{"/admodel.cov"}\hlstd{))}
-    \hlkwa{if}\hlstd{(}\hlopt{!}\hlstd{temp)} \hlkwd{stop}\hlstd{(}\hlkwd{paste0}\hlstd{(}\hlstr{"Couldn't find file "}\hlstd{,model.path,} \hlstr{"/admodel.cov"}\hlstd{))}
-    \hlstd{temp} \hlkwb{<-} \hlkwd{file.copy}\hlstd{(}\hlkwc{from}\hlstd{=}\hlkwd{paste0}\hlstd{(model.path,} \hlstr{"/admodel.cov"}\hlstd{),}
-                      \hlkwc{to}\hlstd{=}\hlkwd{paste0}\hlstd{(model.path,} \hlstr{"/admodel_original.cov"}\hlstd{))}
+    \hlkwa{if} \hlstd{(}\hlopt{!}\hlstd{temp)}
+        \hlkwd{stop}\hlstd{(}\hlkwd{paste0}\hlstd{(}\hlstr{"Couldn't find file "}\hlstd{, model.path,} \hlstr{"/admodel.cov"}\hlstd{))}
+    \hlstd{temp} \hlkwb{<-} \hlkwd{file.copy}\hlstd{(}\hlkwc{from} \hlstd{=} \hlkwd{paste0}\hlstd{(model.path,} \hlstr{"/admodel.cov"}\hlstd{),} \hlkwc{to} \hlstd{=} \hlkwd{paste0}\hlstd{(model.path,}
+        \hlstr{"/admodel_original.cov"}\hlstd{))}
     \hlstd{wd.old} \hlkwb{<-} \hlkwd{getwd}\hlstd{()}
     \hlkwd{on.exit}\hlstd{(}\hlkwd{setwd}\hlstd{(wd.old))}
     \hlkwd{setwd}\hlstd{(model.path)}
@@ -998,21 +1004,22 @@ the following function or something similar:
     \hlstd{results} \hlkwb{<-} \hlkwd{get.admb.cov}\hlstd{()}
     \hlstd{scale} \hlkwb{<-} \hlstd{results}\hlopt{$}\hlstd{scale}
     \hlstd{num.pars} \hlkwb{<-} \hlstd{results}\hlopt{$}\hlstd{num.pars}
-    \hlkwa{if}\hlstd{(}\hlkwd{NROW}\hlstd{(cov.user)} \hlopt{!=} \hlstd{num.pars)}
+    \hlkwa{if} \hlstd{(}\hlkwd{NROW}\hlstd{(cov.user)} \hlopt{!=} \hlstd{num.pars)}
         \hlkwd{stop}\hlstd{(}\hlkwd{paste0}\hlstd{(}\hlstr{"Invalid size of covariance matrix, should be: "}\hlstd{, num.pars,}
-                   \hlstr{"instead of "}\hlstd{,}\hlkwd{NROW}\hlstd{(cov.user)))}
+            \hlstr{"instead of "}\hlstd{,} \hlkwd{NROW}\hlstd{(cov.user)))}
     \hlstd{cov.unbounded} \hlkwb{<-} \hlstd{cov.user}\hlopt{/}\hlstd{(scale} \hlopt{%o%} \hlstd{scale)}
     \hlcom{## Write it back to file}
-    \hlstd{file.new} \hlkwb{<-} \hlkwd{file}\hlstd{(}\hlkwd{paste0}\hlstd{(model.path,} \hlstr{"/admodel.cov"}\hlstd{),}\hlstr{"wb"}\hlstd{)}
+    \hlstd{file.new} \hlkwb{<-} \hlkwd{file}\hlstd{(}\hlkwd{paste0}\hlstd{(model.path,} \hlstr{"/admodel.cov"}\hlstd{),} \hlstr{"wb"}\hlstd{)}
     \hlkwd{on.exit}\hlstd{(}\hlkwd{close}\hlstd{(file.new))}
-    \hlkwd{writeBin}\hlstd{(}\hlkwd{as.integer}\hlstd{(num.pars),} \hlkwc{con}\hlstd{=file.new)}
-    \hlkwd{writeBin}\hlstd{(}\hlkwd{as.vector}\hlstd{(}\hlkwd{as.numeric}\hlstd{(cov.unbounded)),} \hlkwc{con}\hlstd{=file.new)}
-    \hlkwd{writeBin}\hlstd{(}\hlkwd{as.integer}\hlstd{(results}\hlopt{$}\hlstd{hybrid_bounded_flag),} \hlkwc{con}\hlstd{=file.new)}
-    \hlkwd{writeBin}\hlstd{(}\hlkwd{as.vector}\hlstd{(scale),} \hlkwc{con}\hlstd{=file.new)}
+    \hlkwd{writeBin}\hlstd{(}\hlkwd{as.integer}\hlstd{(num.pars),} \hlkwc{con} \hlstd{= file.new)}
+    \hlkwd{writeBin}\hlstd{(}\hlkwd{as.vector}\hlstd{(}\hlkwd{as.numeric}\hlstd{(cov.unbounded)),} \hlkwc{con} \hlstd{= file.new)}
+    \hlkwd{writeBin}\hlstd{(}\hlkwd{as.integer}\hlstd{(results}\hlopt{$}\hlstd{hybrid_bounded_flag),} \hlkwc{con} \hlstd{= file.new)}
+    \hlkwd{writeBin}\hlstd{(}\hlkwd{as.vector}\hlstd{(scale),} \hlkwc{con} \hlstd{= file.new)}
 \hlstd{\}}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
+
 
 We note that the user is responsible for checking whether
 the covariance matrix passed is valid. In R this can be done
@@ -1020,12 +1027,11 @@ with the \texttt{matrixcalc} package:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{matrixcalc::}\hlkwd{is.positive.definite}\hlstd{(x,} \hlkwc{tol}\hlstd{=}\hlnum{1e-8}\hlstd{)}
+\hlstd{matrixcalc::}\hlkwd{is.positive.definite}\hlstd{(x,} \hlkwc{tol} \hlstd{=} \hlnum{1e-08}\hlstd{)}
 \end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error: object 'x' not found}}\end{kframe}
+\end{kframe}
 \end{knitrout}
+
 If the covariance matrix is not valid, ADMB will throw an error and
 perhaps proceed but the output from the MCMC would likely be unusable.
 \section{Hybrid MCMC}\label{sec:hybrid}
@@ -1342,7 +1348,7 @@ chain. First we try the same as above, and instead use the
 empirical covariance matrix.
 \begin{figure}[H]
   \centering
-  \includegraphics[width=5in]{../plots/logistic_hy.pdf}
+  \includegraphics[width=5in]{../plots/logistic_hy2.pdf}
   \caption{The logistic model using the hybrid method with
     default tuning parameters and the empirical covariance matrix
     (blue ellipse).}
@@ -1381,7 +1387,6 @@ for the needs at hand. The hybrid method is more
 sophisticated, but much more difficult to tune, and we
 recommend it as an option only when the Metropolis-Hastings is struggling.
 
-\newpage
 \bibliographystyle{unsrt}
 \bibliography{admb_guide}.
 \end{document}
