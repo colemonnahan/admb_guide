@@ -112,7 +112,7 @@ sampler, both briefly described in this guide.
 
 The goal of MCMC algorithms is to draw samples from the
 posterior distribution from which inference (e.g.\
-parameter estimates and credible intervals) can be done. In
+parameter estimates and credible intervals) can be accomplished. In
 a sense it can be thought of as a numerical integration
 technique. While MCMC is very flexible, it can be highly
 inefficient, needing thousands or millions of function calls
