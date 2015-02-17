@@ -83,10 +83,10 @@ encourage users to contribute to this guide to further
 document the Bayesian capabilities of ADMB, or other parts
 of the ADMB project.  The development contents of this
 document available on a
-\href{https://github.com/colemonnahan/admb_guide}{Github
+\href{https://github.com/colemonnahan/admb_guide}{GitHub
   repository} maintained by Cole Monnahan. Improvements can
-be merged directly to the Rnw file (\texttt{knitr}), and
-suggestions submitted as issues on the Github page.
+be merged directly to the \texttt{.Rnw} file (\texttt{knitr}), and
+suggestions submitted as issues on the GitHub page.
 
 \section{Bayesian inference}
 A full description of Bayesian inference is beyond the scope
@@ -111,8 +111,8 @@ Metropolis-Hastings and a Hamiltonian (or ``hybrid'')
 sampler, both briefly described in this guide.
 
 The goal of MCMC algorithms is to draw samples from the
-posterior distribution, from which inference (e.g.\
-parameter estimates and credible intervals) can be done. In
+posterior distribution from which inference (e.g.\
+parameter estimates and credible intervals) can be accomplished. In
 a sense it can be thought of as a numerical integration
 technique. While MCMC is very flexible, it can be highly
 inefficient, needing thousands or millions of function calls
@@ -123,7 +123,7 @@ discuss this in the context of ADMB for both MCMC
 algorithms. If the chain is not tuned properly, samples
 taken from it could lead to invalid inference. \textbf{The
   responsibility is on the user to verify the validity of
-  samples from a MCMC chain.} The R package \texttt{CODA} is
+  samples from a MCMC chain.} The R package CODA is
 a commonly used tool for checking MCMC diagnostics such as
 autocorrelation. Think of ADMB as a tool to generate
 posterior samples, and these must then be validated and
@@ -140,7 +140,7 @@ adding the negative log of the prior density to the
 objective function. If priors are added, the minimum point
 is no longer the maximum likelihood estimate, but rather
 what we informally refer to as the mode of the posterior
-density (or more simply the posterior mode) -- i.e.\ the
+density (or more simply the posterior mode) --- i.e.\ the
 parameters corresponding to the highest point of the
 posterior (or lowest point on the $-\log$ posterior
 surface). The difference between the two is subtle, but
@@ -150,7 +150,7 @@ space, while the likelihood framework uses minimization of
 the likelihood to get parameter estimates and asymptotic
 assumptions for confidence intervals.
 
-When running an MCMC in ADMB, users are \textbf{not} forced
+When running MCMC in ADMB, users are \textbf{not} forced
 to explicitly define and incorporate priors into their
 model. In this case ``implicit'' priors are still affecting
 the posterior. In particular, unbounded parameters without
@@ -164,7 +164,7 @@ than if the parameter were on the natural scale. The
 implications of these issues are contentious and certainly
 beyond the scope of this guide. We caution users to
 carefully consider and explicitly acknowledge their priors
--- ADMB will not force you to.
+--- ADMB will not force you to.
 
 Bounding a parameter automatically incorporates a uniform
 prior without changing the objective function calculation,
@@ -225,7 +225,7 @@ following steps outline a typical work flow.
   execute in the \texttt{mceval\_phase()}.
 \item Pull results into R, Excel or other program to ensure the
   sample is sufficiently thinned, either visually or with
-  tools using, for example, the \texttt{CODA} package.
+  tools using, for example, the CODA package.
 \item If necessary, rerun the chain with more thinning, drop
   the first part of the chain as a ``burn-in,'' or run
   longer for more saved draws.
@@ -239,7 +239,7 @@ following steps outline a typical work flow.
 
 \subsection{MCMC Arguments}
 ADMB has a suite of arguments available to the user at run time. We cover
-the most commonly used ones in table \ref{tab:mh_args}, and refer the
+the most commonly used ones in Table \ref{tab:mh_args}, and refer the
 user to the ADMB manual and other documentation for further options.
 \begin{table}[H]
   \centering
@@ -249,7 +249,7 @@ user to the ADMB manual and other documentation for further options.
     \texttt{-mcsave N} & Save every $N$th MCMC iteration\\
     \texttt{-mcscale N} & Rescale step size for first $N$ iterations\\
     \texttt{-mcmult N} & Rescale the covariance matrix\\
-    \texttt{-mcpin <file>} & Start algorithm from values in <file>\\
+    \texttt{-mcpin <file>} & Start algorithm from values in $<$file$>$\\
     \texttt{-mcrb N} & Reduce high parameter correlations
     (see \ref{sec:mcrb})\\
     \texttt{-mcprobe X} & Use a fat-tailed proposal
@@ -467,8 +467,8 @@ and filled.
 \subsection{Convergence diagnostics} \label{sec:diag}
 
 There exist important convergence diagnostics to assess whether an MCMC
-chain has not ``converged'' (roughly speaking this means it is producing
-independent samples from the posterior). There are a few key diagnostics to
+chain has ``converged'' (roughly speaking this means it is producing
+independent samples from the posterior). There are a couple key diagnostics to
 check: 1) whether enough of the initial samples have been discarded as
 ``burn-in", 2) how much auto-correlation exists in the saved samples. Using
 the saved parameter values, histograms and trace plots for each parameter
@@ -496,11 +496,11 @@ importance of diligently checking properties of the chain outside of ADMB.
 The first few iterations of a chain should be discarded as ``burn-in''; the
 period where the algorithm is adjusting the jump function in order to best
 explore the posterior space. A general rule of thumb of a
-20\%-50\% burn-in is often recommended. However, this is typically not
+20\%--50\% burn-in is often recommended. However, this is typically not
 required for ADMB since it starts from the posterior mode (a region of high
 probability density, see \ref{sec:startvals}), whereas many other MCMC
 software platforms start from arbitrary places and the chain spends a long
-time moving to the area of high density. At a minimum values during which
+time moving to the area of high density. At a minimum, values during which
 the chain is being tuned should be discarded.  After the samples judged to
 be from the burn-in period have been manually discarded, trace plots should
 be trendless, in that consecutive samples should not be correlated.
@@ -637,7 +637,7 @@ The default MCMC algorithm used by ADMB is the
 Metropolis-Hastings (MH) algorithm\footnote{Technically it
   has a symmetric proposal, a special case known as the
   Metropolis algorithm.}. This algorithm has been around for
-decades, is simple to implement, and used widely.
+decades, is simple to implement, and is used widely.
 
 This algorithm will be most efficient when the posterior
 surface mimics a multivariate Normal distribution.
@@ -770,7 +770,7 @@ values too close to the current state, the chain will accept
 them (high acceptance rate) but explore the posterior slowly
 and need more thinning. Alternatively, if proposals are too
 far away into regions of low density (low acceptance rate)
-the chain will not explore the space. The optimal acceptance
+the chain will not explore the parameter space. The optimal acceptance
 rate varies by model size, among other things, but is
 roughly 40\%. The general advice is to tune the proposal
 distribution to achieve an efficient acceptance rate, with
@@ -1101,7 +1101,7 @@ the proposed parameters (Fig. \ref{fig:hybrid_seeds}).
   \label{fig:hybrid_seeds}
 \end{figure}
 
-A perhaps intuitive question might be: why bother with the
+A perhaps intuitive question might be, why bother with the
 momentum variables at all? One issue is that without the
 momentum variables, and the Hamiltonian dynamics in general,
 we would need to account for changes in volume in the
